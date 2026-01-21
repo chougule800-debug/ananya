@@ -169,8 +169,8 @@
                     <form id="regForm" onsubmit="event.preventDefault(); registerPatient();">
                         <div class="grid-2">
                             <div class="form-group"><label>Patient Name *</label><input type="text" id="regName" required></div>
-                            <div class="form-group"><label>Sex *</label><input type="text" id="regSex" placeholder="e.g. Male / Female" required></div>
-                            <div class="form-group"><label>Age *</label><input type="text" id="regAge" placeholder="e.g. 45" required></div>
+                            <div class="form-group"><label>Sex *</label><input type="text" id="regAgeSex" placeholder="e.g. 45 / Male" required></div>
+                            <div class="form-group"><label>Age *</label><input type="text" id="regAgeSex" placeholder="e.g. 45 / Male" required></div>
                         </div>
                         <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone"></div>
                         <div class="form-group"><label>Address</label><input type="text" id="regAddress"></div>
@@ -203,7 +203,7 @@
                                 <small id="pDetailsDisplay" style="color:#6b7280;">-</small>
                             </div>
                             <div style="display:flex; gap:10px;">
-                                <!-- <button class="btn btn-secondary" onclick="toggleHistory()">📜 History</button> -->
+                                <button class="btn btn-secondary" onclick="toggleHistory()">📜 History</button>
                                 <button class="btn btn-primary" onclick="printPrescription()">🖨️ Print</button>
                             </div>
                         </div>
@@ -213,13 +213,15 @@
                             <div id="historyContent"></div>
                         </div>
 
-                        
+                        <div style="background:#fefce8; padding:10px; border-radius:6px; margin-bottom:15px; font-size:13px; color:#854d0e; border:1px solid #fef08a;">
+                            💡 <strong>Tip:</strong> Total = (Morning + Afternoon + Night) × Days.
+                        </div>
 
                         <div id="drugListContainer"></div>
 
                         <div style="margin-top: 20px; display:flex; justify-content:space-between;">
                             <button class="btn btn-green" onclick="addDrugRow()">+ Add Medicine</button>
-                            <!-- <button class="btn btn-primary" onclick="saveToHistory()">💾 Save Record</button> -->
+                            <button class="btn btn-primary" onclick="saveToHistory()">💾 Save Record</button>
                         </div>
                     </div>
                 </div>
@@ -477,25 +479,25 @@
             alert("Record Saved!");
         }
 
-        // function toggleHistory() {
-        //     const sec = document.getElementById('historySection');
-        //     const cont = document.getElementById('historyContent');
-        //     if(sec.style.display === 'none') {
-        //         sec.style.display = 'block';
-        //         const p = patients.find(x => x.id === currentPatientId);
-        //         if(!p.history.length) cont.innerHTML = "No previous history.";
-        //         else {
-        //             cont.innerHTML = p.history.slice().reverse().map(h => `
-        //                 <div style="border-bottom:1px solid #ccc; padding:10px 0;">
-        //                     <strong>${h.date}</strong>
-        //                     <ul style="margin:5px 0; padding-left:20px; font-size:13px;">
-        //                         ${h.meds.map(m => `<li>${m.name} ${m.strength} (${m.m}-${m.a}-${m.n}) for ${m.days} days</li>`).join('')}
-        //                     </ul>
-        //                 </div>
-        //             `).join('');
-        //         }
-        //     } else { sec.style.display = 'none'; }
-        // }
+        function toggleHistory() {
+            const sec = document.getElementById('historySection');
+            const cont = document.getElementById('historyContent');
+            if(sec.style.display === 'none') {
+                sec.style.display = 'block';
+                const p = patients.find(x => x.id === currentPatientId);
+                if(!p.history.length) cont.innerHTML = "No previous history.";
+                else {
+                    cont.innerHTML = p.history.slice().reverse().map(h => `
+                        <div style="border-bottom:1px solid #ccc; padding:10px 0;">
+                            <strong>${h.date}</strong>
+                            <ul style="margin:5px 0; padding-left:20px; font-size:13px;">
+                                ${h.meds.map(m => `<li>${m.name} ${m.strength} (${m.m}-${m.a}-${m.n}) for ${m.days} days</li>`).join('')}
+                            </ul>
+                        </div>
+                    `).join('');
+                }
+            } else { sec.style.display = 'none'; }
+        }
 
         function printPrescription() {
             const p = patients.find(x => x.id === currentPatientId);
