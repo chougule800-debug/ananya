@@ -24,6 +24,27 @@
 
         .container { max-width: 1500px; margin: 0 auto; }
 
+        /* --- AUTH & LOADING SCREENS --- */
+        #authContainer, #loadingOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center;
+        }
+        #loadingOverlay { background: rgba(255,255,255,0.9); z-index: 10000; display: none; flex-direction: column; }
+        
+        .auth-card {
+            background: white; padding: 40px; border-radius: 16px; width: 100%; max-width: 420px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid var(--primary);
+        }
+        .auth-logo { height: 60px; margin-bottom: 15px; }
+        .auth-title { color: var(--primary); font-weight: 900; font-size: 24px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: -0.5px; }
+        .auth-subtitle { color: #6b7280; font-size: 14px; margin-bottom: 30px; }
+        
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #e5e7eb; border-top: 5px solid var(--primary);
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         /* --- HEADER --- */
         .app-header {
             background: white; padding: 20px 30px; border-radius: 12px;
@@ -47,10 +68,12 @@
         .clinic-name { color: var(--primary); font-size: 22px; font-weight: 900; text-transform: uppercase; border: 2px solid var(--primary); padding: 4px 10px; display: inline-block; }
         .clinic-logo-header { height: 50px; width: auto; }
 
-        .nav-pills { display: flex; gap: 10px; background: var(--bg); padding: 5px; border-radius: 8px; align-self: flex-end; }
+        .nav-pills { display: flex; gap: 10px; background: var(--bg); padding: 5px; border-radius: 8px; align-self: flex-end; align-items: center; }
         .nav-btn { border: none; background: transparent; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; color: #6b7280; transition: 0.2s; }
         .nav-btn.active { background: white; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .nav-btn-icon { font-size: 18px; padding: 8px 15px; }
+        .logout-btn { color: #ef4444 !important; border: 1px solid #ef4444 !important; margin-left: 10px; }
+        .logout-btn:hover { background: #fee2e2 !important; }
 
         /* --- LAYOUTS --- */
         .page { display: none; }
@@ -64,13 +87,13 @@
         .grid-3-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; } 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-        .form-group { margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; font-size: 12px; font-weight: 600; color: #4b5563; margin-bottom: 5px; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
         
         .input-error { border: 2px solid #ef4444 !important; background-color: #fef2f2; }
 
-        .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-green { background: #059669; color: white; }
         .btn-red { background: #ef4444; color: white; }
@@ -78,17 +101,21 @@
         .btn-yellow { background: #f59e0b; color: white; }
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-        /* --- DRUG ROWS (Fixed Alignment) --- */
-        .drug-row { display: flex; gap: 10px; align-items: flex-start; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
+        /* --- DRUG ROWS (ALIGNMENT FIXED) --- */
+        .drug-row { display: flex; gap: 15px; align-items: flex-start; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
         
-        .col-name { flex: 3; position: relative; display: flex; flex-direction: column; gap: 5px; } 
-        .col-weight { flex: 1.2; } 
-        .col-small { flex: 0.7; text-align: center; } 
-        .col-days { flex: 1.5; } 
-        .col-total { flex: 0.8; } 
-        .col-action { flex: 0.3; text-align: right; }
+        /* Adjusted widths to make Name field wider */
+        .col-name { flex: 4; display: flex; flex-direction: column; gap: 5px; } 
+        .col-weight { flex: 1.5; } 
+        .col-small { flex: 0.8; text-align: center; } 
+        .col-days { flex: 1.8; } 
+        .col-total { flex: 1; } 
+        .col-action { flex: 0.4; text-align: right; padding-top: 28px; }
         
-        .form-check-group { display: flex; gap: 10px; margin-top: 2px; }
+        /* Ensure labels inside row are visible */
+        .drug-row label { display: block; font-size: 11px; font-weight: 700; color: #4b5563; margin-bottom: 4px; }
+
+        .form-check-group { display: flex; gap: 10px; margin-top: 5px; }
         .form-check-label { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #555; cursor: pointer; font-weight: 600; }
         .form-check-label input { width: auto; margin: 0; }
 
@@ -139,7 +166,7 @@
         @media print {
             @page { margin: 0; size: auto; }
             body, .container { background: white; margin: 0; padding: 0; max-width: 100%; }
-            .no-print, .app-header, .patient-list-section, .btn, .card-header-actions, .auto-mic-container, .mic-btn, .add-med-link { display: none !important; }
+            .no-print, .app-header, .patient-list-section, .btn, .card-header-actions, .auto-mic-container, .mic-btn, .add-med-link, #authContainer, #loadingOverlay { display: none !important; }
             .print-only { display: block !important; }
             .card { box-shadow: none; padding: 0; border: none; }
             .print-container { padding: 40px; font-family: 'Times New Roman', serif; }
@@ -159,191 +186,226 @@
             .rx-table th { border: 1px solid #000; padding: 6px; font-size: 12px; background: #e5e7eb !important; text-align: center; font-weight: bold; }
             .rx-table td { border: 1px solid #000; padding: 8px 5px; font-size: 16px; text-align: center; height: 40px; vertical-align: middle; font-weight: 600; color: #1e3a8a !important; }
             .rx-table td.drug-name-cell { text-align: left; padding-left: 15px; color: #000 !important; }
-            
-            /* FIXED FOOTER POSITIONING */
-            .print-footer { 
-                position: fixed; 
-                bottom: 50px; 
-                right: 50px; 
-                text-align: center; 
-                width: 200px;
-                display: block !important; /* Force show */
-            }
-            .signature-line {
-                border-top: 1px solid #000;
-                margin-top: 40px;
-                padding-top: 5px;
-                font-weight: bold;
-                display: block;
-            }
-            .print-details-box { border: 1px solid #000; padding: 10px; height: auto; min-height: 0; margin-top: 20px; font-size: 14px; white-space: pre-wrap; font-family: 'Inter', sans-serif; display: none; width: 100%; }
+            .print-footer { position: fixed; bottom: 40px; right: 40px; text-align: right; display: block !important; }
+            .signature-line { border-top: 1px solid #000; margin-top: 40px; padding-top: 5px; font-weight: bold; display: block; }
+            .print-details-box { border: 1px solid #000; padding: 10px; height: auto; min-height: 0; margin-bottom: 20px; font-size: 14px; white-space: pre-wrap; font-family: 'Inter', sans-serif; display: none; width: 100%; }
         }
         .print-only { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="app-header no-print">
-            <div class="header-left">
-                <h1>Dr. G.M. WALI <span class="degree-text">M.D. D.M.</span></h1>
-                <p>CHIEF NEUROLOGIST</p>
-                <p class="kmc-code">K.M.C. 12671</p>
-            </div>
-            <div class="header-right">
-                <div class="clinic-brand">
-                    <img src="logo.png" alt="Logo" class="clinic-logo-header">
-                    <div class="clinic-name">NEURO SPECIALITIES CENTRE</div>
-                </div>
-                <div class="nav-pills">
-                    <button id="btn-reception" class="nav-btn active">Reception Desk</button>
-                    <button id="btn-doctor" class="nav-btn">Doctor Chamber</button>
-                    <button id="btn-medicines" class="nav-btn nav-btn-icon" title="Manage Medicines">💊</button>
-                </div>
-            </div>
-        </div>
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <div style="font-weight:600; color:#374151;">Loading...</div>
+    </div>
 
-        <div id="receptionPage" class="page active no-print">
-            <div class="grid-reception">
-                <div class="card">
-                    <h3 style="margin-top:0;">New Patient Registration</h3>
-                    <form id="regForm">
-                        <div class="grid-3-top">
-                            <div class="form-group"><label>Patient Name *</label><input type="text" id="regName" required></div>
-                            <div class="form-group"><label>Age *</label><input type="number" id="regAge" placeholder="Years" required></div>
-                            <div class="form-group">
-                                <label>Sex *</label>
-                                <select id="regSex" required>
-                                    <option value="">Select</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone"></div>
-                        <div class="form-group"><label>Address</label><input type="text" id="regAddress"></div>
-                        <div class="form-group"><label>Provisional Diagnosis</label><textarea id="regDiagnosis" rows="2"></textarea></div>
-                        <button type="submit" id="btnRegister" class="btn btn-primary">Register & Send to Doctor</button>
-                    </form>
+    <div id="authContainer">
+        <div class="auth-card">
+            <img src="logo.png" class="auth-logo" alt="Logo">
+            <div class="auth-title">Neuro Specialities</div>
+            <div class="auth-subtitle">Secure Cloud System Access</div>
+            
+            <div id="loginForm">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="e.g. doctor@clinic.com">
                 </div>
-                
-                <div class="card" style="height: fit-content;">
-                    <h3 style="margin-top:0; color:var(--primary);">Review / Old Patient</h3>
-                    <div class="mic-wrapper" style="margin-bottom:10px;">
-                        <input type="text" id="reviewSearch" placeholder="🔍 Search Database...">
-                        <button id="mic-reviewSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'reviewSearch')">
-                            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                        </button>
-                    </div>
-                    <div id="reviewList" style="height: 400px; overflow-y: auto; border:1px solid #eee; border-radius:6px; padding:10px;">
-                        <div style="text-align:center; padding:20px; color:#ccc;">Loading...</div>
-                    </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" placeholder="Enter Password">
+                </div>
+                <button class="btn btn-primary" style="width:100%" onclick="login()">Login</button>
+                <div style="margin-top:15px; font-size:13px;">
+                    <a href="#" style="color:var(--primary); text-decoration:none;" onclick="toggleAuthForms()">Register New Staff</a>
+                </div>
+            </div>
+
+            <div id="signupForm" style="display:none;">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="regEmail" placeholder="e.g. nurse@clinic.com">
+                </div>
+                <div class="form-group">
+                    <label>Create Password</label>
+                    <input type="password" id="regPass" placeholder="Min 6 characters">
+                </div>
+                <div class="form-group">
+                    <label>Clinic Code</label>
+                    <input type="password" id="regCode" placeholder="Ask Administrator" style="border-color:#f59e0b;">
+                </div>
+                <button class="btn btn-green" style="width:100%" onclick="signup()">Register Staff</button>
+                <div style="margin-top:15px; font-size:13px;">
+                    <a href="#" style="color:var(--primary); text-decoration:none;" onclick="toggleAuthForms()">Back to Login</a>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="medicinePage" class="page no-print">
-            <div class="card" style="max-width: 800px; margin: 0 auto;">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:20px;">
-                    <h3 style="margin:0;">💊 Medicine Manager (Cloud)</h3>
-                    <button class="btn btn-primary" onclick="showAddMedForm()">+ Add New Medicine</button>
+    <div id="appContainer" style="display:none;">
+        <div class="container">
+            <div class="app-header no-print">
+                <div class="header-left">
+                    <h1>Dr. G.M. WALI <span class="degree-text">M.D. D.M.</span></h1>
+                    <p>CHIEF NEUROLOGIST</p>
+                    <p class="kmc-code">K.M.C. 12671</p>
                 </div>
-                <div id="addMedForm" style="display:none; background:#f9fafb; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #e5e7eb;">
-                    <h4 id="medFormTitle">Add New Medicine</h4>
-                    <input type="hidden" id="editMedId">
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Medicine Name</label>
-                            <div class="mic-wrapper">
-                                <input type="text" id="newMedName" placeholder="e.g. Paracetamol">
-                                <button id="mic-newMedName" class="mic-btn" onmousedown="handleManualMicClick(event, 'newMedName')">
-                                    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Strengths (comma separated)</label>
-                            <div class="mic-wrapper">
-                                <input type="text" id="newMedStrengths" placeholder="e.g. 500mg, 650mg, Syrup">
-                                <button id="mic-newMedStrengths" class="mic-btn" onmousedown="handleManualMicClick(event, 'newMedStrengths')">
-                                    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                                </button>
-                            </div>
-                        </div>
+                <div class="header-right">
+                    <div class="clinic-brand">
+                        <img src="logo.png" alt="Logo" class="clinic-logo-header">
+                        <div class="clinic-name">NEURO SPECIALITIES CENTRE</div>
                     </div>
-                    <button class="btn btn-success" id="btnSaveMed" onclick="saveMedicineData()">Save to Cloud</button>
-                    <button class="btn btn-secondary" onclick="document.getElementById('addMedForm').style.display='none'">Cancel</button>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <div class="mic-wrapper">
-                        <input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." onkeyup="renderMedManagerList()">
-                        <button id="mic-medManagerSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'medManagerSearch')">
-                            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                        </button>
+                    <div class="nav-pills">
+                        <button id="btn-reception" class="nav-btn active">Reception Desk</button>
+                        <button id="btn-doctor" class="nav-btn">Doctor Chamber</button>
+                        <button id="btn-medicines" class="nav-btn nav-btn-icon" title="Manage Medicines">💊</button>
+                        <button id="btn-logout" class="nav-btn logout-btn" onclick="logout()">Logout</button>
                     </div>
                 </div>
-                <div id="medManagerList" style="height: 500px; overflow-y: auto; border:1px solid #eee; border-radius:6px;"></div>
             </div>
-        </div>
 
-        <div id="doctorPage" class="page no-print">
-            <div class="grid-doctor">
-                <div class="card patient-list-section" style="height: 85vh; overflow-y: auto; display:flex; flex-direction:column;">
-                    <div style="margin-bottom:10px;">
-                        <h3 style="margin:0; font-size:16px;">Waiting Queue (<span id="queueCount">0</span>)</h3>
-                    </div>
-                    <div id="doctorQueueList" style="flex-grow:1;">
-                        <div style="text-align:center; padding:20px; color:#ccc;">No patients waiting...</div>
-                    </div>
-                </div>
-
-                <div id="workspace" style="display: none;">
+            <div id="receptionPage" class="page active no-print">
+                <div class="grid-reception">
                     <div class="card">
-                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:20px;">
-                            <div>
-                                <h2 id="pNameDisplay" style="margin:0;">-</h2>
-                                <small id="pDetailsDisplay" style="color:#6b7280;">-</small>
-                            </div>
-                            <div style="display:flex; gap:15px; align-items:center;">
-                                <div class="auto-mic-container">
-                                    <span class="switch-label">Auto-Mic</span>
-                                    <label class="switch">
-                                        <input type="checkbox" id="autoMicToggle" onchange="toggleAutoMic()">
-                                        <span class="slider"></span>
-                                    </label>
+                        <h3 style="margin-top:0;">New Patient Registration</h3>
+                        <form id="regForm">
+                            <div class="grid-3-top">
+                                <div class="form-group"><label>Patient Name *</label><input type="text" id="regName" required></div>
+                                <div class="form-group"><label>Age *</label><input type="number" id="regAge" placeholder="Years" required></div>
+                                <div class="form-group">
+                                    <label>Sex *</label>
+                                    <select id="regSex" required>
+                                        <option value="">Select</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
                                 </div>
-                                <button id="btnToggleHistory" class="btn btn-secondary">History</button>
+                            </div>
+                            <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone"></div>
+                            <div class="form-group"><label>Address</label><input type="text" id="regAddress"></div>
+                            <div class="form-group"><label>Provisional Diagnosis</label><textarea id="regDiagnosis" rows="2"></textarea></div>
+                            <button type="submit" id="btnRegister" class="btn btn-primary">Register Patient</button>
+                        </form>
+                    </div>
+                    
+                    <div class="card" style="height: fit-content;">
+                        <h3 style="margin-top:0; color:var(--primary);">Review / Old Patient</h3>
+                        <div class="mic-wrapper" style="margin-bottom:10px;">
+                            <input type="text" id="reviewSearch" placeholder="🔍 Search Database...">
+                            <button id="mic-reviewSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'reviewSearch')">
+                                <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                            </button>
+                        </div>
+                        <div id="reviewList" style="height: 400px; overflow-y: auto; border:1px solid #eee; border-radius:6px; padding:10px;">
+                            <div style="text-align:center; padding:20px; color:#ccc;">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="medicinePage" class="page no-print">
+                <div class="card" style="max-width: 800px; margin: 0 auto;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:20px;">
+                        <h3 style="margin:0;">💊 Medicine Manager (Cloud)</h3>
+                        <button class="btn btn-primary" onclick="showAddMedForm()">+ Add New Medicine</button>
+                    </div>
+                    <div id="addMedForm" style="display:none; background:#f9fafb; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #e5e7eb;">
+                        <h4 id="medFormTitle">Add New Medicine</h4>
+                        <input type="hidden" id="editMedId">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Medicine Name</label>
+                                <div class="mic-wrapper">
+                                    <input type="text" id="newMedName" placeholder="e.g. Paracetamol">
+                                    <button id="mic-newMedName" class="mic-btn" onmousedown="handleManualMicClick(event, 'newMedName')">
+                                        <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Strengths (comma separated)</label>
+                                <div class="mic-wrapper">
+                                    <input type="text" id="newMedStrengths" placeholder="e.g. 500mg, 650mg, Syrup">
+                                    <button id="mic-newMedStrengths" class="mic-btn" onmousedown="handleManualMicClick(event, 'newMedStrengths')">
+                                        <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-
-                        <div id="historySection" style="display:none; background:#f0f9ff; padding:15px; border-radius:8px; margin-bottom:20px;">
-                            <h4>Previous Visits</h4>
-                            <div id="historyContent">Loading history...</div>
+                        <button class="btn btn-success" id="btnSaveMed" onclick="saveMedicineData()">Save to Cloud</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('addMedForm').style.display='none'">Cancel</button>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div class="mic-wrapper">
+                            <input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." oninput="renderMedManagerList()">
+                            <button id="mic-medManagerSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'medManagerSearch')">
+                                <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                            </button>
                         </div>
+                    </div>
+                    <div id="medManagerList" style="height: 500px; overflow-y: auto; border:1px solid #eee; border-radius:6px;"></div>
+                </div>
+            </div>
 
-                        <div style="margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
-                            <div class="notes-header">
-                                <input type="checkbox" id="includeNotesInPrint" class="notes-checkbox">
-                                <label for="includeNotesInPrint" class="notes-label">Doctor's Notes / Details (Check to print)</label>
+            <div id="doctorPage" class="page no-print">
+                <div class="grid-doctor">
+                    <div class="card patient-list-section" style="height: 85vh; overflow-y: auto; display:flex; flex-direction:column;">
+                        <div style="margin-bottom:10px;">
+                            <h3 style="margin:0; font-size:16px;">Waiting Queue (<span id="queueCount">0</span>)</h3>
+                        </div>
+                        <div id="doctorQueueList" style="flex-grow:1;">
+                            <div style="text-align:center; padding:20px; color:#ccc;">No patients waiting...</div>
+                        </div>
+                    </div>
+
+                    <div id="workspace" style="display: none;">
+                        <div class="card">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:20px;">
+                                <div>
+                                    <h2 id="pNameDisplay" style="margin:0;">-</h2>
+                                    <small id="pDetailsDisplay" style="color:#6b7280;">-</small>
+                                </div>
+                                <div style="display:flex; gap:15px; align-items:center;">
+                                    <div class="auto-mic-container">
+                                        <span class="switch-label">Auto-Mic</span>
+                                        <label class="switch">
+                                            <input type="checkbox" id="autoMicToggle" onchange="toggleAutoMic()">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                    <button id="btnToggleHistory" class="btn btn-secondary">History</button>
+                                </div>
                             </div>
-                            <div class="mic-wrapper">
-                                <textarea id="docDetails" class="form-control" rows="4" placeholder="Type..."></textarea>
-                                <button id="mic-docDetails" class="mic-btn" onmousedown="handleManualMicClick(event, 'docDetails')">
-                                    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                                </button>
+
+                            <div id="historySection" style="display:none; background:#f0f9ff; padding:15px; border-radius:8px; margin-bottom:20px;">
+                                <h4>Previous Visits</h4>
+                                <div id="historyContent">Loading history...</div>
                             </div>
-                        </div>
 
-                        <div id="drugListContainer"></div>
+                            <div style="margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                                <div class="notes-header">
+                                    <input type="checkbox" id="includeNotesInPrint" class="notes-checkbox" title="Check to print on Rx">
+                                    <label for="includeNotesInPrint" class="notes-label">Doctor's Notes / Details (Check to print)</label>
+                                </div>
+                                <div class="mic-wrapper">
+                                    <textarea id="docDetails" class="form-control" rows="4" placeholder="Type..."></textarea>
+                                    <button id="mic-docDetails" class="mic-btn" onmousedown="handleManualMicClick(event, 'docDetails')">
+                                        <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
 
-                        <div style="margin-top:20px;">
-                            <button id="btnAddDrug" class="btn btn-green">+ Add Medicine</button>
-                        </div>
+                            <div id="drugListContainer"></div>
 
-                        <div style="margin-top: 20px; display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:20px;">
-                            <button id="btnFinish" class="btn btn-red">Clear from Queue</button>
-                            <button id="btnPrint" class="btn btn-primary">Save & Print</button>
+                            <div style="margin-top:20px;">
+                                <button id="btnAddDrug" class="btn btn-green">+ Add Medicine</button>
+                            </div>
+
+                            <div style="margin-top: 20px; display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:20px;">
+                                <button id="btnFinish" class="btn btn-red">Clear from Queue</button>
+                                <button id="btnPrint" class="btn btn-primary">Save & Print</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -397,6 +459,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, arrayUnion, serverTimestamp, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -410,7 +473,11 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // --- CLINIC REGISTRATION CODE ---
+        const CLINIC_CODE = "NEURO2026"; 
 
         let allPatients = []; 
         let waitingQueue = []; 
@@ -418,12 +485,58 @@
         let currentPatient = null;
         let rowCount = 0;
         
-        // --- SPEECH API ---
+        // Voice vars
         let recognition = null;
         let isAutoMicOn = false;
         let activeInputId = null; 
         let finalTranscript = ''; 
 
+        // --- AUTH ---
+        onAuthStateChanged(auth, (user) => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            if (user) {
+                document.getElementById('authContainer').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'block';
+                initApp();
+            } else {
+                document.getElementById('authContainer').style.display = 'flex';
+                document.getElementById('appContainer').style.display = 'none';
+            }
+        });
+
+        window.login = async () => {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            if(!email || !pass) return alert("Enter email/pass");
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            try { await signInWithEmailAndPassword(auth, email, pass); } 
+            catch(e) { alert("Login failed: " + e.message); document.getElementById('loadingOverlay').style.display = 'none'; }
+        };
+
+        window.signup = async () => {
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+            const code = document.getElementById('regCode').value;
+            if(code !== CLINIC_CODE) return alert("Wrong Clinic Code");
+            if(pass.length < 6) return alert("Password too short");
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            try { await createUserWithEmailAndPassword(auth, email, pass); } 
+            catch(e) { alert("Signup failed: " + e.message); document.getElementById('loadingOverlay').style.display = 'none'; }
+        };
+
+        window.logout = () => {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            signOut(auth);
+        };
+
+        window.toggleAuthForms = () => {
+            const login = document.getElementById('loginForm');
+            const signup = document.getElementById('signupForm');
+            if(login.style.display === 'none') { login.style.display='block'; signup.style.display='none'; }
+            else { login.style.display='none'; signup.style.display='block'; }
+        };
+
+        // --- VOICE ---
         if ('webkitSpeechRecognition' in window) {
             recognition = new webkitSpeechRecognition();
             recognition.interimResults = true; 
@@ -441,19 +554,17 @@
                 if (input.tagName === 'INPUT') {
                     input.value = finalTranscript + interimTranscript;
                     if(activeInputId.includes('name-')) { handleMedicineInput(activeInputId.split('-')[1]); }
-                } 
-                else {
+                    if(activeInputId === 'medManagerSearch') { renderMedManagerList(); }
+                } else {
                     input.value = finalTranscript + interimTranscript;
                 }
             };
 
-            recognition.onerror = function(event) { console.log("Mic Error", event.error); stopListening(); };
+            recognition.onerror = function(event) { stopListening(); };
             recognition.onend = function() {
                 if (activeInputId && isAutoMicOn && (activeInputId === 'docDetails' || activeInputId === 'newMedStrengths')) { 
                     try { recognition.start(); } catch(e){} 
-                } else { 
-                    stopListeningUI(); 
-                }
+                } else { stopListeningUI(); }
             };
         }
 
@@ -466,7 +577,6 @@
             if (!recognition) return;
             if (activeInputId === inputId) return;
             if(activeInputId) stopListening();
-            
             activeInputId = inputId;
             const input = document.getElementById(inputId);
             
@@ -478,14 +588,13 @@
                 if(finalTranscript && !finalTranscript.endsWith(' ')) finalTranscript += ' ';
             }
             
-            // Determine mic button ID dynamically
             let micBtnId = '';
             if (inputId === 'docDetails') micBtnId = 'mic-docDetails';
             else if (inputId === 'newMedName') micBtnId = 'mic-newMedName';
             else if (inputId === 'newMedStrengths') micBtnId = 'mic-newMedStrengths';
             else if (inputId === 'medManagerSearch') micBtnId = 'mic-medManagerSearch';
             else if (inputId === 'reviewSearch') micBtnId = 'mic-reviewSearch';
-            else micBtnId = `mic-${inputId.split('-')[1]}`; // For dynamic medicine rows
+            else micBtnId = `mic-${inputId.split('-')[1]}`; 
 
             const btn = document.getElementById(micBtnId);
             if(btn) btn.classList.add('listening');
@@ -495,7 +604,6 @@
             } else {
                 recognition.continuous = false; 
             }
-
             try { recognition.start(); } catch(e) {}
         }
 
@@ -509,46 +617,36 @@
 
         function attachMicListeners(inputId) {
             const el = document.getElementById(inputId);
-            el.addEventListener('focus', () => { 
-                el.select(); 
-                if (isAutoMicOn) startListening(inputId); 
-            });
-            el.addEventListener('blur', (e) => { 
-                setTimeout(() => { 
-                    if (document.activeElement !== el) stopListening(); 
-                }, 100); 
-            });
+            if(!el) return;
+            el.addEventListener('focus', () => { el.select(); if (isAutoMicOn) startListening(inputId); });
+            el.addEventListener('blur', (e) => { setTimeout(() => { if (document.activeElement !== el) stopListening(); }, 100); });
         }
 
-        // --- INIT ---
-        document.addEventListener('DOMContentLoaded', async () => {
+        // --- APP INIT ---
+        async function initApp() {
             setupListeners();
             await seedMedicines();
             
-            const q = query(collection(db, "patients"), orderBy("timestamp", "desc"));
-            onSnapshot(q, (snapshot) => {
+            onSnapshot(query(collection(db, "patients"), orderBy("timestamp", "desc")), (snapshot) => {
                 allPatients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 waitingQueue = allPatients.filter(p => p.status === 'waiting');
                 renderDoctorQueue();
                 renderReviewSearch();
             });
 
-            const medQ = query(collection(db, "medicines"), orderBy("name"));
-            onSnapshot(medQ, (snapshot) => {
+            onSnapshot(query(collection(db, "medicines"), orderBy("name")), (snapshot) => {
                 cloudMedicines = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 populateDatalist();
                 renderMedManagerList();
             });
             
-            // Attach static listeners
             attachMicListeners('docDetails');
             attachMicListeners('newMedName');
             attachMicListeners('newMedStrengths');
             attachMicListeners('medManagerSearch');
             attachMicListeners('reviewSearch');
-        });
+        }
 
-        // --- MEDICINE LOGIC ---
         async function seedMedicines() {
             const snap = await getDocs(collection(db, "medicines"));
             if(snap.empty && typeof medicineDatabase !== 'undefined') {
@@ -558,67 +656,45 @@
             }
         }
 
+        // --- LOGIC ---
         function handleMedicineInput(rid) {
             const input = document.getElementById(`name-${rid}`);
             const nameVal = input.value.trim();
             const missingDiv = document.getElementById(`missing-alert-${rid}`);
-            
             const med = cloudMedicines.find(m => m.name.toLowerCase() === nameVal.toLowerCase());
             
             if (med) {
                 missingDiv.innerHTML = '';
                 const select = document.getElementById(`strength-${rid}`);
                 select.innerHTML = '<option value="">--</option>';
-                med.strengths.forEach(opt => { 
-                    const el = document.createElement('option'); el.value = opt; el.innerText = opt; select.appendChild(el); 
-                });
+                med.strengths.forEach(opt => { const el = document.createElement('option'); el.value = opt; el.innerText = opt; select.appendChild(el); });
             } else if (nameVal.length > 2) {
                 missingDiv.innerHTML = `<div class="add-med-link" onclick="quickAddMedicine('${nameVal}')">⚠️ '${nameVal}' not found. + Add to DB?</div>`;
-            } else {
-                missingDiv.innerHTML = '';
-            }
+            } else { missingDiv.innerHTML = ''; }
         }
 
-        window.quickAddMedicine = function(name) {
-            switchPage('medicine');
-            showAddMedForm();
-            document.getElementById('newMedName').value = name;
+        window.quickAddMedicine = function(name) { switchPage('medicine'); showAddMedForm(); document.getElementById('newMedName').value = name; }
+
+        window.saveMedicineData = async function() {
+            const id = document.getElementById('editMedId').value;
+            const name = document.getElementById('newMedName').value;
+            const strStr = document.getElementById('newMedStrengths').value;
+            if(!name) return alert("Enter name");
+            const strengths = strStr.split(',').map(s => s.trim()).filter(s => s);
+            if(id) await updateDoc(doc(db, "medicines", id), { name, strengths });
+            else await addDoc(collection(db, "medicines"), { name, strengths });
+            document.getElementById('addMedForm').style.display = 'none';
         }
 
+        window.deleteMedicine = async function(id) { if(confirm("Delete?")) await deleteDoc(doc(db, "medicines", id)); }
+        
         window.editMedicine = function(id, name, strengths) {
             showAddMedForm();
             document.getElementById('medFormTitle').innerText = "Edit Medicine";
             document.getElementById('btnSaveMed').innerText = "Update Medicine";
             document.getElementById('editMedId').value = id;
             document.getElementById('newMedName').value = name;
-            document.getElementById('newMedStrengths').value = strengths.join(', ');
-        }
-
-        window.saveMedicineData = async function() {
-            const id = document.getElementById('editMedId').value;
-            const name = document.getElementById('newMedName').value;
-            const strStr = document.getElementById('newMedStrengths').value;
-            
-            if(!name) return alert("Enter name");
-            const strengths = strStr.split(',').map(s => s.trim()).filter(s => s);
-
-            try {
-                if(id) {
-                    await updateDoc(doc(db, "medicines", id), { name, strengths });
-                    alert("Updated!");
-                } else {
-                    await addDoc(collection(db, "medicines"), { name, strengths });
-                    alert("Added!");
-                }
-                document.getElementById('addMedForm').style.display = 'none';
-                document.getElementById('editMedId').value = '';
-                document.getElementById('newMedName').value = '';
-                document.getElementById('newMedStrengths').value = '';
-            } catch(e) { alert("Error saving medicine"); }
-        }
-
-        window.deleteMedicine = async function(id) {
-            if(confirm("Delete this medicine?")) await deleteDoc(doc(db, "medicines", id));
+            document.getElementById('newMedStrengths').value = strengths.join(', '); 
         }
 
         window.showAddMedForm = function() { 
@@ -626,34 +702,25 @@
             document.getElementById('medFormTitle').innerText = "Add New Medicine";
             document.getElementById('btnSaveMed').innerText = "Save to Cloud";
             document.getElementById('editMedId').value = '';
+            document.getElementById('newMedName').value = '';
+            document.getElementById('newMedStrengths').value = '';
         }
 
         function renderMedManagerList() {
             const term = document.getElementById('medManagerSearch').value.toLowerCase();
             const container = document.getElementById('medManagerList');
             container.innerHTML = "";
-            const filtered = cloudMedicines.filter(m => m.name.toLowerCase().includes(term));
-            filtered.forEach(m => {
+            cloudMedicines.filter(m => m.name.toLowerCase().includes(term)).forEach(m => {
                 const div = document.createElement('div');
                 div.className = 'med-list-item';
-                div.innerHTML = `
-                    <div><strong>${m.name}</strong> <br> <small style="color:#666">${m.strengths.join(', ')}</small></div>
-                    <div style="display:flex; gap:5px;">
-                        <button class="btn btn-secondary btn-sm" onclick="editMedicine('${m.id}', '${m.name}', ['${m.strengths.join("','")}'])">Edit</button>
-                        <button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button>
-                    </div>`;
+                div.innerHTML = `<div><strong>${m.name}</strong> <br> <small style="color:#666">${m.strengths.join(', ')}</small></div><div style="display:flex; gap:5px;"><button class="btn btn-secondary btn-sm" onclick="editMedicine('${m.id}', '${m.name}', ['${m.strengths.join("','")}'])">Edit</button><button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button></div>`;
                 container.appendChild(div);
             });
         }
 
         function populateDatalist() {
             const dl = document.getElementById('allMedicines');
-            dl.innerHTML = ""; 
-            cloudMedicines.forEach(med => {
-                const opt = document.createElement('option');
-                opt.value = med.name;
-                dl.appendChild(opt);
-            });
+            dl.innerHTML = ""; cloudMedicines.forEach(med => { const opt = document.createElement('option'); opt.value = med.name; dl.appendChild(opt); });
         }
 
         function setupListeners() {
@@ -663,9 +730,9 @@
             document.getElementById('regForm').onsubmit = async (e) => { e.preventDefault(); await registerPatient(); };
             document.getElementById('btnAddDrug').onclick = addDrugRow;
             document.getElementById('btnFinish').onclick = finishConsultation;
-            document.getElementById('btnToggleHistory').onclick = toggleHistory;
             document.getElementById('btnPrint').onclick = saveAndPrint;
             document.getElementById('reviewSearch').onkeyup = renderReviewSearch;
+            document.getElementById('btnToggleHistory').onclick = toggleHistory;
         }
 
         function switchPage(page) {
@@ -679,57 +746,41 @@
 
         async function registerPatient() {
             const btn = document.getElementById('btnRegister');
-            btn.textContent = "Saving...";
             btn.disabled = true;
-            try {
-                const newPatient = {
-                    name: document.getElementById('regName').value,
-                    age: document.getElementById('regAge').value,
-                    sex: document.getElementById('regSex').value,
-                    phone: document.getElementById('regPhone').value,
-                    address: document.getElementById('regAddress').value,
-                    diagnosis: document.getElementById('regDiagnosis').value,
-                    regDate: new Date().toLocaleDateString(),
-                    timestamp: serverTimestamp(),
-                    status: 'waiting', 
-                    history: []
-                };
-                await addDoc(collection(db, "patients"), newPatient);
-                alert('Sent to Doctor!');
-                document.getElementById('regForm').reset();
-            } catch (error) { alert("Error saving data."); } 
-            finally { btn.textContent = "Register & Send to Doctor"; btn.disabled = false; }
+            const newPatient = {
+                name: document.getElementById('regName').value,
+                age: document.getElementById('regAge').value,
+                sex: document.getElementById('regSex').value,
+                phone: document.getElementById('regPhone').value,
+                address: document.getElementById('regAddress').value,
+                diagnosis: document.getElementById('regDiagnosis').value,
+                regDate: new Date().toLocaleDateString(),
+                timestamp: serverTimestamp(),
+                status: 'waiting', 
+                history: []
+            };
+            await addDoc(collection(db, "patients"), newPatient);
+            document.getElementById('regForm').reset();
+            btn.disabled = false;
         }
 
         function renderReviewSearch() {
             const term = document.getElementById('reviewSearch').value.toLowerCase();
             const container = document.getElementById('reviewList');
             container.innerHTML = "";
-            const results = term ? allPatients.filter(p => p.name.toLowerCase().includes(term)) : allPatients;
-            if (results.length === 0) { container.innerHTML = '<div style="text-align:center; padding:10px; color:#ccc;">No patients found.</div>'; return; }
-            results.forEach(p => {
+            allPatients.filter(p => p.name.toLowerCase().includes(term)).forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'patient-list-item review-item';
-                div.innerHTML = `<div><strong>${p.name}</strong> <span style="font-size:11px; color:#666">(${p.age}Y/${p.sex})</span></div><button class="btn btn-yellow btn-sm" onclick="sendToDoctor('${p.id}')">Send to Doctor</button>`;
+                div.innerHTML = `<div><strong>${p.name}</strong> <small>(${p.age}Y/${p.sex})</small></div><button class="btn btn-yellow btn-sm" onclick="sendToDoctor('${p.id}')">Send to Doctor</button>`;
                 container.appendChild(div);
             });
         }
 
-        window.sendToDoctor = async function(id) {
-            try {
-                const ref = doc(db, "patients", id);
-                await updateDoc(ref, { status: 'waiting', timestamp: serverTimestamp() });
-                alert("Patient sent to Doctor's Queue!");
-                document.getElementById('reviewSearch').value = '';
-                renderReviewSearch();
-            } catch(e) { alert("Error."); }
-        }
+        window.sendToDoctor = async function(id) { await updateDoc(doc(db, "patients", id), { status: 'waiting', timestamp: serverTimestamp() }); }
 
         function renderDoctorQueue() {
             const container = document.getElementById('doctorQueueList');
-            document.getElementById('queueCount').innerText = waitingQueue.length;
             container.innerHTML = "";
-            if (waitingQueue.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#ccc;">Queue Empty</div>'; return; }
             waitingQueue.forEach(p => {
                 const div = document.createElement('div');
                 div.className = `patient-list-item ${currentPatient && currentPatient.id === p.id ? 'selected' : ''}`;
@@ -748,7 +799,6 @@
             document.getElementById('drugListContainer').innerHTML = '';
             document.getElementById('docDetails').value = ''; 
             addDrugRow();
-            document.getElementById('historySection').style.display = 'none';
         }
 
         async function saveAndPrint() {
@@ -758,148 +808,85 @@
             const printNotes = document.getElementById('includeNotesInPrint').checked;
             
             document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-
-            // VALIDATION: NOTES
-            if(printNotes && !notes.trim()) {
-                alert("Please fill Doctor's Notes or uncheck the print box.");
-                const noteBox = document.getElementById('docDetails');
-                noteBox.classList.add('input-error');
-                noteBox.focus();
-                return;
-            }
+            if(printNotes && !notes.trim()) { alert("Notes empty!"); document.getElementById('docDetails').classList.add('input-error'); return; }
 
             const drugs = [];
             let isValid = true;
-
-            const rows = document.querySelectorAll('.drug-row');
-            for (const row of rows) {
+            document.querySelectorAll('.drug-row').forEach(row => {
                 const rid = row.id.split('-')[1];
-                const nameInput = document.getElementById(`name-${rid}`);
-                const name = nameInput.value.trim();
-                
-                if(!name) continue; 
+                const name = document.getElementById(`name-${rid}`).value.trim();
+                if(!name) return;
 
-                // Check Database
                 const exists = cloudMedicines.some(m => m.name.toLowerCase() === name.toLowerCase());
-                if (!exists) {
-                    isValid = false;
-                    nameInput.classList.add('input-error');
-                    alert(`Error: "${name}" is not in the database.\nPlease add it in the Medicine Manager before prescribing.`);
-                    return;
-                }
+                if(!exists) { isValid = false; alert("Medicine not in DB: " + name); return; }
 
-                // Check Type
-                const isTab = document.getElementById(`type-tab-${rid}`).checked;
-                const isSyp = document.getElementById(`type-syp-${rid}`).checked;
-                const isCap = document.getElementById(`type-cap-${rid}`).checked;
-                const isSup = document.getElementById(`type-sup-${rid}`).checked;
-                
-                if (!isTab && !isSyp && !isCap && !isSup) {
-                    isValid = false;
-                    row.classList.add('input-error');
-                    alert("Please select a Type (Tab/Syp/Cap/Sup) for " + name);
-                    row.scrollIntoView({behavior: "smooth", block: "center"});
-                    return;
-                }
+                const type = document.querySelector(`input[id^="type-"][id$="-${rid}"]:checked`)?.id.split('-')[1].toUpperCase();
+                if(!type) { isValid = false; alert("Select Type for: " + name); return; }
 
-                const strengthInput = document.getElementById(`strength-${rid}`);
-                if (!strengthInput.value || strengthInput.value === '--') {
-                    isValid = false;
-                    strengthInput.classList.add('input-error');
-                    alert("Please select Strength for " + name);
-                    return;
-                }
+                const str = document.getElementById(`strength-${rid}`).value;
+                if(!str || str === '--') { isValid = false; alert("Select Strength for: " + name); return; }
 
-                const getVal = (slot) => {
-                    const chk = document.getElementById(`${slot}-chk-${rid}`).checked;
-                    return chk ? 1 : parseFloat(document.getElementById(`${slot}-${rid}`).value);
-                };
-                const m = getVal('m');
-                const a = getVal('a');
-                const n = getVal('n');
+                const getVal = (s) => document.getElementById(`${s}-chk-${rid}`).checked ? 1 : parseFloat(document.getElementById(`${s}-${rid}`).value);
+                const m=getVal('m'), a=getVal('a'), n=getVal('n');
+                if(m+a+n === 0) { isValid = false; alert("Select Dose for: " + name); return; }
 
-                if (m === 0 && a === 0 && n === 0) {
-                    isValid = false;
-                    alert("At least one dosage (Morn/Aft/Night) must be selected for " + name);
-                    row.classList.add('input-error');
-                    return;
-                }
+                const total = document.getElementById(`t-${rid}`).value;
+                if(total == 0 || total === "Error") { isValid = false; alert("Select Duration for: " + name); return; }
 
-                const totalInput = document.getElementById(`t-${rid}`);
-                if (totalInput.value == 0 || totalInput.value === "Error") {
-                    isValid = false;
-                    alert("Please select a valid Duration for " + name);
-                    document.getElementById(`d-preset-${rid}`).classList.add('input-error');
-                    return;
-                }
+                drugs.push({ name, strength: str, type, m, a, n, t: total });
+            });
 
-                let type = "";
-                if(isTab) type = "TAB"; else if(isSyp) type = "Syp"; else if(isCap) type = "Cap"; else if(isSup) type = "Sup";
+            if(!isValid) return;
+            if(drugs.length === 0 && !notes) { alert("Add data first!"); return; }
 
-                drugs.push({
-                    name: name, strength: strengthInput.value,
-                    type: type, m: m, a: a, n: n, t: totalInput.value
-                });
-            }
-
-            if(!isValid) return; 
-            if(drugs.length === 0 && !notes) { alert("Please add medicines or notes."); return; }
-            
-            btn.textContent = "Saving..."; btn.disabled = true;
-
+            btn.disabled = true;
             try {
-                const newRecord = { date: new Date().toLocaleDateString(), meds: drugs, notes: notes };
-                const patientRef = doc(db, "patients", currentPatient.id);
-                await updateDoc(patientRef, { history: arrayUnion(newRecord) });
-                if(!currentPatient.history) currentPatient.history = [];
-                currentPatient.history.push(newRecord);
+                const record = { date: new Date().toLocaleDateString(), meds: drugs, notes };
+                await updateDoc(doc(db, "patients", currentPatient.id), { history: arrayUnion(record) });
                 
                 document.getElementById('printName').innerText = currentPatient.name;
-                document.getElementById('printDate').innerText = new Date().toLocaleDateString();
-                
-                const printDetailsDiv = document.getElementById('printDetails');
-                if(printNotes && notes) {
-                    printDetailsDiv.innerText = "Note: " + notes;
-                    printDetailsDiv.style.display = 'block';
-                } else {
-                    printDetailsDiv.innerText = "";
-                    printDetailsDiv.style.display = 'none';
-                }
-                
+                document.getElementById('printDate').innerText = record.date;
+                const pNotes = document.getElementById('printDetails');
+                if(printNotes && notes) { pNotes.innerText = "Note: " + notes; pNotes.style.display = 'block'; }
+                else pNotes.style.display = 'none';
+
                 const tbody = document.getElementById('printTableBody');
                 tbody.innerHTML = '';
-                let sl = 1;
-                drugs.forEach(d => {
-                    const formatDose = (val) => (val == 0.5) ? '½' : val;
-                    const displayName = d.type ? `${d.type} ${d.name}` : d.name;
-                    tbody.innerHTML += `<tr><td>${sl++}</td><td class="drug-name-cell">${displayName} <span style="font-size:12px; margin-left:5px;">${d.strength}</span></td><td>${formatDose(d.m)}</td><td>${formatDose(d.a)}</td><td>${formatDose(d.n)}</td><td>${d.t}</td></tr>`;
+                drugs.forEach((d, i) => {
+                    const fmt = (v) => v==0.5 ? '½' : v;
+                    tbody.innerHTML += `<tr><td>${i+1}</td><td class="drug-name-cell">${d.type} ${d.name} <small>${d.strength}</small></td><td>${fmt(d.m)}</td><td>${fmt(d.a)}</td><td>${fmt(d.n)}</td><td>${d.t}</td></tr>`;
                 });
-                
-                btn.textContent = "Save & Print"; btn.disabled = false; window.print();
-            } catch (error) { alert("Save failed."); btn.disabled = false; }
+                window.print();
+            } catch(e) { alert("Fail!"); } finally { btn.disabled = false; }
         }
 
         async function finishConsultation() {
-            if(!currentPatient) return;
-            if(!confirm("Clear from queue?")) return;
-            try { await updateDoc(doc(db, "patients", currentPatient.id), { status: 'done' }); document.getElementById('workspace').style.display = 'none'; currentPatient = null; } catch(e) { alert("Error."); }
+            if(!currentPatient || !confirm("Clear?")) return;
+            await updateDoc(doc(db, "patients", currentPatient.id), { status: 'done' });
+            document.getElementById('workspace').style.display = 'none';
+            currentPatient = null;
         }
 
         window.addDrugRow = addDrugRow;
         window.calculateTotal = calculateTotal;
-        window.updateStrengths = updateStrengths;
-        window.handleMedicineInput = handleMedicineInput;
-        window.handleTypeCheck = handleTypeCheck;
-        window.handleDoseInput = handleDoseInput;
-        window.handleDurationChange = handleDurationChange;
+        window.updateStrengths = (id) => handleMedicineInput(id);
+        window.handleTypeCheck = (rid, type) => { ['tab','syp','cap','sup'].forEach(t => { if(t!==type) document.getElementById(`type-${t}-${rid}`).checked=false; }); };
+        window.handleDoseInput = (rid, slot, src) => { 
+            const d=document.getElementById(`${slot}-${rid}`), c=document.getElementById(`${slot}-chk-${rid}`);
+            if(src==='dropdown') { if(d.value!=='0') c.checked=false; } else if(c.checked) d.value='0';
+            calculateTotal(rid);
+        };
+        window.handleDurationChange = (rid) => { 
+            document.getElementById(`d-manual-container-${rid}`).style.display = (document.getElementById(`d-preset-${rid}`).value==='manual') ? 'flex' : 'none';
+            calculateTotal(rid);
+        };
 
         function toggleHistory() {
-            const sec = document.getElementById('historySection');
-            const cont = document.getElementById('historyContent');
+            const sec = document.getElementById('historySection'), cont = document.getElementById('historyContent');
             if(sec.style.display === 'none') {
                 sec.style.display = 'block';
-                if(!currentPatient.history || currentPatient.history.length === 0) cont.innerHTML = "No previous history."; 
-                else cont.innerHTML = currentPatient.history.slice().reverse().map(h => `<div style="border-bottom:1px solid #ccc; padding:10px 0;"><strong>${h.date}</strong><p style="font-style:italic;">${h.notes||''}</p><ul style="margin:5px 0; padding-left:20px; font-size:13px;">${h.meds.map(m => `<li>${m.type||''} ${m.name} (${m.strength}) - Qty: ${m.t}</li>`).join('')}</ul></div>`).join('');
+                if(!currentPatient.history?.length) cont.innerHTML = "No history.";
+                else cont.innerHTML = currentPatient.history.slice().reverse().map(h => `<div style="border-bottom:1px solid #ccc; padding:10px 0;"><strong>${h.date}</strong><p>${h.notes||''}</p><ul>${h.meds.map(m => `<li>${m.name} - ${m.t}</li>`).join('')}</ul></div>`).join('');
             } else sec.style.display = 'none';
         }
 
@@ -910,16 +897,11 @@
             div.className = 'drug-row';
             div.id = `row-${rowCount}`;
             const doseOpts = `<option value="0">0</option><option value="0.5">½</option><option value="2">2</option><option value="3">3</option>`; 
-
             div.innerHTML = `
                 <div class="col-name">
                     <label>Medicine Name</label>
-                    <div class="mic-wrapper">
-                        <input list="allMedicines" id="name-${rowCount}" placeholder="Search..." oninput="handleMedicineInput(${rowCount})">
-                        <button id="mic-${rowCount}" class="mic-btn" onmousedown="handleManualMicClick(event, 'name-${rowCount}')">
-                            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                        </button>
-                    </div>
+                    <div class="mic-wrapper"><input list="allMedicines" id="name-${rowCount}" placeholder="Medicine Name..." oninput="updateStrengths(${rowCount})">
+                    <button id="mic-${rowCount}" class="mic-btn" onmousedown="handleManualMicClick(event, 'name-${rowCount}')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button></div>
                     <div id="missing-alert-${rowCount}"></div>
                     <div class="form-check-group">
                         <label class="form-check-label"><input type="checkbox" id="type-tab-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'tab')"> TAB</label>
@@ -929,91 +911,25 @@
                     </div>
                 </div>
                 <div class="col-weight"><label>Strength</label><select id="strength-${rowCount}"><option value="">--</option></select></div>
-                
-                <div class="col-small">
-                    <label>Morn</label>
-                    <div class="dose-input-group">
-                        <select id="m-${rowCount}" onchange="handleDoseInput(${rowCount}, 'm', 'dropdown')">${doseOpts}</select>
-                        <label class="checkbox-label"><input type="checkbox" id="m-chk-${rowCount}" onchange="handleDoseInput(${rowCount}, 'm', 'check')"></label>
-                    </div>
-                </div>
-                <div class="col-small">
-                    <label>Aft</label>
-                    <div class="dose-input-group">
-                        <select id="a-${rowCount}" onchange="handleDoseInput(${rowCount}, 'a', 'dropdown')">${doseOpts}</select>
-                        <label class="checkbox-label"><input type="checkbox" id="a-chk-${rowCount}" onchange="handleDoseInput(${rowCount}, 'a', 'check')"></label>
-                    </div>
-                </div>
-                <div class="col-small">
-                    <label>Night</label>
-                    <div class="dose-input-group">
-                        <select id="n-${rowCount}" onchange="handleDoseInput(${rowCount}, 'n', 'dropdown')">${doseOpts}</select>
-                        <label class="checkbox-label"><input type="checkbox" id="n-chk-${rowCount}" onchange="handleDoseInput(${rowCount}, 'n', 'check')"></label>
-                    </div>
-                </div>
-                
-                <div class="col-days">
-                    <label style="color:var(--dr-red);">Duration</label>
-                    <select id="d-preset-${rowCount}" onchange="handleDurationChange(${rowCount})">
-                        <option value="">Select</option>
-                        <option value="30">1 Month</option>
-                        <option value="60">2 Months</option>
-                        <option value="90">3 Months</option>
-                        <option value="manual">✎ Enter Manually</option>
-                    </select>
-                    <div id="d-manual-container-${rowCount}" style="display:none; margin-top:5px; gap:5px;">
-                        <input type="number" id="d-num-${rowCount}" placeholder="Qty" min="1" style="width:60px" oninput="if(this.value<0)this.value= -this.value; calculateTotal(${rowCount})">
-                        <select id="d-unit-${rowCount}" style="width:80px" onchange="calculateTotal(${rowCount})">
-                            <option value="1">Days</option>
-                            <option value="7">Weeks</option>
-                            <option value="30">Months</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="col-total"><label>Total</label><input type="text" id="t-${rowCount}" placeholder="0" readonly style="background:#f3f4f6; font-weight:bold;"></div>
-                <div class="col-action"><label>&nbsp;</label><button class="btn btn-red" style="padding:10px;" onclick="document.getElementById('row-${rowCount}').remove()">X</button></div>
+                <div class="col-small"><label>M</label><div class="dose-input-group"><select id="m-${rowCount}" onchange="handleDoseInput(${rowCount},'m','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="m-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'m','check')"></label></div></div>
+                <div class="col-small"><label>A</label><div class="dose-input-group"><select id="a-${rowCount}" onchange="handleDoseInput(${rowCount},'a','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="a-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'a','check')"></label></div></div>
+                <div class="col-small"><label>N</label><div class="dose-input-group"><select id="n-${rowCount}" onchange="handleDoseInput(${rowCount},'n','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="n-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'n','check')"></label></div></div>
+                <div class="col-days"><label>Duration</label><select id="d-preset-${rowCount}" onchange="handleDurationChange(${rowCount})"><option value="">Select</option><option value="30">1 Month</option><option value="60">2 Months</option><option value="manual">Manual</option></select>
+                <div id="d-manual-container-${rowCount}" style="display:none; margin-top:5px;"><input type="number" id="d-num-${rowCount}" style="width:50px" oninput="calculateTotal(${rowCount})"><select id="d-unit-${rowCount}" onchange="calculateTotal(${rowCount})"><option value="1">Days</option><option value="30">Months</option></select></div></div>
+                <div class="col-total"><label>Total</label><input type="text" id="t-${rowCount}" readonly style="background:#eee"></div>
+                <div class="col-action"><button class="btn btn-red btn-sm" onclick="document.getElementById('row-${rowCount}').remove()">X</button></div>
             `;
             container.appendChild(div);
-            
             attachMicListeners(`name-${rowCount}`);
         }
 
-        function handleTypeCheck(rid, type) {
-            const types = ['tab', 'syp', 'cap', 'sup'];
-            types.forEach(t => { if(t !== type) document.getElementById(`type-${t}-${rid}`).checked = false; });
-        }
-
-        function handleDoseInput(rid, slot, source) {
-            const drop = document.getElementById(`${slot}-${rid}`);
-            const chk = document.getElementById(`${slot}-chk-${rid}`);
-            if (source === 'dropdown') { if (drop.value != "0") chk.checked = false; } else if (source === 'check') { if (chk.checked) drop.value = "0"; }
-            calculateTotal(rid);
-        }
-
-        function handleDurationChange(rid) {
-            const val = document.getElementById(`d-preset-${rid}`).value;
-            const manualDiv = document.getElementById(`d-manual-container-${rid}`);
-            manualDiv.style.display = (val === 'manual') ? 'flex' : 'none';
-            calculateTotal(rid);
-        }
-
         function calculateTotal(rid) {
-            const getVal = (slot) => { const chk = document.getElementById(`${slot}-chk-${rid}`).checked; return chk ? 1 : (parseFloat(document.getElementById(`${slot}-${rid}`).value) || 0); };
-            const m = getVal('m'); const a = getVal('a'); const n = getVal('n');
-            let days = 0;
-            const preset = document.getElementById(`d-preset-${rid}`).value;
-            if(preset === 'manual') {
-                const num = parseFloat(document.getElementById(`d-num-${rid}`).value) || 0;
-                const unit = parseFloat(document.getElementById(`d-unit-${rid}`).value) || 1;
-                days = num * unit;
-            } else { days = parseFloat(preset) || 0; }
-            if (days === 0 && preset !== "") { document.getElementById(`t-${rid}`).value = "Error"; return; }
-            document.getElementById(`t-${rid}`).value = Math.ceil((m + a + n) * days);
-        }
-
-        function updateStrengths(rowId) {
-            handleMedicineInput(rowId);
+            const v=(s)=>document.getElementById(`${s}-chk-${rid}`).checked ? 1 : parseFloat(document.getElementById(`${s}-${rid}`).value)||0;
+            const m=v('m'), a=v('a'), n=v('n');
+            let d=0, p=document.getElementById(`d-preset-${rid}`).value;
+            if(p==='manual') d=(parseFloat(document.getElementById(`d-num-${rid}`).value)||0) * parseFloat(document.getElementById(`d-unit-${rid}`).value);
+            else d=parseFloat(p)||0;
+            document.getElementById(`t-${rid}`).value = Math.ceil((m+a+n)*d);
         }
     </script>
 </body>
