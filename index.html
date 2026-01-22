@@ -75,6 +75,7 @@
         .btn-green { background: #059669; color: white; }
         .btn-red { background: #ef4444; color: white; }
         .btn-secondary { background: white; border: 1px solid var(--border); color: var(--text); }
+        .btn-yellow { background: #f59e0b; color: white; }
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
         /* --- DRUG ROWS (Fixed Alignment) --- */
@@ -101,16 +102,12 @@
         .review-item { display: flex; justify-content: space-between; align-items: center; }
         .btn-sm { padding: 5px 10px; font-size: 12px; }
 
-<<<<<<< HEAD
-        .mic-wrapper { position: relative; width: 100%; }
-=======
         .med-list-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; align-items: center; }
         .med-list-item:hover { background: #f9fafb; }
 
         /* MIC STYLES */
         .mic-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
         .mic-wrapper input { width: 100%; padding-right: 30px; }
->>>>>>> 7a4d33f (final commit)
         .mic-btn { 
             position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
             background: none; border: none; cursor: pointer; color: #9ca3af;
@@ -118,10 +115,7 @@
         }
         .mic-btn svg { width: 18px; height: 18px; fill: currentColor; }
         .mic-btn.listening { color: #ef4444; animation: pulse 1s infinite; }
-<<<<<<< HEAD
-=======
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
->>>>>>> 7a4d33f (final commit)
 
         .auto-mic-container { display: flex; align-items: center; gap: 8px; background: #f3f4f6; padding: 5px 10px; border-radius: 20px; border: 1px solid #e5e7eb; }
         .switch-label { font-size: 12px; font-weight: 700; color: #374151; }
@@ -165,12 +159,6 @@
             .rx-table th { border: 1px solid #000; padding: 6px; font-size: 12px; background: #e5e7eb !important; text-align: center; font-weight: bold; }
             .rx-table td { border: 1px solid #000; padding: 8px 5px; font-size: 16px; text-align: center; height: 40px; vertical-align: middle; font-weight: 600; color: #1e3a8a !important; }
             .rx-table td.drug-name-cell { text-align: left; padding-left: 15px; color: #000 !important; }
-<<<<<<< HEAD
-            .print-footer { position: fixed; bottom: 40px; right: 40px; text-align: right; }
-            .signature-line { border-top: 1px solid #000; margin-top: 40px; padding-top: 5px; font-weight: bold; display: block; }
-            /* Auto height notes */
-            .print-details-box { border: 1px solid #000; padding: 10px; height: auto; min-height: 0; margin-bottom: 20px; font-size: 14px; white-space: pre-wrap; font-family: 'Inter', sans-serif; display: none; width: 100%; }
-=======
             
             /* FIXED FOOTER POSITIONING */
             .print-footer { 
@@ -189,7 +177,6 @@
                 display: block;
             }
             .print-details-box { border: 1px solid #000; padding: 10px; height: auto; min-height: 0; margin-top: 20px; font-size: 14px; white-space: pre-wrap; font-family: 'Inter', sans-serif; display: none; width: 100%; }
->>>>>>> 7a4d33f (final commit)
         }
         .print-only { display: none; }
     </style>
@@ -243,16 +230,12 @@
                 
                 <div class="card" style="height: fit-content;">
                     <h3 style="margin-top:0; color:var(--primary);">Review / Old Patient</h3>
-<<<<<<< HEAD
-                    <input type="text" id="reviewSearch" placeholder="🔍 Search Database..." style="margin-bottom: 10px;">
-=======
                     <div class="mic-wrapper" style="margin-bottom:10px;">
                         <input type="text" id="reviewSearch" placeholder="🔍 Search Database...">
                         <button id="mic-reviewSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'reviewSearch')">
                             <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
                         </button>
                     </div>
->>>>>>> 7a4d33f (final commit)
                     <div id="reviewList" style="height: 400px; overflow-y: auto; border:1px solid #eee; border-radius:6px; padding:10px;">
                         <div style="text-align:center; padding:20px; color:#ccc;">Loading...</div>
                     </div>
@@ -270,13 +253,36 @@
                     <h4 id="medFormTitle">Add New Medicine</h4>
                     <input type="hidden" id="editMedId">
                     <div class="grid-2">
-                        <div class="form-group"><label>Medicine Name</label><input type="text" id="newMedName" placeholder="e.g. Paracetamol"></div>
-                        <div class="form-group"><label>Strengths (comma separated)</label><input type="text" id="newMedStrengths" placeholder="e.g. 500mg, 650mg, Syrup"></div>
+                        <div class="form-group">
+                            <label>Medicine Name</label>
+                            <div class="mic-wrapper">
+                                <input type="text" id="newMedName" placeholder="e.g. Paracetamol">
+                                <button id="mic-newMedName" class="mic-btn" onmousedown="handleManualMicClick(event, 'newMedName')">
+                                    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Strengths (comma separated)</label>
+                            <div class="mic-wrapper">
+                                <input type="text" id="newMedStrengths" placeholder="e.g. 500mg, 650mg, Syrup">
+                                <button id="mic-newMedStrengths" class="mic-btn" onmousedown="handleManualMicClick(event, 'newMedStrengths')">
+                                    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <button class="btn btn-success" id="btnSaveMed" onclick="saveMedicineData()">Save to Cloud</button>
                     <button class="btn btn-secondary" onclick="document.getElementById('addMedForm').style.display='none'">Cancel</button>
                 </div>
-                <div style="margin-bottom: 15px;"><input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." onkeyup="renderMedManagerList()"></div>
+                <div style="margin-bottom: 15px;">
+                    <div class="mic-wrapper">
+                        <input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." onkeyup="renderMedManagerList()">
+                        <button id="mic-medManagerSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'medManagerSearch')">
+                            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                        </button>
+                    </div>
+                </div>
                 <div id="medManagerList" style="height: 500px; overflow-y: auto; border:1px solid #eee; border-radius:6px;"></div>
             </div>
         </div>
@@ -322,7 +328,7 @@
                                 <label for="includeNotesInPrint" class="notes-label">Doctor's Notes / Details (Check to print)</label>
                             </div>
                             <div class="mic-wrapper">
-                                <textarea id="docDetails" class="form-control" rows="4" placeholder="Type clinical notes here..."></textarea>
+                                <textarea id="docDetails" class="form-control" rows="4" placeholder="Type..."></textarea>
                                 <button id="mic-docDetails" class="mic-btn" onmousedown="handleManualMicClick(event, 'docDetails')">
                                     <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
                                 </button>
@@ -331,19 +337,11 @@
 
                         <div id="drugListContainer"></div>
 
-<<<<<<< HEAD
-                        <div style="margin-top:10px; margin-bottom: 20px;">
-                            <button id="btnAddDrug" class="btn btn-green">+ Add Medicine</button>
-                        </div>
-
-                        <div style="display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:20px;">
-=======
                         <div style="margin-top:20px;">
                             <button id="btnAddDrug" class="btn btn-green">+ Add Medicine</button>
                         </div>
 
                         <div style="margin-top: 20px; display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:20px;">
->>>>>>> 7a4d33f (final commit)
                             <button id="btnFinish" class="btn btn-red">Clear from Queue</button>
                             <button id="btnPrint" class="btn btn-primary">Save & Print</button>
                         </div>
@@ -420,6 +418,7 @@
         let currentPatient = null;
         let rowCount = 0;
         
+        // --- SPEECH API ---
         let recognition = null;
         let isAutoMicOn = false;
         let activeInputId = null; 
@@ -438,10 +437,6 @@
                     else { interimTranscript += event.results[i][0].transcript; }
                 }
                 const input = document.getElementById(activeInputId);
-<<<<<<< HEAD
-                input.value = finalTranscript + interimTranscript;
-                if(activeInputId.includes('name-')) { handleMedicineInput(activeInputId.split('-')[1]); }
-=======
                 
                 if (input.tagName === 'INPUT') {
                     input.value = finalTranscript + interimTranscript;
@@ -450,18 +445,15 @@
                 else {
                     input.value = finalTranscript + interimTranscript;
                 }
->>>>>>> 7a4d33f (final commit)
             };
 
-            recognition.onerror = function(event) { stopListening(); };
+            recognition.onerror = function(event) { console.log("Mic Error", event.error); stopListening(); };
             recognition.onend = function() {
-<<<<<<< HEAD
-                if (activeInputId && isAutoMicOn && (activeInputId === 'docDetails')) { 
-=======
                 if (activeInputId && isAutoMicOn && (activeInputId === 'docDetails' || activeInputId === 'newMedStrengths')) { 
->>>>>>> 7a4d33f (final commit)
                     try { recognition.start(); } catch(e){} 
-                } else { stopListeningUI(); }
+                } else { 
+                    stopListeningUI(); 
+                }
             };
         }
 
@@ -474,14 +466,11 @@
             if (!recognition) return;
             if (activeInputId === inputId) return;
             if(activeInputId) stopListening();
+            
             activeInputId = inputId;
             const input = document.getElementById(inputId);
             
-<<<<<<< HEAD
-            if (input.tagName === 'INPUT' && inputId.includes('name-')) {
-=======
             if (input.tagName === 'INPUT') {
->>>>>>> 7a4d33f (final commit)
                 input.value = '';
                 finalTranscript = '';
             } else {
@@ -489,12 +478,6 @@
                 if(finalTranscript && !finalTranscript.endsWith(' ')) finalTranscript += ' ';
             }
             
-<<<<<<< HEAD
-            const btn = document.getElementById(inputId === 'docDetails' ? 'mic-docDetails' : `mic-${inputId.split('-')[1]}`);
-            if(btn) btn.classList.add('listening');
-            
-            recognition.continuous = (inputId === 'docDetails');
-=======
             // Determine mic button ID dynamically
             let micBtnId = '';
             if (inputId === 'docDetails') micBtnId = 'mic-docDetails';
@@ -513,7 +496,6 @@
                 recognition.continuous = false; 
             }
 
->>>>>>> 7a4d33f (final commit)
             try { recognition.start(); } catch(e) {}
         }
 
@@ -527,22 +509,32 @@
 
         function attachMicListeners(inputId) {
             const el = document.getElementById(inputId);
-            el.addEventListener('focus', () => { el.select(); if (isAutoMicOn) startListening(inputId); });
-            el.addEventListener('blur', (e) => { setTimeout(() => { if (document.activeElement !== el) stopListening(); }, 100); });
+            el.addEventListener('focus', () => { 
+                el.select(); 
+                if (isAutoMicOn) startListening(inputId); 
+            });
+            el.addEventListener('blur', (e) => { 
+                setTimeout(() => { 
+                    if (document.activeElement !== el) stopListening(); 
+                }, 100); 
+            });
         }
 
+        // --- INIT ---
         document.addEventListener('DOMContentLoaded', async () => {
             setupListeners();
             await seedMedicines();
             
-            onSnapshot(query(collection(db, "patients"), orderBy("timestamp", "desc")), (snapshot) => {
+            const q = query(collection(db, "patients"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snapshot) => {
                 allPatients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 waitingQueue = allPatients.filter(p => p.status === 'waiting');
                 renderDoctorQueue();
                 renderReviewSearch();
             });
 
-            onSnapshot(query(collection(db, "medicines"), orderBy("name")), (snapshot) => {
+            const medQ = query(collection(db, "medicines"), orderBy("name"));
+            onSnapshot(medQ, (snapshot) => {
                 cloudMedicines = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 populateDatalist();
                 renderMedManagerList();
@@ -550,15 +542,13 @@
             
             // Attach static listeners
             attachMicListeners('docDetails');
-<<<<<<< HEAD
-=======
             attachMicListeners('newMedName');
             attachMicListeners('newMedStrengths');
             attachMicListeners('medManagerSearch');
             attachMicListeners('reviewSearch');
->>>>>>> 7a4d33f (final commit)
         });
 
+        // --- MEDICINE LOGIC ---
         async function seedMedicines() {
             const snap = await getDocs(collection(db, "medicines"));
             if(snap.empty && typeof medicineDatabase !== 'undefined') {
@@ -572,10 +562,7 @@
             const input = document.getElementById(`name-${rid}`);
             const nameVal = input.value.trim();
             const missingDiv = document.getElementById(`missing-alert-${rid}`);
-<<<<<<< HEAD
-=======
             
->>>>>>> 7a4d33f (final commit)
             const med = cloudMedicines.find(m => m.name.toLowerCase() === nameVal.toLowerCase());
             
             if (med) {
@@ -587,40 +574,86 @@
                 });
             } else if (nameVal.length > 2) {
                 missingDiv.innerHTML = `<div class="add-med-link" onclick="quickAddMedicine('${nameVal}')">⚠️ '${nameVal}' not found. + Add to DB?</div>`;
-            } else { missingDiv.innerHTML = ''; }
+            } else {
+                missingDiv.innerHTML = '';
+            }
         }
 
-        window.quickAddMedicine = function(name) { switchPage('medicine'); showAddMedForm(); document.getElementById('newMedName').value = name; }
+        window.quickAddMedicine = function(name) {
+            switchPage('medicine');
+            showAddMedForm();
+            document.getElementById('newMedName').value = name;
+        }
+
+        window.editMedicine = function(id, name, strengths) {
+            showAddMedForm();
+            document.getElementById('medFormTitle').innerText = "Edit Medicine";
+            document.getElementById('btnSaveMed').innerText = "Update Medicine";
+            document.getElementById('editMedId').value = id;
+            document.getElementById('newMedName').value = name;
+            document.getElementById('newMedStrengths').value = strengths.join(', ');
+        }
 
         window.saveMedicineData = async function() {
             const id = document.getElementById('editMedId').value;
             const name = document.getElementById('newMedName').value;
             const strStr = document.getElementById('newMedStrengths').value;
+            
             if(!name) return alert("Enter name");
             const strengths = strStr.split(',').map(s => s.trim()).filter(s => s);
-            if(id) await updateDoc(doc(db, "medicines", id), { name, strengths });
-            else await addDoc(collection(db, "medicines"), { name, strengths });
-            document.getElementById('addMedForm').style.display = 'none';
+
+            try {
+                if(id) {
+                    await updateDoc(doc(db, "medicines", id), { name, strengths });
+                    alert("Updated!");
+                } else {
+                    await addDoc(collection(db, "medicines"), { name, strengths });
+                    alert("Added!");
+                }
+                document.getElementById('addMedForm').style.display = 'none';
+                document.getElementById('editMedId').value = '';
+                document.getElementById('newMedName').value = '';
+                document.getElementById('newMedStrengths').value = '';
+            } catch(e) { alert("Error saving medicine"); }
         }
 
-        window.deleteMedicine = async function(id) { if(confirm("Delete?")) await deleteDoc(doc(db, "medicines", id)); }
-        window.showAddMedForm = function() { document.getElementById('addMedForm').style.display = 'block'; document.getElementById('editMedId').value = ''; }
+        window.deleteMedicine = async function(id) {
+            if(confirm("Delete this medicine?")) await deleteDoc(doc(db, "medicines", id));
+        }
+
+        window.showAddMedForm = function() { 
+            document.getElementById('addMedForm').style.display = 'block'; 
+            document.getElementById('medFormTitle').innerText = "Add New Medicine";
+            document.getElementById('btnSaveMed').innerText = "Save to Cloud";
+            document.getElementById('editMedId').value = '';
+        }
 
         function renderMedManagerList() {
             const term = document.getElementById('medManagerSearch').value.toLowerCase();
             const container = document.getElementById('medManagerList');
             container.innerHTML = "";
-            cloudMedicines.filter(m => m.name.toLowerCase().includes(term)).forEach(m => {
+            const filtered = cloudMedicines.filter(m => m.name.toLowerCase().includes(term));
+            filtered.forEach(m => {
                 const div = document.createElement('div');
                 div.className = 'med-list-item';
-                div.innerHTML = `<div><strong>${m.name}</strong><br><small>${m.strengths.join(', ')}</small></div><button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button>`;
+                div.innerHTML = `
+                    <div><strong>${m.name}</strong> <br> <small style="color:#666">${m.strengths.join(', ')}</small></div>
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn btn-secondary btn-sm" onclick="editMedicine('${m.id}', '${m.name}', ['${m.strengths.join("','")}'])">Edit</button>
+                        <button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button>
+                    </div>`;
                 container.appendChild(div);
             });
         }
 
         function populateDatalist() {
             const dl = document.getElementById('allMedicines');
-            dl.innerHTML = ""; cloudMedicines.forEach(med => { const opt = document.createElement('option'); opt.value = med.name; dl.appendChild(opt); });
+            dl.innerHTML = ""; 
+            cloudMedicines.forEach(med => {
+                const opt = document.createElement('option');
+                opt.value = med.name;
+                dl.appendChild(opt);
+            });
         }
 
         function setupListeners() {
@@ -630,6 +663,7 @@
             document.getElementById('regForm').onsubmit = async (e) => { e.preventDefault(); await registerPatient(); };
             document.getElementById('btnAddDrug').onclick = addDrugRow;
             document.getElementById('btnFinish').onclick = finishConsultation;
+            document.getElementById('btnToggleHistory').onclick = toggleHistory;
             document.getElementById('btnPrint').onclick = saveAndPrint;
             document.getElementById('reviewSearch').onkeyup = renderReviewSearch;
         }
@@ -645,41 +679,57 @@
 
         async function registerPatient() {
             const btn = document.getElementById('btnRegister');
+            btn.textContent = "Saving...";
             btn.disabled = true;
-            const newPatient = {
-                name: document.getElementById('regName').value,
-                age: document.getElementById('regAge').value,
-                sex: document.getElementById('regSex').value,
-                phone: document.getElementById('regPhone').value,
-                address: document.getElementById('regAddress').value,
-                diagnosis: document.getElementById('regDiagnosis').value,
-                regDate: new Date().toLocaleDateString(),
-                timestamp: serverTimestamp(),
-                status: 'waiting', 
-                history: []
-            };
-            await addDoc(collection(db, "patients"), newPatient);
-            document.getElementById('regForm').reset();
-            btn.disabled = false;
+            try {
+                const newPatient = {
+                    name: document.getElementById('regName').value,
+                    age: document.getElementById('regAge').value,
+                    sex: document.getElementById('regSex').value,
+                    phone: document.getElementById('regPhone').value,
+                    address: document.getElementById('regAddress').value,
+                    diagnosis: document.getElementById('regDiagnosis').value,
+                    regDate: new Date().toLocaleDateString(),
+                    timestamp: serverTimestamp(),
+                    status: 'waiting', 
+                    history: []
+                };
+                await addDoc(collection(db, "patients"), newPatient);
+                alert('Sent to Doctor!');
+                document.getElementById('regForm').reset();
+            } catch (error) { alert("Error saving data."); } 
+            finally { btn.textContent = "Register & Send to Doctor"; btn.disabled = false; }
         }
 
         function renderReviewSearch() {
             const term = document.getElementById('reviewSearch').value.toLowerCase();
             const container = document.getElementById('reviewList');
             container.innerHTML = "";
-            allPatients.filter(p => p.name.toLowerCase().includes(term)).forEach(p => {
+            const results = term ? allPatients.filter(p => p.name.toLowerCase().includes(term)) : allPatients;
+            if (results.length === 0) { container.innerHTML = '<div style="text-align:center; padding:10px; color:#ccc;">No patients found.</div>'; return; }
+            results.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'patient-list-item review-item';
-                div.innerHTML = `<div><strong>${p.name}</strong> <small>(${p.age}Y/${p.sex})</small></div><button class="btn btn-yellow btn-sm" onclick="sendToDoctor('${p.id}')">Send to Doctor</button>`;
+                div.innerHTML = `<div><strong>${p.name}</strong> <span style="font-size:11px; color:#666">(${p.age}Y/${p.sex})</span></div><button class="btn btn-yellow btn-sm" onclick="sendToDoctor('${p.id}')">Send to Doctor</button>`;
                 container.appendChild(div);
             });
         }
 
-        window.sendToDoctor = async function(id) { await updateDoc(doc(db, "patients", id), { status: 'waiting', timestamp: serverTimestamp() }); }
+        window.sendToDoctor = async function(id) {
+            try {
+                const ref = doc(db, "patients", id);
+                await updateDoc(ref, { status: 'waiting', timestamp: serverTimestamp() });
+                alert("Patient sent to Doctor's Queue!");
+                document.getElementById('reviewSearch').value = '';
+                renderReviewSearch();
+            } catch(e) { alert("Error."); }
+        }
 
         function renderDoctorQueue() {
             const container = document.getElementById('doctorQueueList');
+            document.getElementById('queueCount').innerText = waitingQueue.length;
             container.innerHTML = "";
+            if (waitingQueue.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#ccc;">Queue Empty</div>'; return; }
             waitingQueue.forEach(p => {
                 const div = document.createElement('div');
                 div.className = `patient-list-item ${currentPatient && currentPatient.id === p.id ? 'selected' : ''}`;
@@ -698,6 +748,7 @@
             document.getElementById('drugListContainer').innerHTML = '';
             document.getElementById('docDetails').value = ''; 
             addDrugRow();
+            document.getElementById('historySection').style.display = 'none';
         }
 
         async function saveAndPrint() {
@@ -707,85 +758,148 @@
             const printNotes = document.getElementById('includeNotesInPrint').checked;
             
             document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-            if(printNotes && !notes.trim()) { alert("Notes empty!"); document.getElementById('docDetails').classList.add('input-error'); return; }
+
+            // VALIDATION: NOTES
+            if(printNotes && !notes.trim()) {
+                alert("Please fill Doctor's Notes or uncheck the print box.");
+                const noteBox = document.getElementById('docDetails');
+                noteBox.classList.add('input-error');
+                noteBox.focus();
+                return;
+            }
 
             const drugs = [];
             let isValid = true;
-            document.querySelectorAll('.drug-row').forEach(row => {
+
+            const rows = document.querySelectorAll('.drug-row');
+            for (const row of rows) {
                 const rid = row.id.split('-')[1];
-                const name = document.getElementById(`name-${rid}`).value.trim();
-                if(!name) return;
+                const nameInput = document.getElementById(`name-${rid}`);
+                const name = nameInput.value.trim();
+                
+                if(!name) continue; 
 
+                // Check Database
                 const exists = cloudMedicines.some(m => m.name.toLowerCase() === name.toLowerCase());
-                if(!exists) { isValid = false; alert("Medicine not in DB: " + name); return; }
+                if (!exists) {
+                    isValid = false;
+                    nameInput.classList.add('input-error');
+                    alert(`Error: "${name}" is not in the database.\nPlease add it in the Medicine Manager before prescribing.`);
+                    return;
+                }
 
-                const type = document.querySelector(`input[id^="type-"][id$="-${rid}"]:checked`)?.id.split('-')[1].toUpperCase();
-                if(!type) { isValid = false; alert("Select Type for: " + name); return; }
+                // Check Type
+                const isTab = document.getElementById(`type-tab-${rid}`).checked;
+                const isSyp = document.getElementById(`type-syp-${rid}`).checked;
+                const isCap = document.getElementById(`type-cap-${rid}`).checked;
+                const isSup = document.getElementById(`type-sup-${rid}`).checked;
+                
+                if (!isTab && !isSyp && !isCap && !isSup) {
+                    isValid = false;
+                    row.classList.add('input-error');
+                    alert("Please select a Type (Tab/Syp/Cap/Sup) for " + name);
+                    row.scrollIntoView({behavior: "smooth", block: "center"});
+                    return;
+                }
 
-                const str = document.getElementById(`strength-${rid}`).value;
-                if(!str || str === '--') { isValid = false; alert("Select Strength for: " + name); return; }
+                const strengthInput = document.getElementById(`strength-${rid}`);
+                if (!strengthInput.value || strengthInput.value === '--') {
+                    isValid = false;
+                    strengthInput.classList.add('input-error');
+                    alert("Please select Strength for " + name);
+                    return;
+                }
 
-                const getVal = (s) => document.getElementById(`${s}-chk-${rid}`).checked ? 1 : parseFloat(document.getElementById(`${s}-${rid}`).value);
-                const m=getVal('m'), a=getVal('a'), n=getVal('n');
-                if(m+a+n === 0) { isValid = false; alert("Select Dose for: " + name); return; }
+                const getVal = (slot) => {
+                    const chk = document.getElementById(`${slot}-chk-${rid}`).checked;
+                    return chk ? 1 : parseFloat(document.getElementById(`${slot}-${rid}`).value);
+                };
+                const m = getVal('m');
+                const a = getVal('a');
+                const n = getVal('n');
 
-                const total = document.getElementById(`t-${rid}`).value;
-                if(total == 0 || total === "Error") { isValid = false; alert("Select Duration for: " + name); return; }
+                if (m === 0 && a === 0 && n === 0) {
+                    isValid = false;
+                    alert("At least one dosage (Morn/Aft/Night) must be selected for " + name);
+                    row.classList.add('input-error');
+                    return;
+                }
 
-                drugs.push({ name, strength: str, type, m, a, n, t: total });
-            });
+                const totalInput = document.getElementById(`t-${rid}`);
+                if (totalInput.value == 0 || totalInput.value === "Error") {
+                    isValid = false;
+                    alert("Please select a valid Duration for " + name);
+                    document.getElementById(`d-preset-${rid}`).classList.add('input-error');
+                    return;
+                }
 
-            if(!isValid) return;
-            if(drugs.length === 0 && !notes) { alert("Add data first!"); return; }
+                let type = "";
+                if(isTab) type = "TAB"; else if(isSyp) type = "Syp"; else if(isCap) type = "Cap"; else if(isSup) type = "Sup";
 
-            btn.disabled = true;
+                drugs.push({
+                    name: name, strength: strengthInput.value,
+                    type: type, m: m, a: a, n: n, t: totalInput.value
+                });
+            }
+
+            if(!isValid) return; 
+            if(drugs.length === 0 && !notes) { alert("Please add medicines or notes."); return; }
+            
+            btn.textContent = "Saving..."; btn.disabled = true;
+
             try {
-                const record = { date: new Date().toLocaleDateString(), meds: drugs, notes };
-                await updateDoc(doc(db, "patients", currentPatient.id), { history: arrayUnion(record) });
+                const newRecord = { date: new Date().toLocaleDateString(), meds: drugs, notes: notes };
+                const patientRef = doc(db, "patients", currentPatient.id);
+                await updateDoc(patientRef, { history: arrayUnion(newRecord) });
+                if(!currentPatient.history) currentPatient.history = [];
+                currentPatient.history.push(newRecord);
                 
                 document.getElementById('printName').innerText = currentPatient.name;
-                document.getElementById('printDate').innerText = record.date;
-                const pNotes = document.getElementById('printDetails');
-                if(printNotes && notes) { pNotes.innerText = "Note: " + notes; pNotes.style.display = 'block'; }
-                else pNotes.style.display = 'none';
-
+                document.getElementById('printDate').innerText = new Date().toLocaleDateString();
+                
+                const printDetailsDiv = document.getElementById('printDetails');
+                if(printNotes && notes) {
+                    printDetailsDiv.innerText = "Note: " + notes;
+                    printDetailsDiv.style.display = 'block';
+                } else {
+                    printDetailsDiv.innerText = "";
+                    printDetailsDiv.style.display = 'none';
+                }
+                
                 const tbody = document.getElementById('printTableBody');
                 tbody.innerHTML = '';
-                drugs.forEach((d, i) => {
-                    const fmt = (v) => v==0.5 ? '½' : v;
-                    tbody.innerHTML += `<tr><td>${i+1}</td><td class="drug-name-cell">${d.type} ${d.name} <small>${d.strength}</small></td><td>${fmt(d.m)}</td><td>${fmt(d.a)}</td><td>${fmt(d.n)}</td><td>${d.t}</td></tr>`;
+                let sl = 1;
+                drugs.forEach(d => {
+                    const formatDose = (val) => (val == 0.5) ? '½' : val;
+                    const displayName = d.type ? `${d.type} ${d.name}` : d.name;
+                    tbody.innerHTML += `<tr><td>${sl++}</td><td class="drug-name-cell">${displayName} <span style="font-size:12px; margin-left:5px;">${d.strength}</span></td><td>${formatDose(d.m)}</td><td>${formatDose(d.a)}</td><td>${formatDose(d.n)}</td><td>${d.t}</td></tr>`;
                 });
-                window.print();
-            } catch(e) { alert("Fail!"); } finally { btn.disabled = false; }
+                
+                btn.textContent = "Save & Print"; btn.disabled = false; window.print();
+            } catch (error) { alert("Save failed."); btn.disabled = false; }
         }
 
         async function finishConsultation() {
-            if(!currentPatient || !confirm("Clear?")) return;
-            await updateDoc(doc(db, "patients", currentPatient.id), { status: 'done' });
-            document.getElementById('workspace').style.display = 'none';
-            currentPatient = null;
+            if(!currentPatient) return;
+            if(!confirm("Clear from queue?")) return;
+            try { await updateDoc(doc(db, "patients", currentPatient.id), { status: 'done' }); document.getElementById('workspace').style.display = 'none'; currentPatient = null; } catch(e) { alert("Error."); }
         }
 
         window.addDrugRow = addDrugRow;
         window.calculateTotal = calculateTotal;
-        window.updateStrengths = (id) => handleMedicineInput(id);
-        window.handleTypeCheck = (rid, type) => { ['tab','syp','cap','sup'].forEach(t => { if(t!==type) document.getElementById(`type-${t}-${rid}`).checked=false; }); };
-        window.handleDoseInput = (rid, slot, src) => { 
-            const d=document.getElementById(`${slot}-${rid}`), c=document.getElementById(`${slot}-chk-${rid}`);
-            if(src==='dropdown') { if(d.value!=='0') c.checked=false; } else if(c.checked) d.value='0';
-            calculateTotal(rid);
-        };
-        window.handleDurationChange = (rid) => { 
-            document.getElementById(`d-manual-container-${rid}`).style.display = (document.getElementById(`d-preset-${rid}`).value==='manual') ? 'flex' : 'none';
-            calculateTotal(rid);
-        };
+        window.updateStrengths = updateStrengths;
+        window.handleMedicineInput = handleMedicineInput;
+        window.handleTypeCheck = handleTypeCheck;
+        window.handleDoseInput = handleDoseInput;
+        window.handleDurationChange = handleDurationChange;
 
         function toggleHistory() {
-            const sec = document.getElementById('historySection'), cont = document.getElementById('historyContent');
+            const sec = document.getElementById('historySection');
+            const cont = document.getElementById('historyContent');
             if(sec.style.display === 'none') {
                 sec.style.display = 'block';
-                if(!currentPatient.history?.length) cont.innerHTML = "No history.";
-                else cont.innerHTML = currentPatient.history.slice().reverse().map(h => `<div style="border-bottom:1px solid #ccc; padding:10px 0;"><strong>${h.date}</strong><p>${h.notes||''}</p><ul>${h.meds.map(m => `<li>${m.name} - ${m.t}</li>`).join('')}</ul></div>`).join('');
+                if(!currentPatient.history || currentPatient.history.length === 0) cont.innerHTML = "No previous history."; 
+                else cont.innerHTML = currentPatient.history.slice().reverse().map(h => `<div style="border-bottom:1px solid #ccc; padding:10px 0;"><strong>${h.date}</strong><p style="font-style:italic;">${h.notes||''}</p><ul style="margin:5px 0; padding-left:20px; font-size:13px;">${h.meds.map(m => `<li>${m.type||''} ${m.name} (${m.strength}) - Qty: ${m.t}</li>`).join('')}</ul></div>`).join('');
             } else sec.style.display = 'none';
         }
 
@@ -796,10 +910,16 @@
             div.className = 'drug-row';
             div.id = `row-${rowCount}`;
             const doseOpts = `<option value="0">0</option><option value="0.5">½</option><option value="2">2</option><option value="3">3</option>`; 
+
             div.innerHTML = `
                 <div class="col-name">
-                    <div class="mic-wrapper"><input list="allMedicines" id="name-${rowCount}" placeholder="Medicine Name..." oninput="updateStrengths(${rowCount})">
-                    <button class="mic-btn" onmousedown="handleManualMicClick(event, 'name-${rowCount}')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button></div>
+                    <label>Medicine Name</label>
+                    <div class="mic-wrapper">
+                        <input list="allMedicines" id="name-${rowCount}" placeholder="Search..." oninput="handleMedicineInput(${rowCount})">
+                        <button id="mic-${rowCount}" class="mic-btn" onmousedown="handleManualMicClick(event, 'name-${rowCount}')">
+                            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                        </button>
+                    </div>
                     <div id="missing-alert-${rowCount}"></div>
                     <div class="form-check-group">
                         <label class="form-check-label"><input type="checkbox" id="type-tab-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'tab')"> TAB</label>
@@ -808,28 +928,77 @@
                         <label class="form-check-label"><input type="checkbox" id="type-sup-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'sup')"> Sup</label>
                     </div>
                 </div>
-                <div class="col-weight"><select id="strength-${rowCount}"><option value="">--</option></select></div>
-                <div class="col-small"><label>M</label><div class="dose-input-group"><select id="m-${rowCount}" onchange="handleDoseInput(${rowCount},'m','dropdown')">${doseOpts}</select><input type="checkbox" id="m-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'m','check')"></div></div>
-                <div class="col-small"><label>A</label><div class="dose-input-group"><select id="a-${rowCount}" onchange="handleDoseInput(${rowCount},'a','dropdown')">${doseOpts}</select><input type="checkbox" id="a-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'a','check')"></div></div>
-                <div class="col-small"><label>N</label><div class="dose-input-group"><select id="n-${rowCount}" onchange="handleDoseInput(${rowCount},'n','dropdown')">${doseOpts}</select><input type="checkbox" id="n-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'n','check')"></div></div>
-                <div class="col-days"><select id="d-preset-${rowCount}" onchange="handleDurationChange(${rowCount})"><option value="">Select</option><option value="30">1 Month</option><option value="60">2 Months</option><option value="manual">Manual</option></select>
-                <div id="d-manual-container-${rowCount}" style="display:none; margin-top:5px;"><input type="number" id="d-num-${rowCount}" style="width:50px" oninput="calculateTotal(${rowCount})"><select id="d-unit-${rowCount}" onchange="calculateTotal(${rowCount})"><option value="1">Days</option><option value="30">Months</option></select></div></div>
-                <div class="col-total"><input type="text" id="t-${rowCount}" readonly style="background:#eee"></div>
-                <div class="col-action"><button class="btn btn-red btn-sm" onclick="document.getElementById('row-${rowCount}').remove()">X</button></div>
+                <div class="col-weight"><label>Strength</label><select id="strength-${rowCount}"><option value="">--</option></select></div>
+                
+                <div class="col-small">
+                    <label>Morn</label>
+                    <div class="dose-input-group">
+                        <select id="m-${rowCount}" onchange="handleDoseInput(${rowCount}, 'm', 'dropdown')">${doseOpts}</select>
+                        <label class="checkbox-label"><input type="checkbox" id="m-chk-${rowCount}" onchange="handleDoseInput(${rowCount}, 'm', 'check')"></label>
+                    </div>
+                </div>
+                <div class="col-small">
+                    <label>Aft</label>
+                    <div class="dose-input-group">
+                        <select id="a-${rowCount}" onchange="handleDoseInput(${rowCount}, 'a', 'dropdown')">${doseOpts}</select>
+                        <label class="checkbox-label"><input type="checkbox" id="a-chk-${rowCount}" onchange="handleDoseInput(${rowCount}, 'a', 'check')"></label>
+                    </div>
+                </div>
+                <div class="col-small">
+                    <label>Night</label>
+                    <div class="dose-input-group">
+                        <select id="n-${rowCount}" onchange="handleDoseInput(${rowCount}, 'n', 'dropdown')">${doseOpts}</select>
+                        <label class="checkbox-label"><input type="checkbox" id="n-chk-${rowCount}" onchange="handleDoseInput(${rowCount}, 'n', 'check')"></label>
+                    </div>
+                </div>
+                
+                <div class="col-days">
+                    <label style="color:var(--dr-red);">Duration</label>
+                    <select id="d-preset-${rowCount}" onchange="handleDurationChange(${rowCount})">
+                        <option value="">Select</option>
+                        <option value="30">1 Month</option>
+                        <option value="60">2 Months</option>
+                        <option value="90">3 Months</option>
+                        <option value="manual">✎ Enter Manually</option>
+                    </select>
+                    <div id="d-manual-container-${rowCount}" style="display:none; margin-top:5px; gap:5px;">
+                        <input type="number" id="d-num-${rowCount}" placeholder="Qty" min="1" style="width:60px" oninput="if(this.value<0)this.value= -this.value; calculateTotal(${rowCount})">
+                        <select id="d-unit-${rowCount}" style="width:80px" onchange="calculateTotal(${rowCount})">
+                            <option value="1">Days</option>
+                            <option value="7">Weeks</option>
+                            <option value="30">Months</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="col-total"><label>Total</label><input type="text" id="t-${rowCount}" placeholder="0" readonly style="background:#f3f4f6; font-weight:bold;"></div>
+                <div class="col-action"><label>&nbsp;</label><button class="btn btn-red" style="padding:10px;" onclick="document.getElementById('row-${rowCount}').remove()">X</button></div>
             `;
             container.appendChild(div);
+            
             attachMicListeners(`name-${rowCount}`);
         }
 
+        function handleTypeCheck(rid, type) {
+            const types = ['tab', 'syp', 'cap', 'sup'];
+            types.forEach(t => { if(t !== type) document.getElementById(`type-${t}-${rid}`).checked = false; });
+        }
+
+        function handleDoseInput(rid, slot, source) {
+            const drop = document.getElementById(`${slot}-${rid}`);
+            const chk = document.getElementById(`${slot}-chk-${rid}`);
+            if (source === 'dropdown') { if (drop.value != "0") chk.checked = false; } else if (source === 'check') { if (chk.checked) drop.value = "0"; }
+            calculateTotal(rid);
+        }
+
+        function handleDurationChange(rid) {
+            const val = document.getElementById(`d-preset-${rid}`).value;
+            const manualDiv = document.getElementById(`d-manual-container-${rid}`);
+            manualDiv.style.display = (val === 'manual') ? 'flex' : 'none';
+            calculateTotal(rid);
+        }
+
         function calculateTotal(rid) {
-<<<<<<< HEAD
-            const v=(s)=>document.getElementById(`${s}-chk-${rid}`).checked ? 1 : parseFloat(document.getElementById(`${s}-${rid}`).value)||0;
-            const m=v('m'), a=v('a'), n=v('n');
-            let d=0, p=document.getElementById(`d-preset-${rid}`).value;
-            if(p==='manual') d=(parseFloat(document.getElementById(`d-num-${rid}`).value)||0) * parseFloat(document.getElementById(`d-unit-${rid}`).value);
-            else d=parseFloat(p)||0;
-            document.getElementById(`t-${rid}`).value = Math.ceil((m+a+n)*d);
-=======
             const getVal = (slot) => { const chk = document.getElementById(`${slot}-chk-${rid}`).checked; return chk ? 1 : (parseFloat(document.getElementById(`${slot}-${rid}`).value) || 0); };
             const m = getVal('m'); const a = getVal('a'); const n = getVal('n');
             let days = 0;
@@ -845,9 +1014,7 @@
 
         function updateStrengths(rowId) {
             handleMedicineInput(rowId);
->>>>>>> 7a4d33f (final commit)
         }
     </script>
 </body>
 </html>
-
