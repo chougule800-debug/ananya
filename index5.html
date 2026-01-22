@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuro Specialities - Cloud System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script src="medicines.js"></script>
+
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --dr-red: #b91c1c;
+            --text: #1f2937;
+            --bg: #f3f4f6;
+            --border: #e5e7eb;
+            --success: #059669;
+        }
+
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+
+        .container { max-width: 1500px; margin: 0 auto; }
+
+        /* --- HEADER --- */
+        .app-header {
+            background: white; padding: 20px 30px; border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex;
+            justify-content: space-between; align-items: flex-start; margin-bottom: 25px;
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .header-left h1 { 
+            color: var(--dr-red); font-size: 28px; margin: 0; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: -0.5px;
+            display: flex; align-items: baseline; gap: 10px;
+        }
+        
+        .degree-text { color: #000; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0; }
+        .header-left p { margin: 2px 0; font-size: 13px; font-weight: 700; color: #000; }
+        .kmc-code { font-size: 14px; font-weight: 600; color: #444; margin-top: 5px !important; }
+
+        .header-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+        .clinic-brand { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .clinic-name { color: var(--primary); font-size: 22px; font-weight: 900; text-transform: uppercase; border: 2px solid var(--primary); padding: 4px 10px; display: inline-block; }
+        .clinic-logo-header { height: 50px; width: auto; }
+
+        .nav-pills { display: flex; gap: 10px; background: var(--bg); padding: 5px; border-radius: 8px; align-self: flex-end; }
+        .nav-btn { border: none; background: transparent; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; color: #6b7280; transition: 0.2s; }
+        .nav-btn.active { background: white; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* --- LAYOUTS --- */
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        
+        .grid-reception { display: grid; grid-template-columns: 2fr 1.5fr; gap: 20px; }
+        .grid-doctor { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; }
+        .grid-3-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; } 
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: #4b5563; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-green { background: #059669; color: white; }
+        .btn-red { background: #ef4444; color: white; }
+        .btn-secondary { background: white; border: 1px solid var(--border); color: var(--text); }
+        .btn-yellow { background: #f59e0b; color: white; }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* --- DRUG ROWS --- */
+        .drug-row { display: flex; gap: 10px; align-items: flex-start; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
+        
+        /* Adjusted Column Widths for new Duration UI */
+        .col-name { flex: 2.5; } 
+        .col-weight { flex: 1.2; } 
+        .col-small { flex: 0.6; } /* Smaller for 0/1 dropdowns */
+        .col-days { flex: 1.8; } /* Wider for complex duration input */
+        .col-total { flex: 0.8; } 
+        .col-action { flex: 0.3; text-align: right; }
+        
+        .patient-list-item { padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; background: #f9fafb; transition: 0.2s; }
+        .patient-list-item:hover { border-color: var(--primary); transform: translateX(2px); }
+        .patient-list-item.selected { background: var(--primary-light); border-color: var(--primary); border-left: 4px solid var(--primary); }
+        
+        .review-item { display: flex; justify-content: space-between; align-items: center; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            @page { margin: 0; size: auto; }
+            body, .container { background: white; margin: 0; padding: 0; max-width: 100%; }
+            .no-print, .app-header, .patient-list-section, .btn, .card-header-actions { display: none !important; }
+            .print-only { display: block !important; }
+            .card { box-shadow: none; padding: 0; border: none; }
+            .print-container { padding: 40px; font-family: 'Times New Roman', serif; }
+            .print-header { display: flex; justify-content: space-between; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 5px; }
+            .dr-info h1 { color: #b91c1c !important; font-size: 26px; margin: 0; font-weight: 900; text-transform: uppercase; -webkit-print-color-adjust: exact; display: flex; align-items: baseline; gap: 10px; }
+            .dr-info .print-degree { font-size: 14px; color: #000; font-weight: 700; }
+            .dr-info p { margin: 2px 0; font-size: 12px; font-weight: bold; color: #000; }
+            .clinic-info-container { display: flex; align-items: center; gap: 15px; text-align: right; }
+            .clinic-logo-img { height: 60px; width: auto; }
+            .clinic-name { color: #1e3a8a !important; font-size: 20px; font-weight: 900; text-transform: uppercase; border: 2px solid #1e3a8a; padding: 2px 8px; display: inline-block; -webkit-print-color-adjust: exact; }
+            .clinic-details { font-size: 11px; margin-top: 5px; line-height: 1.4; color: #000; }
+            .rx-badge { text-align: center; margin: 15px 0; }
+            .rx-badge span { background: #222; color: white !important; padding: 4px 25px; border-radius: 4px; font-weight: bold; letter-spacing: 2px; font-family: sans-serif; font-size: 14px; -webkit-print-color-adjust: exact; }
+            .print-meta { margin: 20px 0; font-size: 16px; font-weight: bold; display: flex; flex-direction: column; gap: 15px; }
+            .meta-row { display: flex; align-items: baseline; }
+            .dotted-line { border-bottom: 1px dotted #000; flex-grow: 1; margin-left: 10px; padding-left: 10px; }
+            .rx-table { width: 100%; border-collapse: collapse; margin-top: 10px; border: 2px solid #000; }
+            .rx-table th { border: 1px solid #000; padding: 6px; font-size: 12px; background: #e5e7eb !important; -webkit-print-color-adjust: exact; text-align: center; font-weight: bold; font-family: sans-serif; }
+            .rx-table td { border: 1px solid #000; padding: 8px 5px; font-size: 16px; text-align: center; height: 40px; vertical-align: middle; font-weight: 600; color: #1e3a8a !important; -webkit-print-color-adjust: exact; }
+            .rx-table td.drug-name-cell { text-align: left; padding-left: 15px; color: #000 !important; }
+            .lang-sub { display: block; font-size: 9px; font-weight: normal; margin-top: 2px; }
+            .print-footer { position: fixed; bottom: 40px; right: 40px; text-align: right; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="app-header no-print">
+            <div class="header-left">
+                <h1>Dr. G.M. WALI <span class="degree-text">M.D. D.M.</span></h1>
+                <p>CHIEF NEUROLOGIST</p>
+                <p class="kmc-code">K.M.C. 12671</p>
+            </div>
+            <div class="header-right">
+                <div class="clinic-brand">
+                    <img src="logo.png" alt="Logo" class="clinic-logo-header">
+                    <div class="clinic-name">NEURO SPECIALITIES CENTRE</div>
+                </div>
+                <div class="nav-pills">
+                    <button id="btn-reception" class="nav-btn active">Reception Desk</button>
+                    <button id="btn-doctor" class="nav-btn">Doctor Chamber</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="receptionPage" class="page active no-print">
+            <div class="grid-reception">
+                <div class="card">
+                    <h3 style="margin-top:0;">New Patient Registration</h3>
+                    <form id="regForm">
+                        <div class="grid-3-top">
+                            <div class="form-group"><label>Patient Name *</label><input type="text" id="regName" required></div>
+                            <div class="form-group"><label>Age *</label><input type="number" id="regAge" placeholder="Years" required></div>
+                            <div class="form-group">
+                                <label>Sex *</label>
+                                <select id="regSex" required>
+                                    <option value="">Select</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone"></div>
+                        <div class="form-group"><label>Address</label><input type="text" id="regAddress"></div>
+                        <div class="form-group"><label>Provisional Diagnosis</label><textarea id="regDiagnosis" rows="2"></textarea></div>
+                        <button type="submit" id="btnRegister" class="btn btn-primary">Register & Send to Doctor</button>
+                    </form>
+                </div>
+                
+                <div class="card" style="height: fit-content;">
+                    <h3 style="margin-top:0; color:var(--primary);">Review / Old Patient</h3>
+                    <p style="font-size:13px; color:#666; margin-bottom:15px;">List of all patients in database.</p>
+                    <input type="text" id="reviewSearch" placeholder="🔍 Search Database..." style="margin-bottom: 10px;">
+                    <div id="reviewList" style="height: 400px; overflow-y: auto; border:1px solid #eee; border-radius:6px; padding:10px;">
+                        <div style="text-align:center; padding:20px; color:#ccc;">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="doctorPage" class="page no-print">
+            <div class="grid-doctor">
+                <div class="card patient-list-section" style="height: 85vh; overflow-y: auto; display:flex; flex-direction:column;">
+                    <div style="margin-bottom:10px;">
+                        <h3 style="margin:0; font-size:16px;">Waiting Queue (<span id="queueCount">0</span>)</h3>
+                        <small style="color:var(--success);">🔴 Live Updates</small>
+                    </div>
+                    <div id="doctorQueueList" style="flex-grow:1;">
+                        <div style="text-align:center; padding:20px; color:#ccc;">No patients waiting...</div>
+                    </div>
+                </div>
+
+                <div id="workspace" style="display: none;">
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:20px;">
+                            <div>
+                                <h2 id="pNameDisplay" style="margin:0;">-</h2>
+                                <small id="pDetailsDisplay" style="color:#6b7280;">-</small>
+                            </div>
+                            <div style="display:flex; gap:10px;">
+                                <button id="btnToggleHistory" class="btn btn-secondary">📜 History</button>
+                            </div>
+                        </div>
+
+                        <div id="historySection" style="display:none; background:#f0f9ff; padding:15px; border-radius:8px; margin-bottom:20px;">
+                            <h4>Previous Visits</h4>
+                            <div id="historyContent">Loading history...</div>
+                        </div>
+
+                        <div id="drugListContainer"></div>
+
+                        <div style="margin-top: 20px; display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:20px;">
+                            <button id="btnAddDrug" class="btn btn-green">+ Add Medicine</button>
+                            <div style="display:flex; gap:10px;">
+                                <button id="btnPrint" class="btn btn-primary">🖨️ Save & Print</button>
+                                <button id="btnFinish" class="btn btn-red">✅ Finish (Clear Queue)</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="print-only print-container">
+        <div class="print-header">
+            <div class="dr-info">
+                <h1>Dr. G.M. WALI <span class="print-degree">M.D. D.M.</span></h1>
+                <p>CHIEF NEUROLOGIST</p>
+                <p>K.M.C. 12671</p>
+            </div>
+            <div class="clinic-info-container">
+                <img src="logo.png" alt="Logo" class="clinic-logo-img">
+                <div class="clinic-info">
+                    <div class="clinic-name">NEURO SPECIALITIES CENTRE</div>
+                    <div class="clinic-details">3933, CLUB ROAD, BELGAUM-590 001<br>Ph.: 0831-2430625, E-mail: walidoc@hotmail.com</div>
+                </div>
+            </div>
+        </div>
+        <div class="rx-badge"><span>PRESCRIPTION</span></div>
+        <div class="print-meta">
+            <div class="meta-row">Name : <span id="printName" class="dotted-line"></span></div>
+            <div class="meta-row">Date : <span id="printDate" class="dotted-line" style="width: 200px; flex-grow: 0;"></span></div>
+        </div>
+        <table class="rx-table">
+            <thead>
+                <tr>
+                    <th width="5%">Sl.<br>No.</th>
+                    <th width="40%">DRUG NAME</th>
+                    <th width="10%">Morning<br><span class="lang-sub">ಬೆಳಿಗ್ಗೆ / सकाळी</span></th>
+                    <th width="10%">Afternoon<br><span class="lang-sub">ಮಧ್ಯಾಹ್ನ / दुपारी</span></th>
+                    <th width="10%">Night<br><span class="lang-sub">ರಾತ್ರಿ / रात्री</span></th>
+                    <th width="10%">Total Qty.</th>
+                </tr>
+            </thead>
+            <tbody id="printTableBody"></tbody>
+        </table>
+        <div class="print-footer"><strong>Signature</strong></div>
+    </div>
+
+    <datalist id="allMedicines"></datalist>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, arrayUnion, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyAWNn0lX3UzfKkZ2ivirPMb3vu9GNGLcfg",
+          authDomain: "doc-det.firebaseapp.com",
+          projectId: "doc-det",
+          storageBucket: "doc-det.firebasestorage.app",
+          messagingSenderId: "618914142158",
+          appId: "1:618914142158:web:0ee8c35b219cf92533fd9f",
+          measurementId: "G-CR3H21D0MC"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const medicineDB = (typeof medicineDatabase !== 'undefined') ? medicineDatabase : {};
+        let allPatients = []; 
+        let waitingQueue = []; 
+        let currentPatient = null;
+        let rowCount = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateDatalist();
+            setupListeners();
+            const q = query(collection(db, "patients"), orderBy("timestamp", "desc"));
+            onSnapshot(q, (snapshot) => {
+                allPatients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                waitingQueue = allPatients.filter(p => p.status === 'waiting');
+                renderDoctorQueue();
+                renderReviewSearch();
+            });
+        });
+
+        function setupListeners() {
+            document.getElementById('btn-reception').onclick = () => switchPage('reception');
+            document.getElementById('btn-doctor').onclick = () => switchPage('doctor');
+            document.getElementById('regForm').onsubmit = async (e) => { e.preventDefault(); await registerPatient(); };
+            document.getElementById('btnAddDrug').onclick = addDrugRow;
+            document.getElementById('btnFinish').onclick = finishConsultation;
+            document.getElementById('btnToggleHistory').onclick = toggleHistory;
+            document.getElementById('btnPrint').onclick = saveAndPrint;
+            document.getElementById('reviewSearch').onkeyup = renderReviewSearch;
+        }
+
+        async function registerPatient() {
+            const btn = document.getElementById('btnRegister');
+            btn.textContent = "Saving...";
+            btn.disabled = true;
+            try {
+                const newPatient = {
+                    name: document.getElementById('regName').value,
+                    age: document.getElementById('regAge').value,
+                    sex: document.getElementById('regSex').value,
+                    phone: document.getElementById('regPhone').value,
+                    address: document.getElementById('regAddress').value,
+                    diagnosis: document.getElementById('regDiagnosis').value,
+                    regDate: new Date().toLocaleDateString(),
+                    timestamp: serverTimestamp(),
+                    status: 'waiting', 
+                    history: []
+                };
+                await addDoc(collection(db, "patients"), newPatient);
+                alert('Patient Registered & Sent to Doctor!');
+                document.getElementById('regForm').reset();
+            } catch (error) { console.error("Error:", error); alert("Error saving data."); } 
+            finally { btn.textContent = "Register & Send to Doctor"; btn.disabled = false; }
+        }
+
+        function renderReviewSearch() {
+            const term = document.getElementById('reviewSearch').value.toLowerCase();
+            const container = document.getElementById('reviewList');
+            container.innerHTML = "";
+            const results = term ? allPatients.filter(p => p.name.toLowerCase().includes(term)) : allPatients;
+            if (results.length === 0) { container.innerHTML = '<div style="text-align:center; padding:10px; color:#ccc;">No patients found.</div>'; return; }
+            results.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'patient-list-item review-item';
+                div.innerHTML = `<div><strong>${p.name}</strong> <span style="font-size:11px; color:#666">(${p.age}Y/${p.sex})</span></div><button class="btn btn-yellow btn-sm" onclick="sendToDoctor('${p.id}')">Send to Doctor</button>`;
+                container.appendChild(div);
+            });
+        }
+
+        window.sendToDoctor = async function(id) {
+            try {
+                const ref = doc(db, "patients", id);
+                await updateDoc(ref, { status: 'waiting', timestamp: serverTimestamp() });
+                alert("Patient sent to Doctor's Queue!");
+                document.getElementById('reviewSearch').value = '';
+                renderReviewSearch();
+            } catch(e) { alert("Error sending patient."); }
+        }
+
+        function renderDoctorQueue() {
+            const container = document.getElementById('doctorQueueList');
+            document.getElementById('queueCount').innerText = waitingQueue.length;
+            container.innerHTML = "";
+            if (waitingQueue.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#ccc;">Queue Empty</div>'; return; }
+            waitingQueue.forEach(p => {
+                const div = document.createElement('div');
+                div.className = `patient-list-item ${currentPatient && currentPatient.id === p.id ? 'selected' : ''}`;
+                div.onclick = () => selectPatient(p);
+                div.innerHTML = `<strong>${p.name}</strong><br><small>${p.age}Y / ${p.sex}</small>`;
+                container.appendChild(div);
+            });
+        }
+
+        function selectPatient(p) {
+            currentPatient = p;
+            document.getElementById('workspace').style.display = 'block';
+            document.getElementById('pNameDisplay').innerText = p.name;
+            document.getElementById('pDetailsDisplay').innerText = `${p.age}Y / ${p.sex} | ${p.phone}`;
+            renderDoctorQueue();
+            document.getElementById('drugListContainer').innerHTML = '';
+            addDrugRow();
+            document.getElementById('historySection').style.display = 'none';
+        }
+
+        async function saveAndPrint() {
+            if(!currentPatient) return;
+            const btn = document.getElementById('btnPrint');
+            const drugs = [];
+            
+            // Gather input data including the dynamic duration logic
+            document.querySelectorAll('.drug-row').forEach(row => {
+                const rid = row.id.split('-')[1];
+                const name = document.getElementById(`name-${rid}`).value;
+                const total = document.getElementById(`t-${rid}`).value;
+                
+                // Get display strings for M/A/N/D
+                const m = document.getElementById(`m-${rid}`).value;
+                const a = document.getElementById(`a-${rid}`).value;
+                const n = document.getElementById(`n-${rid}`).value;
+                
+                let durationText = "";
+                const presetVal = document.getElementById(`d-preset-${rid}`).value;
+                
+                if (presetVal === 'manual') {
+                    const num = document.getElementById(`d-num-${rid}`).value;
+                    const unit = document.getElementById(`d-unit-${rid}`).value;
+                    const unitName = (unit == '1') ? 'Days' : 'Months';
+                    durationText = `${num} ${unitName}`;
+                } else if (presetVal == '30') { durationText = "1 Month"; }
+                else if (presetVal == '60') { durationText = "2 Months"; }
+                else if (presetVal == '90') { durationText = "3 Months"; }
+                else { durationText = "Unknown"; }
+
+                if(name && total !== "Error") {
+                    drugs.push({
+                        name: name,
+                        strength: document.getElementById(`strength-${rid}`).value,
+                        m: m, a: a, n: n,
+                        duration: durationText,
+                        t: total
+                    });
+                }
+            });
+
+            if(drugs.length === 0) { alert("Please add medicines first."); return; }
+
+            btn.textContent = "Saving...";
+            btn.disabled = true;
+
+            try {
+                const newRecord = { date: new Date().toLocaleDateString(), meds: drugs };
+                const patientRef = doc(db, "patients", currentPatient.id);
+                await updateDoc(patientRef, { history: arrayUnion(newRecord) });
+                if(!currentPatient.history) currentPatient.history = [];
+                currentPatient.history.push(newRecord);
+                
+                document.getElementById('printName').innerText = currentPatient.name;
+                document.getElementById('printDate').innerText = new Date().toLocaleDateString();
+                const tbody = document.getElementById('printTableBody');
+                tbody.innerHTML = '';
+                let sl = 1;
+                drugs.forEach(d => {
+                    // Logic to display 0.5 as 1/2 in print
+                    const formatDose = (val) => (val == '0.5') ? '½' : val;
+                    
+                    tbody.innerHTML += `<tr>
+                        <td>${sl++}</td>
+                        <td class="drug-name-cell">${d.name} <span style="font-size:12px; margin-left:5px;">${d.strength}</span></td>
+                        <td>${formatDose(d.m)}</td>
+                        <td>${formatDose(d.a)}</td>
+                        <td>${formatDose(d.n)}</td>
+                        <td>${d.t}</td>
+                    </tr>`;
+                });
+
+                btn.textContent = "🖨️ Save & Print";
+                btn.disabled = false;
+                window.print();
+            } catch (error) { console.error("Error:", error); alert("Save failed."); btn.disabled = false; }
+        }
+
+        async function finishConsultation() {
+            if(!currentPatient) return;
+            if(!confirm("Finish? This removes patient from queue.")) return;
+            const btn = document.getElementById('btnFinish');
+            btn.disabled = true;
+            try {
+                await updateDoc(doc(db, "patients", currentPatient.id), { status: 'done' });
+                document.getElementById('workspace').style.display = 'none';
+                currentPatient = null;
+                alert("Done.");
+            } catch(e) { alert("Error."); } finally { btn.disabled = false; }
+        }
+
+        window.addDrugRow = addDrugRow;
+        window.calculateTotal = calculateTotal;
+        window.updateStrengths = updateStrengths;
+        window.handleDurationChange = handleDurationChange;
+
+        function populateDatalist() {
+            const dl = document.getElementById('allMedicines');
+            Object.keys(medicineDB).forEach(med => { const opt = document.createElement('option'); opt.value = med; dl.appendChild(opt); });
+        }
+
+        function switchPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(page + 'Page').classList.add('active');
+            if(page === 'reception') document.getElementById('btn-reception').classList.add('active');
+            else document.getElementById('btn-doctor').classList.add('active');
+        }
+
+        function toggleHistory() {
+            const sec = document.getElementById('historySection');
+            const cont = document.getElementById('historyContent');
+            if(sec.style.display === 'none') {
+                sec.style.display = 'block';
+                if(!currentPatient.history || currentPatient.history.length === 0) { cont.innerHTML = "No previous history."; } 
+                else {
+                    cont.innerHTML = currentPatient.history.slice().reverse().map(h => `
+                        <div style="border-bottom:1px solid #ccc; padding:10px 0;">
+                            <strong>${h.date}</strong>
+                            <ul style="margin:5px 0; padding-left:20px; font-size:13px;">
+                                ${h.meds.map(m => `<li>${m.name} (${m.strength}) - Qty: ${m.t}</li>`).join('')}
+                            </ul>
+                        </div>`).join('');
+                }
+            } else { sec.style.display = 'none'; }
+        }
+
+        function addDrugRow() {
+            rowCount++;
+            const container = document.getElementById('drugListContainer');
+            const div = document.createElement('div');
+            div.className = 'drug-row';
+            div.id = `row-${rowCount}`;
+            
+            // Dropdown options for dosage
+            const doseOpts = `<option value="0">0</option><option value="0.5">½</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>`;
+
+            div.innerHTML = `
+                <div class="col-name"><label>Medicine Name</label><input list="allMedicines" id="name-${rowCount}" placeholder="Search..." onchange="updateStrengths(${rowCount})"></div>
+                <div class="col-weight"><label>Strength</label><select id="strength-${rowCount}"><option value="">--</option></select></div>
+                
+                <div class="col-small"><label>Morn</label><select id="m-${rowCount}" onchange="calculateTotal(${rowCount})">${doseOpts}</select></div>
+                <div class="col-small"><label>Aft</label><select id="a-${rowCount}" onchange="calculateTotal(${rowCount})">${doseOpts}</select></div>
+                <div class="col-small"><label>Night</label><select id="n-${rowCount}" onchange="calculateTotal(${rowCount})">${doseOpts}</select></div>
+                
+                <div class="col-days">
+                    <label style="color:var(--dr-red);">Duration</label>
+                    <select id="d-preset-${rowCount}" onchange="handleDurationChange(${rowCount})">
+                        <option value="">Select</option>
+                        <option value="30">1 Month</option>
+                        <option value="60">2 Months</option>
+                        <option value="90">3 Months</option>
+                        <option value="manual">✎ Enter Manually</option>
+                    </select>
+                    <div id="d-manual-container-${rowCount}" style="display:none; margin-top:5px; gap:5px;">
+                        <input type="number" id="d-num-${rowCount}" placeholder="Qty" style="width:60px" oninput="calculateTotal(${rowCount})">
+                        <select id="d-unit-${rowCount}" style="width:80px" onchange="calculateTotal(${rowCount})">
+                            <option value="1">Days</option>
+                            <option value="7">Weeks</option>
+                            <option value="30">Months</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="col-total"><label>Total</label><input type="text" id="t-${rowCount}" placeholder="0" readonly style="background:#f3f4f6; font-weight:bold;"></div>
+                <div class="col-action"><label>&nbsp;</label><button class="btn btn-red" style="padding:10px;" onclick="document.getElementById('row-${rowCount}').remove()">X</button></div>
+            `;
+            container.appendChild(div);
+        }
+
+        function handleDurationChange(rid) {
+            const val = document.getElementById(`d-preset-${rid}`).value;
+            const manualDiv = document.getElementById(`d-manual-container-${rid}`);
+            if(val === 'manual') { manualDiv.style.display = 'flex'; }
+            else { manualDiv.style.display = 'none'; }
+            calculateTotal(rid);
+        }
+
+        function calculateTotal(rid) {
+            const m = parseFloat(document.getElementById(`m-${rid}`).value) || 0;
+            const a = parseFloat(document.getElementById(`a-${rid}`).value) || 0;
+            const n = parseFloat(document.getElementById(`n-${rid}`).value) || 0;
+            
+            let days = 0;
+            const preset = document.getElementById(`d-preset-${rid}`).value;
+            
+            if(preset === 'manual') {
+                const num = parseFloat(document.getElementById(`d-num-${rid}`).value) || 0;
+                const unit = parseFloat(document.getElementById(`d-unit-${rid}`).value) || 1;
+                days = num * unit;
+            } else {
+                days = parseFloat(preset) || 0;
+            }
+
+            const total = Math.ceil((m + a + n) * days);
+            document.getElementById(`t-${rid}`).value = total;
+        }
+
+        function updateStrengths(rowId) {
+            const nameVal = document.getElementById(`name-${rowId}`).value;
+            const select = document.getElementById(`strength-${rowId}`);
+            select.innerHTML = '<option value="">--</option>';
+            const key = Object.keys(medicineDB).find(k => k.toLowerCase() === nameVal.toLowerCase());
+            const options = key ? medicineDB[key] : ["Tablet", "Syrup", "Inj", "mg", "ml"];
+            options.forEach(opt => { const el = document.createElement('option'); el.value = opt; el.innerText = opt; select.appendChild(el); });
+        }
+    </script>
+</body>
+</html>
