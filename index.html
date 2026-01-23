@@ -17,6 +17,7 @@
             --bg: #f3f4f6;
             --border: #e5e7eb;
             --success: #059669;
+            --warning: #f59e0b;
         }
 
         * { box-sizing: border-box; }
@@ -101,10 +102,8 @@
         .btn-yellow { background: #f59e0b; color: white; }
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-        /* --- DRUG ROWS (ALIGNMENT FIXED) --- */
+        /* --- DRUG ROWS --- */
         .drug-row { display: flex; gap: 15px; align-items: flex-start; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
-        
-        /* Adjusted widths to make Name field wider */
         .col-name { flex: 3.5; position: relative; display: flex; flex-direction: column; gap: 5px; } 
         .col-weight { flex: 1.2; } 
         .col-small { flex: 0.7; text-align: center; } 
@@ -112,9 +111,7 @@
         .col-total { flex: 0.8; } 
         .col-action { flex: 0.4; text-align: right; padding-top: 28px; }
         
-        /* Ensure labels inside row are visible */
         .drug-row label { display: block; font-size: 11px; font-weight: 700; color: #4b5563; margin-bottom: 4px; }
-
         .form-check-group { display: flex; gap: 10px; margin-top: 2px; }
         .form-check-label { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #555; cursor: pointer; font-weight: 600; }
         .form-check-label input { width: auto; margin: 0; }
@@ -176,6 +173,15 @@
         }
         .template-add-btn:hover { border-color: var(--primary); color: var(--primary); }
 
+        /* AI BUTTON */
+        .ai-fix-btn { 
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); 
+            color: white; border: none; padding: 4px 10px; border-radius: 12px; 
+            font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .ai-fix-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
         /* MODALS */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
         .modal-content { background-color: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
@@ -189,11 +195,10 @@
         }
         .selection-btn:hover { border-color: var(--primary); background: #f0f9ff; color: var(--primary); }
 
-        /* --- PRINT STYLES --- */
+        /* PRINT */
         @media print {
-            @page { margin: 0; size: auto; }
             body, .container { background: white; margin: 0; padding: 0; max-width: 100%; }
-            .no-print, .app-header, .patient-list-section, .btn, .card-header-actions, .auto-mic-container, .mic-btn, .add-med-link, #authContainer, #loadingOverlay, .template-area, .modal { display: none !important; }
+            .no-print, .app-header, .patient-list-section, .btn, .card-header-actions, .auto-mic-container, .mic-btn, .add-med-link, #authContainer, #loadingOverlay, .template-area, .modal, .ai-fix-btn { display: none !important; }
             .print-only { display: block !important; }
             .card { box-shadow: none; padding: 0; border: none; }
             .print-container { padding: 40px; font-family: 'Times New Roman', serif; }
@@ -403,7 +408,7 @@
                     </div>
                     <div style="margin-bottom: 15px;">
                         <div class="mic-wrapper">
-                            <input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." onkeyup="renderMedManagerList()">
+                            <input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." oninput="renderMedManagerList()">
                             <button id="mic-medManagerSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'medManagerSearch')">
                                 <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
                             </button>
@@ -460,6 +465,11 @@
                                 </div>
                                 <div class="mic-wrapper">
                                     <textarea id="docDetails" class="form-control" rows="4" placeholder="Type or use templates..."></textarea>
+                                    
+                                    <!-- <button class="ai-fix-btn" style="position:absolute; bottom:10px; right:40px;" onclick="correctTextWithGroq('docDetails', 'notes')">
+                                        ✨ AI Fix
+                                    </button> -->
+
                                     <button id="mic-docDetails" class="mic-btn" onmousedown="handleManualMicClick(event, 'docDetails')">
                                         <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
                                     </button>
@@ -532,6 +542,10 @@
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, arrayUnion, serverTimestamp, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
+        // --- PASTE YOUR GROQ API KEY HERE ---
+        const GROQ_API_KEY = "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"; 
+        // ------------------------------------
+
         const firebaseConfig = {
           apiKey: "AIzaSyAWNn0lX3UzfKkZ2ivirPMb3vu9GNGLcfg",
           authDomain: "doc-det.firebaseapp.com",
@@ -545,11 +559,9 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        // --- CLINIC REGISTRATION CODE ---
         const CLINIC_CODE = "NEURO2026"; 
 
-        // --- CLINICAL TEMPLATES SEED DATA ---
+        // CLINICAL TEMPLATES SEED
         const DEFAULT_TEMPLATES = [
             { name: "Headache", subtypes: ["Migraine", "Tension", "Cluster", "Sinusitis"], durations: ["5 Days", "10 Days", "15 Days", "1 Month"] },
             { name: "Epilepsy", subtypes: ["GTCS", "Focal", "Absence", "Myoclonic"], durations: ["1 Month", "2 Months", "3 Months", "6 Months"] },
@@ -565,13 +577,10 @@
         let currentPatient = null, rowCount = 0;
         
         // Voice vars
-        let recognition = null;
-        let isAutoMicOn = false;
-        let activeInputId = null; 
-        let finalTranscript = ''; 
+        let recognition = null, isAutoMicOn = false, activeInputId = null, finalTranscript = '';
         let currentTemplateAction = null;
 
-        // --- AUTH ---
+        // --- AUTH & INIT ---
         onAuthStateChanged(auth, (user) => {
             document.getElementById('loadingOverlay').style.display = 'none';
             if (user) {
@@ -585,173 +594,113 @@
         });
 
         window.login = async () => {
-            const email = document.getElementById('loginEmail').value;
-            const pass = document.getElementById('loginPass').value;
-            if(!email || !pass) return alert("Enter email/pass");
+            const email = document.getElementById('loginEmail').value, pass = document.getElementById('loginPass').value;
+            if(!email || !pass) return alert("Enter credentials");
             document.getElementById('loadingOverlay').style.display = 'flex';
-            try { await signInWithEmailAndPassword(auth, email, pass); } 
-            catch(e) { alert("Login failed: " + e.message); document.getElementById('loadingOverlay').style.display = 'none'; }
+            try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert(e.message); document.getElementById('loadingOverlay').style.display = 'none'; }
         };
 
         window.signup = async () => {
-            const email = document.getElementById('regEmail').value;
-            const pass = document.getElementById('regPass').value;
-            const code = document.getElementById('regCode').value;
-            if(code !== CLINIC_CODE) return alert("Wrong Clinic Code");
-            if(pass.length < 6) return alert("Password too short");
+            const email = document.getElementById('regEmail').value, pass = document.getElementById('regPass').value, code = document.getElementById('regCode').value;
+            if(code !== CLINIC_CODE) return alert("Wrong Code");
             document.getElementById('loadingOverlay').style.display = 'flex';
-            try { await createUserWithEmailAndPassword(auth, email, pass); } 
-            catch(e) { alert("Signup failed: " + e.message); document.getElementById('loadingOverlay').style.display = 'none'; }
+            try { await createUserWithEmailAndPassword(auth, email, pass); } catch(e) { alert(e.message); document.getElementById('loadingOverlay').style.display = 'none'; }
         };
 
-        window.logout = () => {
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            signOut(auth);
-        };
-
+        window.logout = () => { document.getElementById('loadingOverlay').style.display = 'flex'; signOut(auth); };
         window.toggleAuthForms = () => {
-            const login = document.getElementById('loginForm');
-            const signup = document.getElementById('signupForm');
-            if(login.style.display === 'none') { login.style.display='block'; signup.style.display='none'; }
-            else { login.style.display='none'; signup.style.display='block'; }
+            const l = document.getElementById('loginForm'), s = document.getElementById('signupForm');
+            if(l.style.display==='none'){l.style.display='block';s.style.display='none'}else{l.style.display='none';s.style.display='block'}
         };
 
-        // --- VOICE ---
-        if ('webkitSpeechRecognition' in window) {
-            recognition = new webkitSpeechRecognition();
-            recognition.interimResults = true; 
-            recognition.lang = 'en-US';
-
-            recognition.onresult = function(event) {
-                if (!activeInputId) return;
-                let interimTranscript = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) { finalTranscript += event.results[i][0].transcript; } 
-                    else { interimTranscript += event.results[i][0].transcript; }
-                }
-                const input = document.getElementById(activeInputId);
-                
-                if (input.tagName === 'INPUT') {
-                    input.value = finalTranscript + interimTranscript;
-                    if(activeInputId.includes('name-')) { handleMedicineInput(activeInputId.split('-')[1]); }
-                    if(activeInputId === 'medManagerSearch') { renderMedManagerList(); }
-                } else {
-                    input.value = finalTranscript + interimTranscript;
-                }
-            };
-
-            recognition.onerror = function(event) { stopListening(); };
-            recognition.onend = function() {
-                if (activeInputId && isAutoMicOn && (activeInputId === 'docDetails' || activeInputId === 'newMedStrengths')) { 
-                    try { recognition.start(); } catch(e){} 
-                } else { stopListeningUI(); }
-            };
-        }
-
-        window.toggleAutoMic = function() {
-            isAutoMicOn = document.getElementById('autoMicToggle').checked;
-            if(!isAutoMicOn) stopListening();
-        };
-
-        function startListening(inputId) {
-            if (!recognition) return;
-            if (activeInputId === inputId) return;
-            if(activeInputId) stopListening();
-            activeInputId = inputId;
-            const input = document.getElementById(inputId);
-            
-            if (input.tagName === 'INPUT') {
-                input.value = '';
-                finalTranscript = '';
-            } else {
-                finalTranscript = input.value;
-                if(finalTranscript && !finalTranscript.endsWith(' ')) finalTranscript += ' ';
-            }
-            
-            let micBtnId = '';
-            if (inputId === 'docDetails') micBtnId = 'mic-docDetails';
-            else if (inputId === 'newMedName') micBtnId = 'mic-newMedName';
-            else if (inputId === 'newMedStrengths') micBtnId = 'mic-newMedStrengths';
-            else if (inputId === 'medManagerSearch') micBtnId = 'mic-medManagerSearch';
-            else if (inputId === 'reviewSearch') micBtnId = 'mic-reviewSearch';
-            else micBtnId = `mic-${inputId.split('-')[1]}`; 
-
-            const btn = document.getElementById(micBtnId);
-            if(btn) btn.classList.add('listening');
-            
-            if (inputId === 'docDetails' || inputId === 'newMedStrengths') {
-                recognition.continuous = true; 
-            } else {
-                recognition.continuous = false; 
-            }
-            try { recognition.start(); } catch(e) {}
-        }
-
-        function stopListening() { if (!recognition) return; recognition.stop(); stopListeningUI(); activeInputId = null; }
-        function stopListeningUI() { document.querySelectorAll('.mic-btn').forEach(b => b.classList.remove('listening')); }
-
-        window.handleManualMicClick = function(e, inputId) {
-            e.preventDefault(); e.stopPropagation();
-            if (activeInputId === inputId) stopListening(); else { document.getElementById(inputId).focus(); startListening(inputId); }
-        };
-
-        function attachMicListeners(inputId) {
-            const el = document.getElementById(inputId);
-            if(!el) return;
-            el.addEventListener('focus', () => { el.select(); if (isAutoMicOn) startListening(inputId); });
-            el.addEventListener('blur', (e) => { setTimeout(() => { if (document.activeElement !== el) stopListening(); }, 100); });
-        }
-
-        // --- APP INIT ---
         async function initApp() {
             setupListeners();
             await seedMedicines();
             await seedTemplates();
-            
-            onSnapshot(query(collection(db, "patients"), orderBy("timestamp", "desc")), (snapshot) => {
-                allPatients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // Listeners
+            onSnapshot(query(collection(db, "patients"), orderBy("timestamp", "desc")), (s) => {
+                allPatients = s.docs.map(d => ({ id: d.id, ...d.data() }));
                 waitingQueue = allPatients.filter(p => p.status === 'waiting');
-                renderDoctorQueue();
-                renderReviewSearch();
+                renderDoctorQueue(); renderReviewSearch();
             });
+            onSnapshot(query(collection(db, "medicines"), orderBy("name")), (s) => {
+                cloudMedicines = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                populateDatalist(); renderMedManagerList();
+            });
+            onSnapshot(collection(db, "clinicalTemplates"), (s) => {
+                clinicalTemplates = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderTemplateChips(); renderTemplateManagerList();
+            });
+            // Mics
+            ['docDetails','newMedName','newMedStrengths','medManagerSearch','reviewSearch'].forEach(attachMicListeners);
+        }
 
-            onSnapshot(query(collection(db, "medicines"), orderBy("name")), (snapshot) => {
-                cloudMedicines = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                populateDatalist();
-                renderMedManagerList();
-            });
-
-            onSnapshot(collection(db, "clinicalTemplates"), (snapshot) => {
-                clinicalTemplates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderTemplateChips();
-                renderTemplateManagerList();
-            });
+        // --- GROQ AI INTEGRATION ---
+        async function correctTextWithGroq(inputId, type) {
+            const input = document.getElementById(inputId);
+            const originalText = input.value;
+            if (!originalText) return alert("Nothing to fix!");
             
-            attachMicListeners('docDetails');
-            attachMicListeners('newMedName');
-            attachMicListeners('newMedStrengths');
-            attachMicListeners('medManagerSearch');
-            attachMicListeners('reviewSearch');
-        }
+            // Show loading state on button
+            const btn = document.querySelector('.ai-fix-btn');
+            const originalBtnText = btn.innerText;
+            btn.innerText = "Thinking...";
+            btn.disabled = true;
 
-        async function seedMedicines() {
-            const snap = await getDocs(collection(db, "medicines"));
-            if(snap.empty && typeof medicineDatabase !== 'undefined') {
-                for (const [name, strengths] of Object.entries(medicineDatabase)) {
-                    await addDoc(collection(db, "medicines"), { name: name, strengths: strengths });
+            let systemPrompt = "";
+            let userPrompt = "";
+
+            if (type === 'notes') {
+                systemPrompt = "You are a medical assistant. Correct the grammar and spelling of the following clinical notes. Do not remove medical details. Output ONLY the corrected text.";
+                userPrompt = originalText;
+            } 
+            else if (type === 'medicine') {
+                // Prepare context from existing DB
+                const medNames = cloudMedicines.map(m => m.name).join(", ");
+                systemPrompt = `You are a pharmacist. You have a database of medicines: [${medNames}]. Match the user's input to the closest valid medicine name from the list. If it's a new valid medicine not in the list, correct its spelling. Output ONLY the medicine name.`;
+                userPrompt = originalText;
+            }
+
+            try {
+                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${GROQ_API_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: userPrompt }
+                        ],
+                        model: "llama3-8b-8192",
+                        temperature: 0.1 // Low temperature for factual correction
+                    })
+                });
+
+                const data = await response.json();
+                if (data.choices && data.choices.length > 0) {
+                    const correctedText = data.choices[0].message.content.trim();
+                    input.value = correctedText;
+                    
+                    // If medicine, re-trigger validation logic
+                    if(type === 'medicine') {
+                        const rid = inputId.split('-')[1];
+                        handleMedicineInput(rid);
+                    }
                 }
+            } catch (error) {
+                console.error("Groq Error:", error);
+                alert("AI Error. Check Console.");
+            } finally {
+                btn.innerText = originalBtnText;
+                btn.disabled = false;
             }
         }
+        
+        // Expose function globally
+        window.correctTextWithGroq = correctTextWithGroq;
 
-        async function seedTemplates() {
-            const snap = await getDocs(collection(db, "clinicalTemplates"));
-            if(snap.empty) {
-                console.log("Seeding templates...");
-                for(const t of DEFAULT_TEMPLATES) {
-                    await addDoc(collection(db, "clinicalTemplates"), t);
-                }
-            }
-        }
 
         // --- TEMPLATE LOGIC ---
         function renderTemplateChips() {
@@ -791,8 +740,10 @@
             if(t.subtype) text += ` (${t.subtype})`;
             if(t.duration) text += ` for ${t.duration}`;
             text += ".";
+            
             const area = document.getElementById('docDetails');
-            area.value += (area.value ? " " : "") + text;
+            // Add Newline and Bullet point
+            area.value += (area.value ? "\n" : "") + "• " + text;
             closeModal('selectionModal');
         }
 
@@ -831,80 +782,63 @@
         window.deleteTemplate = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "clinicalTemplates", id)); };
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
 
-        // --- MEDICINE LOGIC ---
+        // --- MEDICINES & PATIENTS ---
+        async function seedMedicines() {
+            const snap = await getDocs(collection(db, "medicines"));
+            if(snap.empty && typeof medicineDatabase !== 'undefined') {
+                for (const [name, strengths] of Object.entries(medicineDatabase)) await addDoc(collection(db, "medicines"), { name, strengths });
+            }
+        }
+        
+        async function seedTemplates() {
+            const snap = await getDocs(collection(db, "clinicalTemplates"));
+            if(snap.empty) { for(const t of DEFAULT_TEMPLATES) await addDoc(collection(db, "clinicalTemplates"), t); }
+        }
+
         function handleMedicineInput(rid) {
             const input = document.getElementById(`name-${rid}`);
             const nameVal = input.value.trim();
             const missingDiv = document.getElementById(`missing-alert-${rid}`);
             const med = cloudMedicines.find(m => m.name.toLowerCase() === nameVal.toLowerCase());
-            
             if (med) {
                 missingDiv.innerHTML = '';
                 const select = document.getElementById(`strength-${rid}`);
                 select.innerHTML = '<option value="">--</option>';
-                med.strengths.forEach(opt => { 
-                    const el = document.createElement('option'); el.value = opt; el.innerText = opt; select.appendChild(el); 
-                });
+                med.strengths.forEach(opt => { const el = document.createElement('option'); el.value = opt; el.innerText = opt; select.appendChild(el); });
             } else if (nameVal.length > 2) {
-                missingDiv.innerHTML = `<div class="add-med-link" onclick="quickAddMedicine('${nameVal}')">⚠️ '${nameVal}' not found. + Add to DB?</div>`;
+                missingDiv.innerHTML = `<div class="add-med-link" onclick="quickAddMedicine('${nameVal}')">⚠️ '${nameVal}' not found. + Add?</div>`;
+                // Auto-trigger Groq correction if likely a typo
+                // correctTextWithGroq(`name-${rid}`, 'medicine'); // Optional: auto-fix on blur/stop
             } else { missingDiv.innerHTML = ''; }
         }
 
         window.quickAddMedicine = function(name) { switchPage('medicine'); showAddMedForm(); document.getElementById('newMedName').value = name; }
-
         window.saveMedicineData = async function() {
-            const id = document.getElementById('editMedId').value;
-            const name = document.getElementById('newMedName').value;
-            const strStr = document.getElementById('newMedStrengths').value;
+            const id = document.getElementById('editMedId').value, name = document.getElementById('newMedName').value, str = document.getElementById('newMedStrengths').value;
             if(!name) return alert("Enter name");
-            const strengths = strStr.split(',').map(s => s.trim()).filter(s => s);
-            if(id) await updateDoc(doc(db, "medicines", id), { name, strengths });
-            else await addDoc(collection(db, "medicines"), { name, strengths });
+            const strengths = str.split(',').map(s => s.trim()).filter(s => s);
+            if(id) await updateDoc(doc(db, "medicines", id), { name, strengths }); else await addDoc(collection(db, "medicines"), { name, strengths });
             document.getElementById('addMedForm').style.display = 'none';
         }
-
         window.deleteMedicine = async function(id) { if(confirm("Delete?")) await deleteDoc(doc(db, "medicines", id)); }
-        
         window.editMedicine = function(id, name, strengths) {
             showAddMedForm();
-            document.getElementById('medFormTitle').innerText = "Edit Medicine";
-            document.getElementById('btnSaveMed').innerText = "Update Medicine";
-            document.getElementById('editMedId').value = id;
-            document.getElementById('newMedName').value = name;
-            document.getElementById('newMedStrengths').value = strengths;
+            document.getElementById('medFormTitle').innerText = "Edit Medicine"; document.getElementById('btnSaveMed').innerText = "Update";
+            document.getElementById('editMedId').value = id; document.getElementById('newMedName').value = name; document.getElementById('newMedStrengths').value = strengths;
         }
-
-        window.showAddMedForm = function() { 
-            document.getElementById('addMedForm').style.display = 'block'; 
-            document.getElementById('medFormTitle').innerText = "Add New Medicine";
-            document.getElementById('btnSaveMed').innerText = "Save to Cloud";
-            document.getElementById('editMedId').value = '';
-            document.getElementById('newMedName').value = '';
-            document.getElementById('newMedStrengths').value = '';
-        }
-
+        window.showAddMedForm = function() { document.getElementById('addMedForm').style.display = 'block'; document.getElementById('medFormTitle').innerText = "Add New"; document.getElementById('btnSaveMed').innerText = "Save"; document.getElementById('editMedId').value = ''; }
+        
         function renderMedManagerList() {
             const term = document.getElementById('medManagerSearch').value.toLowerCase();
-            const container = document.getElementById('medManagerList');
-            container.innerHTML = "";
+            const container = document.getElementById('medManagerList'); container.innerHTML = "";
             cloudMedicines.filter(m => m.name.toLowerCase().includes(term)).forEach(m => {
-                const div = document.createElement('div');
-                div.className = 'med-list-item';
-                div.innerHTML = `
-                    <div><strong>${m.name}</strong> <br> <small style="color:#666">${m.strengths.join(', ')}</small></div>
-                    <div style="display:flex; gap:5px;">
-                        <button class="btn btn-secondary btn-sm" onclick="editMedicine('${m.id}', '${m.name}', '${m.strengths.join(", ")}')">Edit</button>
-                        <button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button>
-                    </div>`;
-                container.appendChild(div);
+                container.innerHTML += `<div class="med-list-item"><div><strong>${m.name}</strong> <br> <small style="color:#666">${m.strengths.join(', ')}</small></div><div style="display:flex; gap:5px;"><button class="btn btn-secondary btn-sm" onclick="editMedicine('${m.id}', '${m.name}', '${m.strengths.join(", ")}')">Edit</button><button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button></div></div>`;
             });
         }
+        
+        function populateDatalist() { const dl = document.getElementById('allMedicines'); dl.innerHTML = ""; cloudMedicines.forEach(med => { const opt = document.createElement('option'); opt.value = med.name; dl.appendChild(opt); }); }
 
-        function populateDatalist() {
-            const dl = document.getElementById('allMedicines');
-            dl.innerHTML = ""; cloudMedicines.forEach(med => { const opt = document.createElement('option'); opt.value = med.name; dl.appendChild(opt); });
-        }
-
+        // --- NAVIGATION ---
         function setupListeners() {
             document.getElementById('btn-reception').onclick = () => switchPage('reception');
             document.getElementById('btn-doctor').onclick = () => switchPage('doctor');
@@ -916,110 +850,76 @@
             document.getElementById('reviewSearch').onkeyup = renderReviewSearch;
             document.getElementById('btnToggleHistory').onclick = toggleHistory;
         }
-
         function switchPage(page) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(page + 'Page').classList.add('active');
             if(page === 'reception') document.getElementById('btn-reception').classList.add('active');
             else if(page === 'doctor') document.getElementById('btn-doctor').classList.add('active');
             else if(page === 'medicine') document.getElementById('btn-medicines').classList.add('active');
         }
 
+        // --- PATIENT LOGIC ---
         async function registerPatient() {
-            const btn = document.getElementById('btnRegister');
-            btn.disabled = true;
-            const newPatient = {
-                name: document.getElementById('regName').value,
-                age: document.getElementById('regAge').value,
-                sex: document.getElementById('regSex').value,
-                phone: document.getElementById('regPhone').value,
-                address: document.getElementById('regAddress').value,
-                diagnosis: document.getElementById('regDiagnosis').value,
-                regDate: new Date().toLocaleDateString(),
-                timestamp: serverTimestamp(),
-                status: 'waiting', 
-                history: []
-            };
-            await addDoc(collection(db, "patients"), newPatient);
-            document.getElementById('regForm').reset();
-            btn.disabled = false;
+            const btn = document.getElementById('btnRegister'); btn.disabled = true;
+            await addDoc(collection(db, "patients"), {
+                name: document.getElementById('regName').value, age: document.getElementById('regAge').value, sex: document.getElementById('regSex').value,
+                phone: document.getElementById('regPhone').value, address: document.getElementById('regAddress').value, diagnosis: document.getElementById('regDiagnosis').value,
+                regDate: new Date().toLocaleDateString(), timestamp: serverTimestamp(), status: 'waiting', history: []
+            });
+            document.getElementById('regForm').reset(); btn.disabled = false;
         }
-
         function renderReviewSearch() {
-            const term = document.getElementById('reviewSearch').value.toLowerCase();
-            const container = document.getElementById('reviewList');
-            container.innerHTML = "";
+            const term = document.getElementById('reviewSearch').value.toLowerCase(); const container = document.getElementById('reviewList'); container.innerHTML = "";
             allPatients.filter(p => p.name.toLowerCase().includes(term)).forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'patient-list-item review-item';
-                div.innerHTML = `<div><strong>${p.name}</strong> <small>(${p.age}Y/${p.sex})</small></div><button class="btn btn-yellow btn-sm" onclick="sendToDoctor('${p.id}')">Send to Doctor</button>`;
-                container.appendChild(div);
+                container.innerHTML += `<div class="patient-list-item review-item"><div><strong>${p.name}</strong> <small>(${p.age}Y/${p.sex})</small></div><button class="btn btn-yellow btn-sm" onclick="sendToDoctor('${p.id}')">Send to Doctor</button></div>`;
             });
         }
-
-        window.sendToDoctor = async function(id) { await updateDoc(doc(db, "patients", id), { status: 'waiting', timestamp: serverTimestamp() }); }
-
+        window.sendToDoctor = async (id) => await updateDoc(doc(db, "patients", id), { status: 'waiting', timestamp: serverTimestamp() });
         function renderDoctorQueue() {
-            const container = document.getElementById('doctorQueueList');
-            container.innerHTML = "";
+            const container = document.getElementById('doctorQueueList'); container.innerHTML = ""; document.getElementById('queueCount').innerText = waitingQueue.length;
             waitingQueue.forEach(p => {
-                const div = document.createElement('div');
-                div.className = `patient-list-item ${currentPatient && currentPatient.id === p.id ? 'selected' : ''}`;
-                div.onclick = () => selectPatient(p);
-                div.innerHTML = `<strong>${p.name}</strong><br><small>${p.age}Y / ${p.sex}</small>`;
+                const div = document.createElement('div'); div.className = `patient-list-item ${currentPatient && currentPatient.id === p.id ? 'selected' : ''}`;
+                div.onclick = () => selectPatient(p); div.innerHTML = `<strong>${p.name}</strong><br><small>${p.age}Y / ${p.sex}</small>`;
                 container.appendChild(div);
             });
         }
-
         function selectPatient(p) {
-            currentPatient = p;
-            document.getElementById('workspace').style.display = 'block';
-            document.getElementById('pNameDisplay').innerText = p.name;
-            document.getElementById('pDetailsDisplay').innerText = `${p.age}Y / ${p.sex} | ${p.phone}`;
-            renderDoctorQueue();
-            document.getElementById('drugListContainer').innerHTML = '';
-            document.getElementById('docDetails').value = ''; 
-            addDrugRow();
+            currentPatient = p; document.getElementById('workspace').style.display = 'block';
+            document.getElementById('pNameDisplay').innerText = p.name; document.getElementById('pDetailsDisplay').innerText = `${p.age}Y / ${p.sex} | ${p.phone}`;
+            renderDoctorQueue(); document.getElementById('drugListContainer').innerHTML = ''; document.getElementById('docDetails').value = ''; addDrugRow();
         }
 
         async function saveAndPrint() {
             if(!currentPatient) return;
-            const btn = document.getElementById('btnPrint');
-            const notes = document.getElementById('docDetails').value;
-            const printNotes = document.getElementById('includeNotesInPrint').checked;
-            
+            const btn = document.getElementById('btnPrint'), notes = document.getElementById('docDetails').value, printNotes = document.getElementById('includeNotesInPrint').checked;
             document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
             if(printNotes && !notes.trim()) { alert("Notes empty!"); document.getElementById('docDetails').classList.add('input-error'); return; }
-
-            const drugs = [];
-            let isValid = true;
+            
+            const drugs = []; let isValid = true;
             document.querySelectorAll('.drug-row').forEach(row => {
-                const rid = row.id.split('-')[1];
-                const name = document.getElementById(`name-${rid}`).value.trim();
+                const rid = row.id.split('-')[1], name = document.getElementById(`name-${rid}`).value.trim();
                 if(!name) return;
-
                 const exists = cloudMedicines.some(m => m.name.toLowerCase() === name.toLowerCase());
-                if(!exists) { isValid = false; alert("Medicine not in DB: " + name); return; }
-
+                if(!exists) { isValid = false; document.getElementById(`name-${rid}`).classList.add('input-error'); alert("Unknown medicine: " + name); return; }
+                
                 const type = document.querySelector(`input[id^="type-"][id$="-${rid}"]:checked`)?.id.split('-')[1].toUpperCase();
-                if(!type) { isValid = false; alert("Select Type for: " + name); return; }
-
+                if(!type) { isValid = false; alert("Select Type for " + name); row.scrollIntoView(); return; }
+                
                 const str = document.getElementById(`strength-${rid}`).value;
-                if(!str || str === '--') { isValid = false; alert("Select Strength for: " + name); return; }
-
+                if(!str || str==='--') { isValid = false; alert("Select Strength for " + name); return; }
+                
                 const getVal = (s) => document.getElementById(`${s}-chk-${rid}`).checked ? 1 : parseFloat(document.getElementById(`${s}-${rid}`).value);
                 const m=getVal('m'), a=getVal('a'), n=getVal('n');
-                if(m+a+n === 0) { isValid = false; alert("Select Dose for: " + name); return; }
-
+                if(m+a+n === 0) { isValid = false; alert("Select Dose for " + name); return; }
+                
                 const total = document.getElementById(`t-${rid}`).value;
-                if(total == 0 || total === "Error") { isValid = false; alert("Select Duration for: " + name); return; }
-
+                if(total == 0 || total === "Error") { isValid = false; alert("Check duration for " + name); return; }
+                
                 drugs.push({ name, strength: str, type, m, a, n, t: total });
             });
 
             if(!isValid) return;
-            if(drugs.length === 0 && !notes) { alert("Add data first!"); return; }
+            if(drugs.length === 0 && !notes) { alert("Nothing to print!"); return; }
 
             btn.disabled = true;
             try {
@@ -1029,26 +929,24 @@
                 document.getElementById('printName').innerText = currentPatient.name;
                 document.getElementById('printDate').innerText = record.date;
                 const pNotes = document.getElementById('printDetails');
-                if(printNotes && notes) { pNotes.innerText = "Note: " + notes; pNotes.style.display = 'block'; }
-                else pNotes.style.display = 'none';
-
-                const tbody = document.getElementById('printTableBody');
-                tbody.innerHTML = '';
+                if(printNotes && notes) { pNotes.innerText = "Note: " + notes; pNotes.style.display = 'block'; } else pNotes.style.display = 'none';
+                
+                const tbody = document.getElementById('printTableBody'); tbody.innerHTML = '';
                 drugs.forEach((d, i) => {
                     const fmt = (v) => v==0.5 ? '½' : v;
                     tbody.innerHTML += `<tr><td>${i+1}</td><td class="drug-name-cell">${d.type} ${d.name} <small>${d.strength}</small></td><td>${fmt(d.m)}</td><td>${fmt(d.a)}</td><td>${fmt(d.n)}</td><td>${d.t}</td></tr>`;
                 });
                 window.print();
-            } catch(e) { alert("Fail!"); } finally { btn.disabled = false; }
+            } catch(e) { alert("Error!"); } finally { btn.disabled = false; }
         }
 
         async function finishConsultation() {
             if(!currentPatient || !confirm("Clear?")) return;
             await updateDoc(doc(db, "patients", currentPatient.id), { status: 'done' });
-            document.getElementById('workspace').style.display = 'none';
-            currentPatient = null;
+            document.getElementById('workspace').style.display = 'none'; currentPatient = null;
         }
 
+        // --- ROW HELPERS ---
         window.addDrugRow = addDrugRow;
         window.calculateTotal = calculateTotal;
         window.updateStrengths = (id) => handleMedicineInput(id);
@@ -1062,47 +960,32 @@
             document.getElementById(`d-manual-container-${rid}`).style.display = (document.getElementById(`d-preset-${rid}`).value==='manual') ? 'flex' : 'none';
             calculateTotal(rid);
         };
-
         function toggleHistory() {
             const sec = document.getElementById('historySection'), cont = document.getElementById('historyContent');
             if(sec.style.display === 'none') {
                 sec.style.display = 'block';
                 if(!currentPatient.history?.length) cont.innerHTML = "No history.";
-                else cont.innerHTML = currentPatient.history.slice().reverse().map(h => `<div style="border-bottom:1px solid #ccc; padding:10px 0;"><strong>${h.date}</strong><p>${h.notes||''}</p><ul>${h.meds.map(m => `<li>${m.name} - ${m.t}</li>`).join('')}</ul></div>`).join('');
+                else cont.innerHTML = currentPatient.history.slice().reverse().map(h => `<div style="border-bottom:1px solid #ccc; padding:10px 0;"><strong>${h.date}</strong><p>${h.notes||''}</p><ul>${h.meds.map(m => `<li>${m.type} ${m.name} (${m.strength})</li>`).join('')}</ul></div>`).join('');
             } else sec.style.display = 'none';
         }
 
         function addDrugRow() {
             rowCount++;
             const container = document.getElementById('drugListContainer');
-            const div = document.createElement('div');
-            div.className = 'drug-row';
-            div.id = `row-${rowCount}`;
+            const div = document.createElement('div'); div.className = 'drug-row'; div.id = `row-${rowCount}`;
             const doseOpts = `<option value="0">0</option><option value="0.5">½</option><option value="2">2</option><option value="3">3</option>`; 
             div.innerHTML = `
-                <div class="col-name">
-                    <label>Medicine Name</label>
-                    <div class="mic-wrapper"><input list="allMedicines" id="name-${rowCount}" placeholder="Medicine Name..." oninput="updateStrengths(${rowCount})">
-                    <button id="mic-${rowCount}" class="mic-btn" onmousedown="handleManualMicClick(event, 'name-${rowCount}')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button></div>
-                    <div id="missing-alert-${rowCount}"></div>
-                    <div class="form-check-group">
-                        <label class="form-check-label"><input type="checkbox" id="type-tab-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'tab')"> TAB</label>
-                        <label class="form-check-label"><input type="checkbox" id="type-syp-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'syp')"> Syp</label>
-                        <label class="form-check-label"><input type="checkbox" id="type-cap-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'cap')"> Cap</label>
-                        <label class="form-check-label"><input type="checkbox" id="type-sup-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'sup')"> Sup</label>
-                    </div>
-                </div>
+                <div class="col-name"><label>Medicine Name</label><div class="mic-wrapper"><input list="allMedicines" id="name-${rowCount}" placeholder="Search..." oninput="updateStrengths(${rowCount})"><button id="mic-${rowCount}" class="mic-btn" onmousedown="handleManualMicClick(event, 'name-${rowCount}')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button></div><div id="missing-alert-${rowCount}"></div>
+                <div class="form-check-group"><label class="form-check-label"><input type="checkbox" id="type-tab-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'tab')"> TAB</label><label class="form-check-label"><input type="checkbox" id="type-syp-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'syp')"> Syp</label><label class="form-check-label"><input type="checkbox" id="type-cap-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'cap')"> Cap</label><label class="form-check-label"><input type="checkbox" id="type-sup-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'sup')"> Sup</label></div></div>
                 <div class="col-weight"><label>Strength</label><select id="strength-${rowCount}"><option value="">--</option></select></div>
                 <div class="col-small"><label>M</label><div class="dose-input-group"><select id="m-${rowCount}" onchange="handleDoseInput(${rowCount},'m','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="m-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'m','check')"></label></div></div>
                 <div class="col-small"><label>A</label><div class="dose-input-group"><select id="a-${rowCount}" onchange="handleDoseInput(${rowCount},'a','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="a-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'a','check')"></label></div></div>
                 <div class="col-small"><label>N</label><div class="dose-input-group"><select id="n-${rowCount}" onchange="handleDoseInput(${rowCount},'n','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="n-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'n','check')"></label></div></div>
-                <div class="col-days"><label>Duration</label><select id="d-preset-${rowCount}" onchange="handleDurationChange(${rowCount})"><option value="">Select</option><option value="30">1 Month</option><option value="60">2 Months</option><option value="manual">Manual</option></select>
-                <div id="d-manual-container-${rowCount}" style="display:none; margin-top:5px;"><input type="number" id="d-num-${rowCount}" style="width:50px" oninput="calculateTotal(${rowCount})"><select id="d-unit-${rowCount}" onchange="calculateTotal(${rowCount})"><option value="1">Days</option><option value="30">Months</option></select></div></div>
+                <div class="col-days"><label>Duration</label><select id="d-preset-${rowCount}" onchange="handleDurationChange(${rowCount})"><option value="">Select</option><option value="30">1 Month</option><option value="60">2 Months</option><option value="manual">Manual</option></select><div id="d-manual-container-${rowCount}" style="display:none; margin-top:5px;"><input type="number" id="d-num-${rowCount}" style="width:50px" oninput="calculateTotal(${rowCount})"><select id="d-unit-${rowCount}" onchange="calculateTotal(${rowCount})"><option value="1">Days</option><option value="30">Months</option></select></div></div>
                 <div class="col-total"><label>Total</label><input type="text" id="t-${rowCount}" readonly style="background:#eee"></div>
                 <div class="col-action"><button class="btn btn-red btn-sm" onclick="document.getElementById('row-${rowCount}').remove()">X</button></div>
             `;
-            container.appendChild(div);
-            attachMicListeners(`name-${rowCount}`);
+            container.appendChild(div); attachMicListeners(`name-${rowCount}`);
         }
 
         function calculateTotal(rid) {
@@ -1112,6 +995,39 @@
             if(p==='manual') d=(parseFloat(document.getElementById(`d-num-${rid}`).value)||0) * parseFloat(document.getElementById(`d-unit-${rid}`).value);
             else d=parseFloat(p)||0;
             document.getElementById(`t-${rid}`).value = Math.ceil((m+a+n)*d);
+        }
+
+        // --- VOICE ---
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition(); recognition.interimResults = true; recognition.lang = 'en-US';
+            recognition.onresult = (e) => {
+                if (!activeInputId) return;
+                let interim = '';
+                for (let i = e.resultIndex; i < e.results.length; ++i) e.results[i].isFinal ? finalTranscript += e.results[i][0].transcript : interim += e.results[i][0].transcript;
+                const input = document.getElementById(activeInputId);
+                if(input.tagName === 'INPUT') { input.value = finalTranscript + interim; if(activeInputId.includes('name-')) handleMedicineInput(activeInputId.split('-')[1]); if(activeInputId === 'medManagerSearch') renderMedManagerList(); }
+                else input.value = finalTranscript + interim;
+            };
+            recognition.onerror = () => stopListening();
+            recognition.onend = () => { if(activeInputId && isAutoMicOn && ['docDetails','newMedStrengths'].includes(activeInputId)) try{recognition.start()}catch(e){} else stopListeningUI(); };
+        }
+        window.toggleAutoMic = () => { isAutoMicOn = document.getElementById('autoMicToggle').checked; if(!isAutoMicOn) stopListening(); };
+        window.handleManualMicClick = (e, id) => { e.preventDefault(); e.stopPropagation(); if(activeInputId === id) stopListening(); else { document.getElementById(id).focus(); startListening(id); } };
+        function startListening(id) {
+            if(!recognition) return; if(activeInputId === id) return; if(activeInputId) stopListening();
+            activeInputId = id; const el = document.getElementById(id);
+            if(el.tagName === 'INPUT') { el.value=''; finalTranscript=''; } else { finalTranscript=el.value; if(finalTranscript && !finalTranscript.endsWith(' ')) finalTranscript+=' '; }
+            let btnId = (id==='docDetails'?'mic-docDetails':(id.includes('name-')?`mic-${id.split('-')[1]}`:`mic-${id}`));
+            const btn = document.getElementById(btnId); if(btn) btn.classList.add('listening');
+            recognition.continuous = ['docDetails','newMedStrengths'].includes(id);
+            try{recognition.start()}catch(e){}
+        }
+        function stopListening() { if(!recognition)return; recognition.stop(); stopListeningUI(); activeInputId=null; }
+        function stopListeningUI() { document.querySelectorAll('.mic-btn').forEach(b => b.classList.remove('listening')); }
+        function attachMicListeners(id) {
+            const el = document.getElementById(id); if(!el)return;
+            el.addEventListener('focus', () => { el.select(); if(isAutoMicOn) startListening(id); });
+            el.addEventListener('blur', (e) => { setTimeout(() => { if(document.activeElement!==el) stopListening(); }, 100); });
         }
     </script>
 </body>
