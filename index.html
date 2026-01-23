@@ -105,17 +105,17 @@
         .drug-row { display: flex; gap: 15px; align-items: flex-start; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
         
         /* Adjusted widths to make Name field wider */
-        .col-name { flex: 4; display: flex; flex-direction: column; gap: 5px; } 
-        .col-weight { flex: 1.5; } 
-        .col-small { flex: 0.8; text-align: center; } 
-        .col-days { flex: 1.8; } 
-        .col-total { flex: 1; } 
+        .col-name { flex: 3.5; position: relative; display: flex; flex-direction: column; gap: 5px; } 
+        .col-weight { flex: 1.2; } 
+        .col-small { flex: 0.7; text-align: center; } 
+        .col-days { flex: 1.5; } 
+        .col-total { flex: 0.8; } 
         .col-action { flex: 0.4; text-align: right; padding-top: 28px; }
         
         /* Ensure labels inside row are visible */
         .drug-row label { display: block; font-size: 11px; font-weight: 700; color: #4b5563; margin-bottom: 4px; }
 
-        .form-check-group { display: flex; gap: 10px; margin-top: 5px; }
+        .form-check-group { display: flex; gap: 10px; margin-top: 2px; }
         .form-check-label { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #555; cursor: pointer; font-weight: 600; }
         .form-check-label input { width: auto; margin: 0; }
 
@@ -162,11 +162,38 @@
             background: #fffbeb; border: 1px solid #fcd34d; padding: 4px 8px; border-radius: 4px; text-align: center;
         }
 
+        /* CLINICAL TEMPLATE CHIPS */
+        .template-area { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
+        .template-chip { 
+            background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 20px; 
+            font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #bae6fd; transition: 0.2s; 
+        }
+        .template-chip:hover { background: #0284c7; color: white; }
+        
+        .template-add-btn { 
+            background: white; border: 1px dashed #cbd5e1; color: #64748b; 
+            padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; 
+        }
+        .template-add-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* MODALS */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal-content { background-color: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-weight: 700; font-size: 18px; margin: 0; }
+        .modal-body { max-height: 400px; overflow-y: auto; }
+        .selection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+        .selection-btn { 
+            padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: white; 
+            cursor: pointer; font-size: 13px; text-align: center; transition: 0.2s; font-weight: 500; color: #374151;
+        }
+        .selection-btn:hover { border-color: var(--primary); background: #f0f9ff; color: var(--primary); }
+
         /* --- PRINT STYLES --- */
         @media print {
             @page { margin: 0; size: auto; }
             body, .container { background: white; margin: 0; padding: 0; max-width: 100%; }
-            .no-print, .app-header, .patient-list-section, .btn, .card-header-actions, .auto-mic-container, .mic-btn, .add-med-link, #authContainer, #loadingOverlay { display: none !important; }
+            .no-print, .app-header, .patient-list-section, .btn, .card-header-actions, .auto-mic-container, .mic-btn, .add-med-link, #authContainer, #loadingOverlay, .template-area, .modal { display: none !important; }
             .print-only { display: block !important; }
             .card { box-shadow: none; padding: 0; border: none; }
             .print-container { padding: 40px; font-family: 'Times New Roman', serif; }
@@ -198,6 +225,44 @@
     <div id="loadingOverlay">
         <div class="spinner"></div>
         <div style="font-weight:600; color:#374151;">Loading...</div>
+    </div>
+
+    <div id="selectionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="selectionTitle">Select Option</h4>
+                <button class="btn btn-red btn-sm" onclick="closeModal('selectionModal')">X</button>
+            </div>
+            <div class="modal-body selection-grid" id="selectionContainer"></div>
+        </div>
+    </div>
+
+    <div id="templateManagerModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h4 class="modal-title">Manage Clinical Templates</h4>
+                <button class="btn btn-red btn-sm" onclick="closeModal('templateManagerModal')">X</button>
+            </div>
+            <div class="modal-body">
+                <div style="background:#f9fafb; padding:15px; border-radius:8px; margin-bottom:20px;">
+                    <h5>Add New Template</h5>
+                    <div class="form-group">
+                        <label>Condition Name (e.g. Headache)</label>
+                        <input type="text" id="tplName">
+                    </div>
+                    <div class="form-group">
+                        <label>Sub-Types (comma separated)</label>
+                        <input type="text" id="tplTypes" placeholder="Migraine, Tension, Cluster">
+                    </div>
+                    <div class="form-group">
+                        <label>Durations (comma separated)</label>
+                        <input type="text" id="tplDurations" placeholder="5 Days, 10 Days, 1 Month">
+                    </div>
+                    <button class="btn btn-success" onclick="saveNewTemplate()">Save Template</button>
+                </div>
+                <div id="templateListContainer"></div>
+            </div>
+        </div>
     </div>
 
     <div id="authContainer">
@@ -234,7 +299,7 @@
                     <label>Clinic Code</label>
                     <input type="password" id="regCode" placeholder="Ask Administrator" style="border-color:#f59e0b;">
                 </div>
-                <button class="btn btn-green" style="width:100%" onclick="signup()">Register Staff</button>
+                <button class="btn btn-green" style="width:100%" onclick="signup()">Register</button>
                 <div style="margin-top:15px; font-size:13px;">
                     <a href="#" style="color:var(--primary); text-decoration:none;" onclick="toggleAuthForms()">Back to Login</a>
                 </div>
@@ -338,7 +403,7 @@
                     </div>
                     <div style="margin-bottom: 15px;">
                         <div class="mic-wrapper">
-                            <input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." oninput="renderMedManagerList()">
+                            <input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." onkeyup="renderMedManagerList()">
                             <button id="mic-medManagerSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'medManagerSearch')">
                                 <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
                             </button>
@@ -384,12 +449,17 @@
                             </div>
 
                             <div style="margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
-                                <div class="notes-header">
-                                    <input type="checkbox" id="includeNotesInPrint" class="notes-checkbox" title="Check to print on Rx">
-                                    <label for="includeNotesInPrint" class="notes-label">Doctor's Notes / Details (Check to print)</label>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                                    <div class="notes-header">
+                                        <input type="checkbox" id="includeNotesInPrint" class="notes-checkbox" title="Check to print on Rx">
+                                        <label for="includeNotesInPrint" class="notes-label">Doctor's Notes / Details (Check to print)</label>
+                                    </div>
+                                    <div class="template-area" id="templateChipContainer">
+                                        <span class="template-add-btn" onclick="openTemplateManager()">+ Manage Templates</span>
+                                    </div>
                                 </div>
                                 <div class="mic-wrapper">
-                                    <textarea id="docDetails" class="form-control" rows="4" placeholder="Type..."></textarea>
+                                    <textarea id="docDetails" class="form-control" rows="4" placeholder="Type or use templates..."></textarea>
                                     <button id="mic-docDetails" class="mic-btn" onmousedown="handleManualMicClick(event, 'docDetails')">
                                         <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
                                     </button>
@@ -479,17 +549,27 @@
         // --- CLINIC REGISTRATION CODE ---
         const CLINIC_CODE = "NEURO2026"; 
 
-        let allPatients = []; 
-        let waitingQueue = []; 
-        let cloudMedicines = []; 
-        let currentPatient = null;
-        let rowCount = 0;
+        // --- CLINICAL TEMPLATES SEED DATA ---
+        const DEFAULT_TEMPLATES = [
+            { name: "Headache", subtypes: ["Migraine", "Tension", "Cluster", "Sinusitis"], durations: ["5 Days", "10 Days", "15 Days", "1 Month"] },
+            { name: "Epilepsy", subtypes: ["GTCS", "Focal", "Absence", "Myoclonic"], durations: ["1 Month", "2 Months", "3 Months", "6 Months"] },
+            { name: "Vertigo", subtypes: ["BPPV", "Meniere's", "Vestibular Neuritis"], durations: ["3 Days", "5 Days", "1 Week", "2 Weeks"] },
+            { name: "Stroke", subtypes: ["Ischemic", "Hemorrhagic", "TIA"], durations: ["Acute", "1 Month", "Long Term"] },
+            { name: "Back Pain", subtypes: ["Lumbar Spondylosis", "Disc Prolapse", "Sciatica"], durations: ["5 Days", "10 Days", "15 Days", "1 Month"] },
+            { name: "Neck Pain", subtypes: ["Cervical Spondylosis", "Muscle Spasm"], durations: ["5 Days", "10 Days", "15 Days"] },
+            { name: "Neuropathy", subtypes: ["Diabetic", "Peripheral", "Vitamin Deficiency"], durations: ["1 Month", "2 Months", "3 Months"] },
+            { name: "Parkinson's", subtypes: ["Tremor Dominant", "Rigidity Dominant"], durations: ["1 Month", "3 Months"] }
+        ];
+
+        let allPatients = [], waitingQueue = [], cloudMedicines = [], clinicalTemplates = [];
+        let currentPatient = null, rowCount = 0;
         
         // Voice vars
         let recognition = null;
         let isAutoMicOn = false;
         let activeInputId = null; 
         let finalTranscript = ''; 
+        let currentTemplateAction = null;
 
         // --- AUTH ---
         onAuthStateChanged(auth, (user) => {
@@ -626,6 +706,7 @@
         async function initApp() {
             setupListeners();
             await seedMedicines();
+            await seedTemplates();
             
             onSnapshot(query(collection(db, "patients"), orderBy("timestamp", "desc")), (snapshot) => {
                 allPatients = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -638,6 +719,12 @@
                 cloudMedicines = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 populateDatalist();
                 renderMedManagerList();
+            });
+
+            onSnapshot(collection(db, "clinicalTemplates"), (snapshot) => {
+                clinicalTemplates = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderTemplateChips();
+                renderTemplateManagerList();
             });
             
             attachMicListeners('docDetails');
@@ -656,7 +743,95 @@
             }
         }
 
-        // --- LOGIC ---
+        async function seedTemplates() {
+            const snap = await getDocs(collection(db, "clinicalTemplates"));
+            if(snap.empty) {
+                console.log("Seeding templates...");
+                for(const t of DEFAULT_TEMPLATES) {
+                    await addDoc(collection(db, "clinicalTemplates"), t);
+                }
+            }
+        }
+
+        // --- TEMPLATE LOGIC ---
+        function renderTemplateChips() {
+            const container = document.getElementById('templateChipContainer');
+            const manageBtn = container.querySelector('.template-add-btn');
+            container.innerHTML = '';
+            clinicalTemplates.forEach(t => {
+                const chip = document.createElement('span');
+                chip.className = 'template-chip';
+                chip.innerText = t.name;
+                chip.onclick = () => startTemplateFlow(t);
+                container.appendChild(chip);
+            });
+            container.appendChild(manageBtn);
+        }
+
+        function startTemplateFlow(template) {
+            currentTemplateAction = { template: template };
+            const subTypes = template.subtypes || [];
+            if(subTypes.length > 0) {
+                openSelectionModal(`Select ${template.name} Type`, subTypes, (selectedSub) => {
+                    currentTemplateAction.subtype = selectedSub;
+                    const durations = template.durations || [];
+                    if(durations.length > 0) {
+                        openSelectionModal(`Select Duration`, durations, (selectedDur) => {
+                            currentTemplateAction.duration = selectedDur;
+                            finalizeTemplate();
+                        });
+                    } else { finalizeTemplate(); }
+                });
+            } else { finalizeTemplate(); }
+        }
+
+        function finalizeTemplate() {
+            const t = currentTemplateAction;
+            let text = `Patient has ${t.template.name}`;
+            if(t.subtype) text += ` (${t.subtype})`;
+            if(t.duration) text += ` for ${t.duration}`;
+            text += ".";
+            const area = document.getElementById('docDetails');
+            area.value += (area.value ? " " : "") + text;
+            closeModal('selectionModal');
+        }
+
+        function openSelectionModal(title, options, callback) {
+            document.getElementById('selectionTitle').innerText = title;
+            const grid = document.getElementById('selectionContainer');
+            grid.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('div');
+                btn.className = 'selection-btn';
+                btn.innerText = opt;
+                btn.onclick = () => callback(opt);
+                grid.appendChild(btn);
+            });
+            document.getElementById('selectionModal').style.display = 'flex';
+        }
+
+        window.openTemplateManager = () => document.getElementById('templateManagerModal').style.display = 'flex';
+        
+        window.saveNewTemplate = async () => {
+            const name = document.getElementById('tplName').value;
+            const subs = document.getElementById('tplTypes').value.split(',').map(s=>s.trim()).filter(s=>s);
+            const durs = document.getElementById('tplDurations').value.split(',').map(s=>s.trim()).filter(s=>s);
+            if(!name) return alert("Name required");
+            await addDoc(collection(db, "clinicalTemplates"), { name, subtypes: subs, durations: durs });
+            document.getElementById('tplName').value=''; document.getElementById('tplTypes').value=''; document.getElementById('tplDurations').value='';
+        };
+
+        function renderTemplateManagerList() {
+            const div = document.getElementById('templateListContainer');
+            div.innerHTML = '';
+            clinicalTemplates.forEach(t => {
+                div.innerHTML += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:5px;"><span>${t.name}</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('${t.id}')">Del</button></div>`;
+            });
+        }
+        window.deleteTemplate = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "clinicalTemplates", id)); };
+        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+
+        // --- MEDICINE LOGIC ---
         function handleMedicineInput(rid) {
             const input = document.getElementById(`name-${rid}`);
             const nameVal = input.value.trim();
@@ -667,7 +842,9 @@
                 missingDiv.innerHTML = '';
                 const select = document.getElementById(`strength-${rid}`);
                 select.innerHTML = '<option value="">--</option>';
-                med.strengths.forEach(opt => { const el = document.createElement('option'); el.value = opt; el.innerText = opt; select.appendChild(el); });
+                med.strengths.forEach(opt => { 
+                    const el = document.createElement('option'); el.value = opt; el.innerText = opt; select.appendChild(el); 
+                });
             } else if (nameVal.length > 2) {
                 missingDiv.innerHTML = `<div class="add-med-link" onclick="quickAddMedicine('${nameVal}')">⚠️ '${nameVal}' not found. + Add to DB?</div>`;
             } else { missingDiv.innerHTML = ''; }
@@ -694,7 +871,7 @@
             document.getElementById('btnSaveMed').innerText = "Update Medicine";
             document.getElementById('editMedId').value = id;
             document.getElementById('newMedName').value = name;
-            document.getElementById('newMedStrengths').value = strengths.join(', '); 
+            document.getElementById('newMedStrengths').value = strengths;
         }
 
         window.showAddMedForm = function() { 
@@ -713,7 +890,12 @@
             cloudMedicines.filter(m => m.name.toLowerCase().includes(term)).forEach(m => {
                 const div = document.createElement('div');
                 div.className = 'med-list-item';
-                div.innerHTML = `<div><strong>${m.name}</strong> <br> <small style="color:#666">${m.strengths.join(', ')}</small></div><div style="display:flex; gap:5px;"><button class="btn btn-secondary btn-sm" onclick="editMedicine('${m.id}', '${m.name}', ['${m.strengths.join("','")}'])">Edit</button><button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button></div>`;
+                div.innerHTML = `
+                    <div><strong>${m.name}</strong> <br> <small style="color:#666">${m.strengths.join(', ')}</small></div>
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn btn-secondary btn-sm" onclick="editMedicine('${m.id}', '${m.name}', '${m.strengths.join(", ")}')">Edit</button>
+                        <button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button>
+                    </div>`;
                 container.appendChild(div);
             });
         }
