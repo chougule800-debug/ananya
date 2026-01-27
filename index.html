@@ -91,6 +91,13 @@
         .form-group label { display: block; font-size: 12px; font-weight: 600; color: #4b5563; margin-bottom: 5px; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
         
+        /* Auto-expandable textarea style */
+        textarea.auto-expand { 
+            resize: none; 
+            overflow-y: hidden; 
+            min-height: 40px; 
+        }
+
         .input-error { border: 2px solid #ef4444 !important; background-color: #fef2f2; }
 
         .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
@@ -101,13 +108,13 @@
         .btn-yellow { background: #f59e0b; color: white; }
         .btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-        /* --- DRUG ROWS (ALIGNMENT FIXED) --- */
+        /* --- DRUG ROWS --- */
         .drug-row { display: flex; gap: 15px; align-items: flex-start; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
         
         .col-name { flex: 4; display: flex; flex-direction: column; gap: 5px; } 
         .col-weight { flex: 1.5; } 
         .col-small { flex: 0.8; text-align: center; } 
-        .col-days { flex: 1.8; } 
+        .col-days { flex: 2; } 
         .col-total { flex: 1; } 
         .col-action { flex: 0.4; text-align: right; padding-top: 28px; }
         
@@ -119,6 +126,13 @@
 
         .dose-input-group { display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .checkbox-label { font-size: 10px; color: #666; font-weight: bold; cursor: pointer; height: 20px; display: flex; align-items: center; }
+        
+        .duration-checks { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+        .dur-check-label { 
+            font-size: 11px; font-weight: 700; color: #374151; display: flex; align-items: center; gap: 4px; cursor: pointer;
+            background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #e5e7eb;
+        }
+        .dur-check-label input { margin: 0; width: auto; }
 
         .patient-list-item { padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; background: #f9fafb; transition: 0.2s; }
         .patient-list-item:hover { border-color: var(--primary); transform: translateX(2px); }
@@ -175,7 +189,9 @@
         .template-add-btn:hover { border-color: var(--primary); color: var(--primary); }
 
         /* LAB GRID */
-        .lab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+        .lab-grid-row1 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
+        .lab-grid-row2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 10px; }
+        .lab-big-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: 'Inter', sans-serif; resize: none; overflow-y: hidden; min-height: 40px;}
         .lab-input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; text-align: center; font-weight: 600; color: var(--primary); }
 
         /* MODALS */
@@ -193,11 +209,13 @@
 
         /* PRINT */
         @media print {
+            @page { margin: 10mm; size: A4; }
             body, .container { background: white; margin: 0; padding: 0; max-width: 100%; }
             .no-print, .app-header, .patient-list-section, .btn, .card-header-actions, .auto-mic-container, .mic-btn, .add-med-link, #authContainer, #loadingOverlay, .template-area, .modal { display: none !important; }
             .print-only { display: block !important; }
             .card { box-shadow: none; padding: 0; border: none; }
-            .print-container { padding: 40px; font-family: 'Times New Roman', serif; }
+            .print-container { padding: 20px; font-family: 'Times New Roman', serif; }
+            
             .print-header { display: flex; justify-content: space-between; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 5px; }
             .dr-info h1 { color: #b91c1c !important; font-size: 26px; margin: 0; font-weight: 900; text-transform: uppercase; display: flex; align-items: baseline; gap: 10px; }
             .dr-info .print-degree { font-size: 14px; color: #000; font-weight: 700; }
@@ -205,8 +223,22 @@
             .clinic-info-container { display: flex; align-items: center; gap: 15px; text-align: right; }
             .clinic-logo-img { height: 60px; width: auto; }
             .clinic-name { color: #1e3a8a !important; font-size: 20px; font-weight: 900; text-transform: uppercase; border: 2px solid #1e3a8a; padding: 2px 8px; display: inline-block; }
-            .rx-badge { text-align: center; margin: 15px 0; }
-            .rx-badge span { background: #222; color: white !important; padding: 4px 25px; border-radius: 4px; font-weight: bold; letter-spacing: 2px; font-size: 14px; -webkit-print-color-adjust: exact; }
+            
+            /* Two separate pages layout */
+            /* Removed min-height to prevent accidental 3rd page generation */
+            .print-page { 
+                display: flex; flex-direction: column; 
+                position: relative;
+            }
+            
+            /* Proper Page Break Mechanism */
+            .page-break-before { page-break-before: always; }
+
+            /* Add padding to second page header so it doesn't touch top */
+            #printPage2 { padding-top: 30px; }
+
+            .rx-badge { text-align: center; margin: 20px 0; }
+            .rx-badge span { background: #222; color: white !important; padding: 6px 30px; border-radius: 4px; font-weight: bold; letter-spacing: 2px; font-size: 16px; -webkit-print-color-adjust: exact; }
             
             /* Print Meta Grid */
             .print-meta-grid { display: flex; justify-content: space-between; margin: 10px 0; font-weight: bold; font-size: 16px; border-bottom: 2px solid #000; padding-bottom: 5px; }
@@ -216,16 +248,21 @@
             .rx-table td { border: 1px solid #000; padding: 8px 5px; font-size: 16px; text-align: center; height: 40px; vertical-align: middle; font-weight: 600; color: #1e3a8a !important; }
             .rx-table td.drug-name-cell { text-align: left; padding-left: 15px; color: #000 !important; }
             
-            .print-footer { position: fixed; bottom: 40px; right: 40px; text-align: right; display: block !important; }
-            .signature-line { border-top: 1px solid #000; margin-top: 40px; padding-top: 5px; font-weight: bold; display: block; }
+            /* Signature flow layout instead of absolute */
+            .print-footer { 
+                margin-top: 50px; /* Space from table */
+                text-align: right; 
+                padding-bottom: 20px; 
+            }
+            .signature-line { border-top: 1px solid #000; margin-top: 10px; padding-top: 5px; font-weight: bold; display: inline-block; width: 200px; text-align: center;}
             
-            /* PRINT BOXES FOR LABS & DETAILS */
+            /* PRINT BOXES */
             .print-section-box { border: 1px solid #000; padding: 5px 10px; margin-bottom: 8px; font-size: 14px; font-family: 'Inter', sans-serif; display: flex; align-items: baseline; gap: 10px; min-height: 35px;}
             .print-section-title { font-weight: bold; min-width: 140px; text-decoration: underline;}
-            .print-section-content { font-weight: 600; flex-grow: 1; }
+            .print-section-content { font-weight: 600; flex-grow: 1; white-space: pre-wrap; }
+            .print-details-box { border: 1px solid #000; padding: 10px; height: auto; min-height: 0; margin-bottom: 20px; font-size: 14px; white-space: pre-wrap; font-family: 'Inter', sans-serif; display: none; width: 100%; }
             
             .print-prescription-box { text-align: center; border: 1px solid #000; padding: 5px; margin: 15px 0 5px 0; font-weight: bold; background: #eee !important; -webkit-print-color-adjust: exact; }
-            
             .print-patient-rx-row { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; padding: 0 10px; }
         }
         .print-only { display: none; }
@@ -321,7 +358,7 @@
                             </div>
                             <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone"></div>
                             <div class="form-group"><label>Address</label><input type="text" id="regAddress"></div>
-                            <div class="form-group"><label>Provisional Diagnosis</label><textarea id="regDiagnosis" rows="2"></textarea></div>
+                            <div class="form-group"><label>Provisional Diagnosis</label><textarea id="regDiagnosis" rows="2" class="auto-expand"></textarea></div>
                             <button type="submit" id="btnRegister" class="btn btn-primary">Register Patient</button>
                         </form>
                     </div>
@@ -378,17 +415,19 @@
 
                             <div style="margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
                                 <h5 style="margin-top:0; color:var(--primary); margin-bottom:10px;">On Examination</h5>
-                                <div class="lab-grid">
+                                <div class="lab-grid-row1">
                                     <div class="form-group"><label>BP</label><input type="text" id="examBP" class="lab-input" placeholder="e.g. 140/80"></div>
                                     <div class="form-group"><label>Pulse</label><input type="text" id="examPulse" class="lab-input" placeholder="e.g. 78"></div>
+                                </div>
+                                <div class="lab-grid-row2">
                                     <div class="form-group"><label>HB (g/dL)</label><input type="text" id="labHB" class="lab-input" placeholder="e.g. 12.5"></div>
                                     <div class="form-group"><label>RBS (mg/dL)</label><input type="text" id="labRBS" class="lab-input" placeholder="e.g. 110"></div>
                                     <div class="form-group"><label>Creatinine (mg/dL)</label><input type="text" id="labCreatinine" class="lab-input" placeholder="e.g. 0.9"></div>
-                                    
-                                    <div class="form-group"><label>EEG</label><input type="text" id="testEEG" class="lab-input" placeholder="Result"></div>
-                                    <div class="form-group"><label>NCV</label><input type="text" id="testNCV" class="lab-input" placeholder="Result"></div>
-                                    <div class="form-group"><label>Carotid Doppler / TCS</label><input type="text" id="testDoppler" class="lab-input" placeholder="Result"></div>
                                 </div>
+                                <div class="form-group"><label>ECG</label><textarea id="testECG" class="lab-big-input auto-expand" rows="1" placeholder="Result"></textarea></div>
+                                <div class="form-group"><label>EEG</label><textarea id="testEEG" class="lab-big-input auto-expand" rows="1" placeholder="Result"></textarea></div>
+                                <div class="form-group"><label>NCV</label><textarea id="testNCV" class="lab-big-input auto-expand" rows="1" placeholder="Result"></textarea></div>
+                                <div class="form-group"><label>Carotid Doppler / TCS</label><textarea id="testDoppler" class="lab-big-input auto-expand" rows="1" placeholder="Result"></textarea></div>
                             </div>
 
                             <div style="margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
@@ -397,7 +436,7 @@
                                     <div class="template-area" id="templateChipContainer"><span class="template-add-btn" onclick="openTemplateManager()">+ Manage Templates</span></div>
                                 </div>
                                 <div class="mic-wrapper">
-                                    <textarea id="docDetails" class="form-control" rows="4" placeholder="Type or use templates..."></textarea>
+                                    <textarea id="docDetails" class="form-control auto-expand" rows="4" placeholder="Type or use templates..."></textarea>
                                     <button id="mic-docDetails" class="mic-btn" onmousedown="handleManualMicClick(event, 'docDetails')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button>
                                 </div>
                             </div>
@@ -416,57 +455,40 @@
     </div>
 
     <div class="print-only print-container">
-        <div class="print-header">
-            <div class="dr-info"><h1>Dr. G.M. WALI <span class="print-degree">M.D. D.M.</span></h1><p>CHIEF NEUROLOGIST</p><p>K.M.C. 12671</p></div>
-            <div class="clinic-info-container"><img src="logo.png" alt="Logo" class="clinic-logo-img"><div class="clinic-info"><div class="clinic-name">NEURO SPECIALITIES CENTRE</div><div class="clinic-details">3933, CLUB ROAD, BELGAUM-590 001<br>Ph.: 0831-2430625, E-mail: walidoc@hotmail.com</div></div></div>
-        </div>
         
-        <div id="printTopSection" style="display: none;">
-            <div class="print-meta-grid">
-                <div id="printNameTop">Patient Name: </div>
-                <div id="printAgeSexTop">Age/Sex: </div>
+        <div id="printPage1" class="print-page" style="display:none;">
+            <div class="print-header">
+                <div class="dr-info"><h1>Dr. G.M. WALI <span class="print-degree">M.D. D.M.</span></h1><p>CHIEF NEUROLOGIST</p><p>K.M.C. 12671</p></div>
+                <div class="clinic-info-container"><img src="logo.png" alt="Logo" class="clinic-logo-img"><div class="clinic-info"><div class="clinic-name">NEURO SPECIALITIES CENTRE</div><div class="clinic-details">3933, CLUB ROAD, BELGAUM-590 001<br>Ph.: 0831-2430625, E-mail: walidoc@hotmail.com</div></div></div>
             </div>
             
-            <div id="printDetails" class="print-section-box" style="display:none;">
-                <div class="print-section-title">Case Details:</div>
-                <div class="print-section-content" id="printDetailsContent"></div>
+            <div class="print-meta-grid">
+                <div id="printNameP1">Patient Name: </div>
+                <div id="printAgeSexP1">Age/Sex: </div>
             </div>
-
-            <div class="print-section-box" id="printExamBox" style="display:none;">
-                <div class="print-section-title">On Examination:</div>
-                <div class="print-section-content" id="printExamContent"></div>
-            </div>
-
-            <div class="print-section-box" id="printBloodBox" style="display:none;">
-                <div class="print-section-title">Blood Test:</div>
-                <div class="print-section-content" id="printBloodContent"></div>
-            </div>
-
-            <div class="print-section-box" id="printEEGBox" style="display:none;">
-                <div class="print-section-title">EEG:</div>
-                <div class="print-section-content" id="printEEGContent"></div>
-            </div>
-
-            <div class="print-section-box" id="printNCVBox" style="display:none;">
-                <div class="print-section-title">NCV:</div>
-                <div class="print-section-content" id="printNCVContent"></div>
-            </div>
-
-            <div class="print-section-box" id="printDopplerBox" style="display:none;">
-                <div class="print-section-title">Carotid Doppler / TCS:</div>
-                <div class="print-section-content" id="printDopplerContent"></div>
-            </div>
+            
+            <div id="printExamBody"></div>
+            <div id="printNotesBody" class="print-details-box" style="margin-top:10px;"></div>
         </div>
 
-        <div class="rx-badge"><span>PRESCRIPTION</span></div>
-        
-        <div class="print-patient-rx-row">
-            <div id="printNameBottom">Name: </div>
-            <div id="printDateBottom">Date: </div>
+        <div id="printPage2" class="print-page page-break-before" style="display:none;">
+            <div class="print-header">
+                <div class="dr-info"><h1>Dr. G.M. WALI <span class="print-degree">M.D. D.M.</span></h1><p>CHIEF NEUROLOGIST</p><p>K.M.C. 12671</p></div>
+                <div class="clinic-info-container"><img src="logo.png" alt="Logo" class="clinic-logo-img"><div class="clinic-info"><div class="clinic-name">NEURO SPECIALITIES CENTRE</div><div class="clinic-details">3933, CLUB ROAD, BELGAUM-590 001<br>Ph.: 0831-2430625, E-mail: walidoc@hotmail.com</div></div></div>
+            </div>
+
+            <div class="print-patient-rx-row" style="margin-top:20px;">
+                <div id="printNameP2">Name: </div>
+                <div id="printDateP2">Date: </div>
+            </div>
+
+            <div class="rx-badge"><span>PRESCRIPTION</span></div>
+
+            <table class="rx-table"><thead><tr><th width="5%">Sl.<br>No.</th><th width="40%">DRUG NAME</th><th width="10%">Morning<br><span class="lang-sub">ಬೆಳಿಗ್ಗೆ / सकाळी</span></th><th width="10%">Afternoon<br><span class="lang-sub">ಮಧ್ಯಾಹ್ನ / दुपारी</span></th><th width="10%">Night<br><span class="lang-sub">ರಾತ್ರಿ / रात्री</span></th><th width="10%">Total Qty.</th></tr></thead><tbody id="printTableBody"></tbody></table>
+            
+            <div class="print-footer"><div class="signature-line">Signature</div></div>
         </div>
 
-        <table class="rx-table"><thead><tr><th width="5%">Sl.<br>No.</th><th width="40%">DRUG NAME</th><th width="10%">Morning<br><span class="lang-sub">ಬೆಳಿಗ್ಗೆ / सकाळी</span></th><th width="10%">Afternoon<br><span class="lang-sub">ಮಧ್ಯಾಹ್ನ / दुपारी</span></th><th width="10%">Night<br><span class="lang-sub">ರಾತ್ರಿ / रात्री</span></th><th width="10%">Total Qty.</th></tr></thead><tbody id="printTableBody"></tbody></table>
-        <div class="print-footer"><div class="signature-line">Signature</div></div>
     </div>
 
     <datalist id="allMedicines"></datalist>
@@ -561,7 +583,18 @@
                 renderTemplateChips(); renderTemplateManagerList();
             });
             // Mics
-            ['docDetails','newMedName','newMedStrengths','medManagerSearch','reviewSearch'].forEach(attachMicListeners);
+            ['docDetails'].forEach(attachMicListeners);
+            
+            // Auto Expand Listeners
+            document.querySelectorAll('.auto-expand').forEach(el => {
+                el.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                });
+            });
+            
+            // Default check notes
+            document.getElementById('includeNotesInPrint').checked = true;
         }
 
         async function seedMedicines() { const snap = await getDocs(collection(db, "medicines")); if(snap.empty && typeof medicineDatabase !== 'undefined') for (const [n, s] of Object.entries(medicineDatabase)) await addDoc(collection(db, "medicines"), { name: n, strengths: s }); }
@@ -657,7 +690,7 @@
             currentPatient = p; document.getElementById('workspace').style.display = 'block';
             document.getElementById('pNameDisplay').innerText = p.name; document.getElementById('pDetailsDisplay').innerText = `${p.age}Y / ${p.sex} | ${p.phone}`;
             renderDoctorQueue(); document.getElementById('drugListContainer').innerHTML = ''; document.getElementById('docDetails').value = ''; 
-            ['examBP','examPulse','labHB','labRBS','labCreatinine','testEEG','testNCV','testDoppler'].forEach(id => document.getElementById(id).value = '');
+            ['examBP','examPulse','labHB','labRBS','labCreatinine','testECG','testEEG','testNCV','testDoppler'].forEach(id => document.getElementById(id).value = '');
             addDrugRow();
         }
 
@@ -691,7 +724,7 @@
             const labs = {
                 bp: document.getElementById('examBP').value, pulse: document.getElementById('examPulse').value,
                 hb: document.getElementById('labHB').value, rbs: document.getElementById('labRBS').value, cr: document.getElementById('labCreatinine').value,
-                eeg: document.getElementById('testEEG').value, ncv: document.getElementById('testNCV').value, dop: document.getElementById('testDoppler').value
+                ecg: document.getElementById('testECG').value, eeg: document.getElementById('testEEG').value, ncv: document.getElementById('testNCV').value, dop: document.getElementById('testDoppler').value
             };
 
             btn.disabled = true;
@@ -699,62 +732,51 @@
                 const record = { date: new Date().toLocaleDateString(), meds: drugs, notes, labs };
                 await updateDoc(doc(db, "patients", currentPatient.id), { history: arrayUnion(record) });
                 
-                // POPULATE PRINT VIEW
-                document.getElementById('printNameTop').innerText = "Patient Name: " + currentPatient.name;
-                document.getElementById('printAgeSexTop').innerText = `Age/Sex: ${currentPatient.age} / ${currentPatient.sex}`;
-                
-                document.getElementById('printNameBottom').innerText = "Name: " + currentPatient.name;
-                document.getElementById('printDateBottom').innerText = "Date: " + record.date;
-                
-                // CONDITIONAL SHOW LOGIC
-                // Check if we have ANY data for top section (Notes or Labs)
-                const hasData = (printNotes && notes) || labs.bp || labs.pulse || labs.hb || labs.rbs || labs.cr || labs.eeg || labs.ncv || labs.dop;
+                const hasExam = (printNotes && notes) || labs.bp || labs.pulse || labs.hb || labs.rbs || labs.cr || labs.ecg || labs.eeg || labs.ncv || labs.dop;
+                const hasMeds = drugs.length > 0;
 
-                if (hasData) {
-                    document.getElementById('printTopSection').style.display = 'block';
+                // --- PAGE 1: EXAM & NOTES ---
+                const page1 = document.getElementById('printPage1');
+                if(hasExam) {
+                    page1.style.display = 'block';
+                    document.getElementById('printNameP1').innerText = "Patient Name: " + currentPatient.name;
+                    document.getElementById('printAgeSexP1').innerText = `Age/Sex: ${currentPatient.age} / ${currentPatient.sex}`;
                     
-                    // Notes
-                    const pNotes = document.getElementById('printDetails');
-                    const pContent = document.getElementById('printDetailsContent');
-                    if(printNotes && notes) { pContent.innerText = notes; pNotes.style.display = 'flex'; } else pNotes.style.display = 'none';
+                    let examHtml = "";
+                    if(labs.bp || labs.pulse) examHtml += `<div class="print-section-box"><div class="print-section-title">On Examination:</div><div class="print-section-content">BP: ${labs.bp||'-'} &nbsp;&nbsp; Pulse: ${labs.pulse||'-'}</div></div>`;
+                    if(labs.hb || labs.rbs || labs.cr) examHtml += `<div class="print-section-box"><div class="print-section-title">Blood Test:</div><div class="print-section-content">HB: ${labs.hb||'-'} &nbsp;&nbsp; RBS: ${labs.rbs||'-'} &nbsp;&nbsp; Cr: ${labs.cr||'-'}</div></div>`;
+                    if(labs.ecg) examHtml += `<div class="print-section-box"><div class="print-section-title">ECG:</div><div class="print-section-content">${labs.ecg}</div></div>`;
+                    if(labs.eeg) examHtml += `<div class="print-section-box"><div class="print-section-title">EEG:</div><div class="print-section-content">${labs.eeg}</div></div>`;
+                    if(labs.ncv) examHtml += `<div class="print-section-box"><div class="print-section-title">NCV:</div><div class="print-section-content">${labs.ncv}</div></div>`;
+                    if(labs.dop) examHtml += `<div class="print-section-box"><div class="print-section-title">Carotid/TCS:</div><div class="print-section-content">${labs.dop}</div></div>`;
+                    
+                    document.getElementById('printExamBody').innerHTML = examHtml;
 
-                    // Exam
-                    const pExam = document.getElementById('printExamBox');
-                    let examTxt = "";
-                    if(labs.bp) examTxt += `BP: ${labs.bp}  `;
-                    if(labs.pulse) examTxt += `Pulse: ${labs.pulse}`;
-                    if(examTxt) { document.getElementById('printExamContent').innerText = examTxt; pExam.style.display = 'flex'; } else pExam.style.display = 'none';
-
-                    // Blood
-                    const pBlood = document.getElementById('printBloodBox');
-                    let bloodTxt = "";
-                    if(labs.hb) bloodTxt += `HB: ${labs.hb}  `;
-                    if(labs.rbs) bloodTxt += `RBS: ${labs.rbs}  `;
-                    if(labs.cr) bloodTxt += `Creatinine: ${labs.cr}`;
-                    if(bloodTxt) { document.getElementById('printBloodContent').innerText = bloodTxt; pBlood.style.display = 'flex'; } else pBlood.style.display = 'none';
-
-                    // Neuro Tests
-                    const pEEG = document.getElementById('printEEGBox');
-                    if(labs.eeg) { document.getElementById('printEEGContent').innerText = labs.eeg; pEEG.style.display = 'flex'; } else pEEG.style.display = 'none';
-
-                    const pNCV = document.getElementById('printNCVBox');
-                    if(labs.ncv) { document.getElementById('printNCVContent').innerText = labs.ncv; pNCV.style.display = 'flex'; } else pNCV.style.display = 'none';
-
-                    const pDop = document.getElementById('printDopplerBox');
-                    if(labs.dop) { document.getElementById('printDopplerContent').innerText = labs.dop; pDop.style.display = 'flex'; } else pDop.style.display = 'none';
-
+                    const pNotes = document.getElementById('printNotesBody');
+                    if(printNotes && notes) { pNotes.innerHTML = "<strong>Case Details:</strong><br>" + notes; pNotes.style.display = 'block'; } 
+                    else pNotes.style.display = 'none';
                 } else {
-                    // Hide top section entirely if no data
-                    document.getElementById('printTopSection').style.display = 'none';
+                    page1.style.display = 'none';
                 }
 
-                const tbody = document.getElementById('printTableBody'); tbody.innerHTML = '';
-                drugs.forEach((d, i) => {
-                    const fmt = (v) => v==0.5 ? '½' : v;
-                    tbody.innerHTML += `<tr><td>${i+1}</td><td class="drug-name-cell">${d.type} ${d.name} <small>${d.strength}</small></td><td>${fmt(d.m)}</td><td>${fmt(d.a)}</td><td>${fmt(d.n)}</td><td>${d.t}</td></tr>`;
-                });
+                // --- PAGE 2: PRESCRIPTION ---
+                const page2 = document.getElementById('printPage2');
+                if(hasMeds) {
+                    page2.style.display = 'flex'; // Use flex for column layout
+                    document.getElementById('printNameP2').innerText = "Name: " + currentPatient.name;
+                    document.getElementById('printDateP2').innerText = "Date: " + record.date;
+                    
+                    const tbody = document.getElementById('printTableBody'); tbody.innerHTML = '';
+                    drugs.forEach((d, i) => {
+                        const fmt = (v) => v==0.5 ? '½' : v;
+                        tbody.innerHTML += `<tr><td>${i+1}</td><td class="drug-name-cell">${d.type} ${d.name} <small>${d.strength}</small></td><td>${fmt(d.m)}</td><td>${fmt(d.a)}</td><td>${fmt(d.n)}</td><td>${d.t}</td></tr>`;
+                    });
+                } else {
+                    page2.style.display = 'none';
+                }
+
                 window.print();
-            } catch(e) { alert("Error!"); } finally { btn.disabled = false; }
+            } catch(e) { console.log(e); alert("Error!"); } finally { btn.disabled = false; }
         }
 
         async function finishConsultation() {
@@ -767,7 +789,7 @@
         window.addDrugRow = addDrugRow;
         window.calculateTotal = calculateTotal;
         window.updateStrengths = (id) => handleMedicineInput(id);
-        window.handleTypeCheck = (rid, type) => { ['tab','syp','cap','sup'].forEach(t => { if(t!==type) document.getElementById(`type-${t}-${rid}`).checked=false; }); };
+        window.handleTypeCheck = (rid, type) => { ['tab','syp','cap'].forEach(t => { if(t!==type) document.getElementById(`type-${t}-${rid}`).checked=false; }); };
         window.handleDoseInput = (rid, slot, src) => { 
             const d=document.getElementById(`${slot}-${rid}`), c=document.getElementById(`${slot}-chk-${rid}`);
             if(src==='dropdown') { if(d.value!=='0') c.checked=false; } else if(c.checked) d.value='0';
@@ -778,6 +800,18 @@
             calculateTotal(rid);
         };
         
+        window.setDurationChk = (rid, days) => {
+            [5, 10, 15, 30].forEach(d => {
+                const box = document.getElementById(`d-${d}-${rid}`);
+                if(d !== days) box.checked = false;
+            });
+            document.getElementById(`d-preset-${rid}`).value = "manual";
+            document.getElementById(`d-manual-container-${rid}`).style.display = 'flex';
+            document.getElementById(`d-num-${rid}`).value = days;
+            document.getElementById(`d-unit-${rid}`).value = "1"; 
+            calculateTotal(rid);
+        };
+
         function toggleHistory() {
             const sec = document.getElementById('historySection'), cont = document.getElementById('historyContent');
             if (sec.style.display === 'none') {
@@ -795,21 +829,13 @@
                             if(l.hb) parts.push(`HB: ${l.hb}`);
                             if(l.rbs) parts.push(`RBS: ${l.rbs}`);
                             if(l.cr) parts.push(`Cr: ${l.cr}`);
+                            if(l.ecg) parts.push(`ECG: ${l.ecg}`);
                             if(l.eeg) parts.push(`EEG: ${l.eeg}`);
                             if(l.ncv) parts.push(`NCV: ${l.ncv}`);
                             if(l.dop) parts.push(`Dop: ${l.dop}`);
                             if(parts.length > 0) labStr = `<div style="font-size:12px; color:#666; margin-bottom:5px;"><strong>Exam:</strong> ${parts.join(', ')}</div>`;
                         }
-                        
-                        return `
-                        <div style="border-bottom:1px solid #ccc; padding:10px 0;">
-                            <strong>${h.date}</strong>
-                            ${labStr}
-                            <p style="margin:5px 0;">${h.notes || ''}</p>
-                            <ul style="margin:5px 0; padding-left:20px; font-size:13px;">
-                                ${h.meds.map(m => `<li>${m.type} ${m.name} (${m.strength})</li>`).join('')}
-                            </ul>
-                        </div>`;
+                        return `<div style="border-bottom:1px solid #ccc; padding:10px 0;"><strong>${h.date}</strong>${labStr}<p style="margin:5px 0;">${h.notes || ''}</p><ul style="margin:5px 0; padding-left:20px; font-size:13px;">${h.meds.map(m => `<li>${m.type} ${m.name} (${m.strength})</li>`).join('')}</ul></div>`;
                     }).join('');
                 }
             } else sec.style.display = 'none';
@@ -821,13 +847,15 @@
             const div = document.createElement('div'); div.className = 'drug-row'; div.id = `row-${rowCount}`;
             const doseOpts = `<option value="0">0</option><option value="0.5">½</option><option value="2">2</option><option value="3">3</option>`; 
             div.innerHTML = `
-                <div class="col-name"><label>Medicine Name</label><div class="mic-wrapper"><input list="allMedicines" id="name-${rowCount}" placeholder="Search..." oninput="updateStrengths(${rowCount})"><button id="mic-${rowCount}" class="mic-btn" onmousedown="handleManualMicClick(event, 'name-${rowCount}')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button></div><div id="missing-alert-${rowCount}"></div>
-                <div class="form-check-group"><label class="form-check-label"><input type="checkbox" id="type-tab-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'tab')"> TAB</label><label class="form-check-label"><input type="checkbox" id="type-syp-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'syp')"> Syp</label><label class="form-check-label"><input type="checkbox" id="type-cap-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'cap')"> Cap</label><label class="form-check-label"><input type="checkbox" id="type-sup-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'sup')"> Sup</label></div></div>
+                <div class="col-name"><label>Medicine Name</label><div class="mic-wrapper"><input list="allMedicines" id="name-${rowCount}" placeholder="Search..." oninput="updateStrengths(${rowCount})"></div><div id="missing-alert-${rowCount}"></div>
+                <div class="form-check-group"><label class="form-check-label"><input type="checkbox" id="type-tab-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'tab')" checked> TAB</label><label class="form-check-label"><input type="checkbox" id="type-syp-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'syp')"> Syp</label><label class="form-check-label"><input type="checkbox" id="type-cap-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'cap')"> Cap</label></div></div>
                 <div class="col-weight"><label>Strength</label><select id="strength-${rowCount}"><option value="">--</option></select></div>
-                <div class="col-small"><label>M</label><div class="dose-input-group"><select id="m-${rowCount}" onchange="handleDoseInput(${rowCount},'m','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="m-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'m','check')"></label></div></div>
+                <div class="col-small"><label>M</label><div class="dose-input-group"><select id="m-${rowCount}" onchange="handleDoseInput(${rowCount},'m','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="m-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'m','check')" checked></label></div></div>
                 <div class="col-small"><label>A</label><div class="dose-input-group"><select id="a-${rowCount}" onchange="handleDoseInput(${rowCount},'a','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="a-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'a','check')"></label></div></div>
-                <div class="col-small"><label>N</label><div class="dose-input-group"><select id="n-${rowCount}" onchange="handleDoseInput(${rowCount},'n','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="n-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'n','check')"></label></div></div>
-                <div class="col-days"><label>Duration</label><select id="d-preset-${rowCount}" onchange="handleDurationChange(${rowCount})"><option value="">Select</option><option value="30">1 Month</option><option value="60">2 Months</option><option value="manual">Manual</option></select><div id="d-manual-container-${rowCount}" style="display:none; margin-top:5px;"><input type="number" id="d-num-${rowCount}" style="width:50px" oninput="calculateTotal(${rowCount})"><select id="d-unit-${rowCount}" onchange="calculateTotal(${rowCount})"><option value="1">Days</option><option value="30">Months</option></select></div></div>
+                <div class="col-small"><label>N</label><div class="dose-input-group"><select id="n-${rowCount}" onchange="handleDoseInput(${rowCount},'n','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="n-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'n','check')" checked></label></div></div>
+                <div class="col-days"><label>Duration</label><select id="d-preset-${rowCount}" onchange="handleDurationChange(${rowCount})"><option value="">Select</option><option value="5">5 Days</option><option value="10">10 Days</option><option value="15">15 Days</option><option value="30">1 Month</option><option value="60">2 Months</option><option value="90">3 Months</option><option value="120">4 Months</option><option value="150">5 Months</option><option value="180">6 Months</option><option value="manual">Manual</option></select>
+                <div class="duration-checks"><label class="dur-check-label"><input type="checkbox" id="d-5-${rowCount}" onclick="setDurationChk(${rowCount},5)"> 5d</label><label class="dur-check-label"><input type="checkbox" id="d-10-${rowCount}" onclick="setDurationChk(${rowCount},10)"> 10d</label><label class="dur-check-label"><input type="checkbox" id="d-15-${rowCount}" onclick="setDurationChk(${rowCount},15)"> 15d</label><label class="dur-check-label"><input type="checkbox" id="d-30-${rowCount}" onclick="setDurationChk(${rowCount},30)"> 1m</label></div>
+                <div id="d-manual-container-${rowCount}" style="display:none; margin-top:5px;"><input type="number" id="d-num-${rowCount}" style="width:50px" oninput="calculateTotal(${rowCount})"><select id="d-unit-${rowCount}" onchange="calculateTotal(${rowCount})"><option value="1">Days</option><option value="30">Months</option></select></div></div>
                 <div class="col-total"><label>Total</label><input type="text" id="t-${rowCount}" readonly style="background:#eee"></div>
                 <div class="col-action"><button class="btn btn-red btn-sm" onclick="document.getElementById('row-${rowCount}').remove()">X</button></div>
             `;
@@ -879,7 +907,9 @@
         function finalizeTemplate() {
             const t = currentTemplateAction; let txt = `• Patient has ${t.template.name}`;
             if(t.subtype) txt += ` (${t.subtype})`; if(t.duration) txt += ` for ${t.duration}`; txt += ".";
-            const area = document.getElementById('docDetails'); area.value += (area.value ? "\n" : "") + txt; closeModal('selectionModal');
+            const area = document.getElementById('docDetails'); area.value += (area.value ? "\n" : "") + txt; 
+            area.style.height = 'auto'; area.style.height = (area.scrollHeight) + 'px'; // Auto expand on template insert
+            closeModal('selectionModal');
         }
         function openSelectionModal(title, opts, cb) {
             document.getElementById('selectionTitle').innerText = title; const grid = document.getElementById('selectionContainer'); grid.innerHTML = '';
@@ -906,7 +936,7 @@
                 if(input.tagName === 'INPUT') { input.value = finalTranscript + interim; if(activeInputId.includes('name-')) handleMedicineInput(activeInputId.split('-')[1]); if(activeInputId === 'medManagerSearch') renderMedManagerList(); } else input.value = finalTranscript + interim;
             };
             recognition.onerror = () => stopListening();
-            recognition.onend = () => { if(activeInputId && isAutoMicOn && ['docDetails','newMedStrengths'].includes(activeInputId)) try{recognition.start()}catch(e){} else stopListeningUI(); };
+            recognition.onend = () => { if(activeInputId && isAutoMicOn && ['docDetails'].includes(activeInputId)) try{recognition.start()}catch(e){} else stopListeningUI(); };
         }
         window.toggleAutoMic = () => { isAutoMicOn = document.getElementById('autoMicToggle').checked; if(!isAutoMicOn) stopListening(); };
         window.handleManualMicClick = (e, id) => { e.preventDefault(); e.stopPropagation(); if(activeInputId === id) stopListening(); else { document.getElementById(id).focus(); startListening(id); } };
@@ -916,7 +946,7 @@
             if(el.tagName === 'INPUT') { el.value=''; finalTranscript=''; } else { finalTranscript=el.value; if(finalTranscript && !finalTranscript.endsWith(' ')) finalTranscript+=' '; }
             let btnId = (id==='docDetails'?'mic-docDetails':(id.includes('name-')?`mic-${id.split('-')[1]}`:`mic-${id}`));
             const btn = document.getElementById(btnId); if(btn) btn.classList.add('listening');
-            recognition.continuous = ['docDetails','newMedStrengths'].includes(id); try{recognition.start()}catch(e){}
+            recognition.continuous = ['docDetails'].includes(id); try{recognition.start()}catch(e){}
         }
         function stopListening() { if(!recognition)return; recognition.stop(); stopListeningUI(); activeInputId=null; }
         function stopListeningUI() { document.querySelectorAll('.mic-btn').forEach(b => b.classList.remove('listening')); }
