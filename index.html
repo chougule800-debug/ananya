@@ -17,12 +17,49 @@
             --bg: #f3f4f6;
             --border: #e5e7eb;
             --success: #059669;
+            --error: #ef4444;
         }
 
         * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 20px; 
+        }
 
         .container { max-width: 1500px; margin: 0 auto; }
+
+        /* --- TOAST NOTIFICATION --- */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 50px;
+            padding: 12px 20px;
+            position: fixed;
+            z-index: 10000;
+            left: 50%;
+            bottom: 40px;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+
+        #toast.success { background-color: var(--success); }
+        #toast.error { background-color: var(--error); }
 
         /* --- AUTH & LOADING SCREENS --- */
         #authContainer, #loadingOverlay {
@@ -83,7 +120,24 @@
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; }
         
         .grid-reception { display: grid; grid-template-columns: 2fr 1.5fr; gap: 20px; }
-        .grid-doctor { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; }
+        
+        /* DOCTOR LAYOUT (Sticky Sidebar) */
+        .grid-doctor { 
+            display: grid; 
+            grid-template-columns: 280px 1fr; 
+            gap: 20px; 
+            align-items: start; 
+        }
+
+        .patient-list-section { 
+            position: sticky;
+            top: 20px; 
+            height: calc(100vh - 40px); 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column;
+        }
+
         .grid-3-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; } 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
@@ -134,50 +188,60 @@
         }
         .dur-check-label input { margin: 0; width: auto; }
 
-        /*  Button in Row */
+        /* Add Medicine Button in Row */
         .add-med-btn-inline {
             font-size: 12px; color: #fff; background: var(--primary); padding: 4px 10px; 
             border-radius: 4px; cursor: pointer; margin-top: 5px; display: inline-block; font-weight: 600;
         }
 
-        /* PATIENT LIST HOVER EXPAND EFFECT */
+        /* --- EXPANDABLE PATIENT LIST ITEM --- */
         .patient-list-item { 
-            padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; 
-            background: #f9fafb; transition: all 0.3s ease; display: block; 
+            padding: 12px; 
+            border: 1px solid var(--border); 
+            border-radius: 8px; 
+            margin-bottom: 8px; 
+            cursor: pointer; 
+            background: #f9fafb; 
+            transition: all 0.2s ease;
         }
+        /* No hover expansion by default */
         .patient-list-item:hover { 
             border-color: var(--primary); 
-            transform: translateX(2px); 
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
+            transform: translateX(2px);
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
         
         .patient-list-header {
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
         }
-        
+
+        /* Hidden details that expand on CLICK */
         .patient-details-expanded {
             max-height: 0;
             overflow: hidden;
             opacity: 0;
-            transition: all 0.4s ease;
-            font-size: 13px;
-            color: #4b5563;
-            margin-top: 0;
+            transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
             background: #eff6ff;
             border-radius: 6px;
+            margin-top: 0;
+            padding: 0 10px;
         }
 
-        /* The Magic Hover */
-        .patient-list-item:hover .patient-details-expanded {
+        /* Expanded State via JS Class */
+        .patient-list-item.expanded .patient-details-expanded {
             max-height: 100px;
             opacity: 1;
             margin-top: 10px;
-            padding: 10px;
+            padding: 8px 10px;
             border: 1px solid #bfdbfe;
         }
-
+        
         .patient-list-item.selected { background: var(--primary-light); border-color: var(--primary); border-left: 4px solid var(--primary); }
         
+        .review-item { display: block; }
         .btn-sm { padding: 5px 10px; font-size: 12px; }
 
         .med-list-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; align-items: center; }
@@ -308,6 +372,8 @@
 </head>
 <body>
 
+    <div id="toast"></div>
+
     <div id="loadingOverlay">
         <div class="spinner"></div>
         <div style="font-weight:600; color:#374151;">Loading...</div>
@@ -401,7 +467,7 @@
                     <div class="nav-pills">
                         <button id="btn-reception" class="nav-btn active">Reception Desk</button>
                         <button id="btn-doctor" class="nav-btn">Doctor Chamber</button>
-                        <button id="btn-medicines" class="nav-btn" onclick="openManagerAddModal()">Add New Medicine</button>
+                        <button id="btn-medicines" class="nav-btn" onclick="openManagerAddModal()">Add Medicine</button>
                         <button id="btn-logout" class="nav-btn logout-btn" onclick="logout()">Logout</button>
                     </div>
                 </div>
@@ -436,7 +502,7 @@
                 <div class="card" style="max-width: 800px; margin: 0 auto;">
                     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:20px;">
                         <h3 style="margin:0;">💊 Medicine Manager (Cloud)</h3>
-                        <button class="btn btn-primary" onclick="openManagerAddModal()">+ Add Medicine</button>
+                        <button class="btn btn-primary" onclick="openManagerAddModal()">+ Add New Medicine</button>
                     </div>
                     
                     <div style="margin-bottom: 15px;">
@@ -581,9 +647,22 @@
 
         let allPatients = [], waitingQueue = [], cloudMedicines = [], clinicalTemplates = [];
         let currentPatient = null, rowCount = 0;
-        
         let recognition = null, isAutoMicOn = false, activeInputId = null, finalTranscript = '';
         let currentTemplateAction = null;
+
+        // --- TOAST FUNCTION ---
+        function showToast(msg, type='neutral') {
+            const t = document.getElementById('toast');
+            t.className = type; 
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => { t.className = ''; }, 800); 
+        }
+
+        // --- TOGGLE DETAILS ---
+        window.togglePatientDetails = function(el) {
+            el.classList.toggle('expanded');
+        }
 
         // --- AUTH & INIT ---
         onAuthStateChanged(auth, (user) => {
@@ -600,16 +679,16 @@
 
         window.login = async () => {
             const email = document.getElementById('loginEmail').value, pass = document.getElementById('loginPass').value;
-            if(!email || !pass) return alert("Enter credentials");
+            if(!email || !pass) return showToast("Enter credentials", "error");
             document.getElementById('loadingOverlay').style.display = 'flex';
-            try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { alert(e.message); document.getElementById('loadingOverlay').style.display = 'none'; }
+            try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { showToast(e.message, "error"); document.getElementById('loadingOverlay').style.display = 'none'; }
         };
 
         window.signup = async () => {
             const email = document.getElementById('regEmail').value, pass = document.getElementById('regPass').value, code = document.getElementById('regCode').value;
-            if(code !== CLINIC_CODE) return alert("Wrong Code");
+            if(code !== CLINIC_CODE) return showToast("Wrong Code", "error");
             document.getElementById('loadingOverlay').style.display = 'flex';
-            try { await createUserWithEmailAndPassword(auth, email, pass); } catch(e) { alert(e.message); document.getElementById('loadingOverlay').style.display = 'none'; }
+            try { await createUserWithEmailAndPassword(auth, email, pass); } catch(e) { showToast(e.message, "error"); document.getElementById('loadingOverlay').style.display = 'none'; }
         };
 
         window.logout = () => { document.getElementById('loadingOverlay').style.display = 'flex'; signOut(auth); };
@@ -744,7 +823,7 @@
             const mode = document.getElementById('uniModalMode').value;
             const targetId = document.getElementById('uniModalTargetId').value;
             
-            if(!name) return alert("Enter Medicine Name");
+            if(!name) return showToast("Enter Medicine Name", "error");
             const strengths = strStr.split(',').map(s => s.trim()).filter(s => s);
             
             if (mode === 'manager_edit') {
@@ -764,6 +843,7 @@
             }
             
             closeModal('universalMedModal');
+            showToast("Medicine Saved!", "success");
         };
 
         window.deleteMedicine = async function(id) { if(confirm("Delete?")) await deleteDoc(doc(db, "medicines", id)); }
@@ -830,7 +910,8 @@
                     });
                 });
                 document.getElementById('regForm').reset();
-            } catch (e) { console.error(e); alert("Registration Failed."); }
+                showToast("Patient Registered!", "success");
+            } catch (e) { console.error(e); showToast("Registration Failed", "error"); }
             btn.disabled = false;
         }
 
@@ -838,19 +919,19 @@
             const term = document.getElementById('reviewSearch').value.toLowerCase(), container = document.getElementById('reviewList'); container.innerHTML = "";
             allPatients.filter(p => p.name.toLowerCase().includes(term) || String(p.regNo).includes(term)).forEach(p => {
                 container.innerHTML += `
-                <div class="patient-list-item review-item">
+                <div class="patient-list-item review-item" onclick="togglePatientDetails(this)">
                     <div class="patient-list-header">
                         <div><strong>${p.name}</strong> <small>(#${p.regNo || '?'} | ${p.age}Y/${p.sex})</small></div>
-                        <button class="btn btn-yellow btn-sm" onclick="sendToDoctor('${p.id}')">Send</button>
+                        <button class="btn btn-yellow btn-sm" onclick="event.stopPropagation(); sendToDoctor('${p.id}')">Send to Doctor</button>
                     </div>
                     <div class="patient-details-expanded">
-                        <div>📞: ${p.phone || '-'}</div>
-                        <div>🏠: ${p.address || '-'}</div>
+                        <div style="font-size:12px; margin-bottom:2px;">📞 ${p.phone || '-'}</div>
+                        <div style="font-size:12px;">🏠 ${p.address || '-'}</div>
                     </div>
                 </div>`;
             });
         }
-        window.sendToDoctor = async (id) => await updateDoc(doc(db, "patients", id), { status: 'waiting', timestamp: serverTimestamp() });
+        window.sendToDoctor = async (id) => { await updateDoc(doc(db, "patients", id), { status: 'waiting', timestamp: serverTimestamp() }); showToast("Sent to Doctor", "success"); };
         function renderDoctorQueue() {
             const container = document.getElementById('doctorQueueList'); container.innerHTML = ""; document.getElementById('queueCount').innerText = waitingQueue.length;
             waitingQueue.forEach(p => {
@@ -871,7 +952,7 @@
             if(!currentPatient) return;
             const btn = document.getElementById('btnPrint'), notes = document.getElementById('docDetails').value, printNotes = document.getElementById('includeNotesInPrint').checked;
             document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-            if(printNotes && !notes.trim()) { alert("Notes empty!"); document.getElementById('docDetails').classList.add('input-error'); return; }
+            if(printNotes && !notes.trim()) { showToast("Notes are empty!", "error"); document.getElementById('docDetails').classList.add('input-error'); return; }
             
             const drugs = []; let isValid = true;
             
@@ -882,18 +963,18 @@
                 if(!name) continue;
 
                 const type = document.querySelector(`input[id^="type-"][id$="-${rid}"]:checked`)?.id.split('-')[1].toUpperCase();
-                if(!type) { isValid = false; alert("Select Type for " + name); row.scrollIntoView(); return; }
+                if(!type) { isValid = false; showToast("Select Type for " + name, "error"); row.scrollIntoView(); return; }
                 
                 const sel = document.getElementById(`str-select-${rid}`);
                 const inp = document.getElementById(`str-input-${rid}`);
                 let str = (sel.style.display !== 'none') ? sel.value : inp.value;
-                if(!str && sel.style.display !== 'none') { isValid = false; alert("Select Strength for " + name); return; }
+                if(!str && sel.style.display !== 'none') { isValid = false; showToast("Select Strength for " + name, "error"); return; }
                 
                 const getVal = (s) => document.getElementById(`${s}-chk-${rid}`).checked ? 1 : parseFloat(document.getElementById(`${s}-${rid}`).value);
                 const m=getVal('m'), a=getVal('a'), n=getVal('n');
-                if(m+a+n === 0) { isValid = false; alert("Select Dose for " + name); return; }
+                if(m+a+n === 0) { isValid = false; showToast("Select Dose for " + name, "error"); return; }
                 const total = document.getElementById(`t-${rid}`).value;
-                if(total == 0 || total === "Error") { isValid = false; alert("Check duration for " + name); return; }
+                if(total == 0 || total === "Error") { isValid = false; showToast("Check duration for " + name, "error"); return; }
                 
                 drugs.push({ name, strength: str, type, m, a, n, t: total });
 
@@ -905,7 +986,7 @@
                 }
             }
 
-            if(!isValid) return; if(drugs.length === 0 && !notes) { alert("Nothing to print!"); return; }
+            if(!isValid) return; if(drugs.length === 0 && !notes) { showToast("Nothing to print!", "error"); return; }
 
             const labs = {
                 bp: document.getElementById('examBP').value, pulse: document.getElementById('examPulse').value,
@@ -961,12 +1042,13 @@
                 }
 
                 window.print();
-            } catch(e) { console.log(e); alert("Error!"); } finally { btn.disabled = false; }
+            } catch(e) { console.log(e); showToast("Error!", "error"); } finally { btn.disabled = false; }
         }
 
         async function finishConsultation() {
-            if(!currentPatient || !confirm("Clear?")) return;
+            if(!currentPatient) return;
             await updateDoc(doc(db, "patients", currentPatient.id), { status: 'done' });
+            showToast("Cleared from Queue", "success");
             document.getElementById('workspace').style.display = 'none'; currentPatient = null;
         }
 
