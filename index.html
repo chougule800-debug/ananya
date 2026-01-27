@@ -24,7 +24,7 @@
 
         .container { max-width: 1500px; margin: 0 auto; }
 
-        /* --- AUTH & LOADING SCREENS --- */
+        /* --- AUTH & LOADING --- */
         #authContainer, #loadingOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center;
@@ -52,26 +52,17 @@
             justify-content: space-between; align-items: flex-start; margin-bottom: 25px;
             border-bottom: 4px solid var(--primary);
         }
-
-        .header-left h1 { 
-            color: var(--dr-red); font-size: 28px; margin: 0; font-weight: 900; 
-            text-transform: uppercase; letter-spacing: -0.5px;
-            display: flex; align-items: baseline; gap: 10px;
-        }
-        
+        .header-left h1 { color: var(--dr-red); font-size: 28px; margin: 0; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; display: flex; align-items: baseline; gap: 10px; }
         .degree-text { color: #000; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0; }
         .header-left p { margin: 2px 0; font-size: 13px; font-weight: 700; color: #000; }
         .kmc-code { font-size: 14px; font-weight: 600; color: #444; margin-top: 5px !important; }
-
         .header-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
         .clinic-brand { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
         .clinic-name { color: var(--primary); font-size: 22px; font-weight: 900; text-transform: uppercase; border: 2px solid var(--primary); padding: 4px 10px; display: inline-block; }
         .clinic-logo-header { height: 50px; width: auto; }
-
         .nav-pills { display: flex; gap: 10px; background: var(--bg); padding: 5px; border-radius: 8px; align-self: flex-end; align-items: center; }
         .nav-btn { border: none; background: transparent; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; color: #6b7280; transition: 0.2s; }
         .nav-btn.active { background: white; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .nav-btn-icon { font-size: 18px; padding: 8px 15px; }
         .logout-btn { color: #ef4444 !important; border: 1px solid #ef4444 !important; margin-left: 10px; }
         .logout-btn:hover { background: #fee2e2 !important; }
 
@@ -81,25 +72,15 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        
         .grid-reception { display: grid; grid-template-columns: 2fr 1.5fr; gap: 20px; }
         .grid-doctor { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; }
         .grid-3-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; } 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
         .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; font-size: 12px; font-weight: 600; color: #4b5563; margin-bottom: 5px; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
-        
-        /* Auto-expandable textarea style */
-        textarea.auto-expand { 
-            resize: none; 
-            overflow-y: hidden; 
-            min-height: 40px; 
-        }
-
+        textarea.auto-expand { resize: none; overflow-y: hidden; min-height: 40px; }
         .input-error { border: 2px solid #ef4444 !important; background-color: #fef2f2; }
-
         .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-green { background: #059669; color: white; }
@@ -110,48 +91,35 @@
 
         /* --- DRUG ROWS --- */
         .drug-row { display: flex; gap: 15px; align-items: flex-start; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
-        
         .col-name { flex: 4; display: flex; flex-direction: column; gap: 5px; } 
         .col-weight { flex: 1.5; } 
         .col-small { flex: 0.8; text-align: center; } 
         .col-days { flex: 2; } 
         .col-total { flex: 1; } 
         .col-action { flex: 0.4; text-align: right; padding-top: 28px; }
-        
         .drug-row label { display: block; font-size: 11px; font-weight: 700; color: #4b5563; margin-bottom: 4px; }
-
         .form-check-group { display: flex; gap: 10px; margin-top: 2px; }
         .form-check-label { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #555; cursor: pointer; font-weight: 600; }
         .form-check-label input { width: auto; margin: 0; }
-
         .dose-input-group { display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .checkbox-label { font-size: 10px; color: #666; font-weight: bold; cursor: pointer; height: 20px; display: flex; align-items: center; }
-        
         .duration-checks { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
-        .dur-check-label { 
-            font-size: 11px; font-weight: 700; color: #374151; display: flex; align-items: center; gap: 4px; cursor: pointer;
-            background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #e5e7eb;
-        }
+        .dur-check-label { font-size: 11px; font-weight: 700; color: #374151; display: flex; align-items: center; gap: 4px; cursor: pointer; background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #e5e7eb; }
         .dur-check-label input { margin: 0; width: auto; }
+        .add-med-btn-inline { font-size: 12px; color: #fff; background: var(--primary); padding: 4px 10px; border-radius: 4px; cursor: pointer; margin-top: 5px; display: inline-block; font-weight: 600; }
 
         .patient-list-item { padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; background: #f9fafb; transition: 0.2s; }
         .patient-list-item:hover { border-color: var(--primary); transform: translateX(2px); }
         .patient-list-item.selected { background: var(--primary-light); border-color: var(--primary); border-left: 4px solid var(--primary); }
-        
         .review-item { display: flex; justify-content: space-between; align-items: center; }
         .btn-sm { padding: 5px 10px; font-size: 12px; }
-
         .med-list-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; align-items: center; }
         .med-list-item:hover { background: #f9fafb; }
 
         /* MIC STYLES */
         .mic-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
         .mic-wrapper input { width: 100%; padding-right: 30px; }
-        .mic-btn { 
-            position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; cursor: pointer; color: #9ca3af;
-            z-index: 10; padding: 0; display: flex; align-items: center;
-        }
+        .mic-btn { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #9ca3af; z-index: 10; padding: 0; display: flex; align-items: center; }
         .mic-btn svg { width: 18px; height: 18px; fill: currentColor; }
         .mic-btn.listening { color: #ef4444; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
@@ -169,23 +137,11 @@
         .notes-checkbox { width: 18px; height: 18px; cursor: pointer; margin: 0; }
         .notes-label { font-weight: 700; color: var(--text); font-size: 14px; cursor: pointer; }
 
-        .add-med-link {
-            font-size: 12px; color: #d97706; cursor: pointer; margin-top: 4px; display: block; font-weight: 600;
-            background: #fffbeb; border: 1px solid #fcd34d; padding: 4px 8px; border-radius: 4px; text-align: center;
-        }
-
-        /* CLINICAL TEMPLATE CHIPS */
+        /* CHIPS */
         .template-area { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
-        .template-chip { 
-            background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 20px; 
-            font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #bae6fd; transition: 0.2s; 
-        }
+        .template-chip { background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #bae6fd; transition: 0.2s; }
         .template-chip:hover { background: #0284c7; color: white; }
-        
-        .template-add-btn { 
-            background: white; border: 1px dashed #cbd5e1; color: #64748b; 
-            padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; 
-        }
+        .template-add-btn { background: white; border: 1px dashed #cbd5e1; color: #64748b; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; }
         .template-add-btn:hover { border-color: var(--primary); color: var(--primary); }
 
         /* LAB GRID */
@@ -196,22 +152,19 @@
 
         /* MODALS */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
-        .modal-content { background-color: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-content { background-color: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-title { font-weight: 700; font-size: 18px; margin: 0; }
         .modal-body { max-height: 400px; overflow-y: auto; }
         .selection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
-        .selection-btn { 
-            padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: white; 
-            cursor: pointer; font-size: 13px; text-align: center; transition: 0.2s; font-weight: 500; color: #374151;
-        }
+        .selection-btn { padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; font-size: 13px; text-align: center; transition: 0.2s; font-weight: 500; color: #374151; }
         .selection-btn:hover { border-color: var(--primary); background: #f0f9ff; color: var(--primary); }
 
-        /* PRINT */
+        /* PRINT STYLES */
         @media print {
             @page { margin: 10mm; size: A4; }
             body, .container { background: white; margin: 0; padding: 0; max-width: 100%; }
-            .no-print, .app-header, .patient-list-section, .btn, .card-header-actions, .auto-mic-container, .mic-btn, .add-med-link, #authContainer, #loadingOverlay, .template-area, .modal { display: none !important; }
+            .no-print, .app-header, .patient-list-section, .btn, .card-header-actions, .auto-mic-container, .mic-btn, .add-med-link, #authContainer, #loadingOverlay, .template-area, .modal, .add-med-btn-inline, .duration-checks { display: none !important; }
             .print-only { display: block !important; }
             .card { box-shadow: none; padding: 0; border: none; }
             .print-container { padding: 20px; font-family: 'Times New Roman', serif; }
@@ -225,22 +178,11 @@
             .clinic-name { color: #1e3a8a !important; font-size: 20px; font-weight: 900; text-transform: uppercase; border: 2px solid #1e3a8a; padding: 2px 8px; display: inline-block; }
             
             /* Two separate pages layout */
-            /* Removed min-height to prevent accidental 3rd page generation */
-            .print-page { 
-                display: flex; flex-direction: column; 
-                position: relative;
-            }
-            
-            /* Proper Page Break Mechanism */
+            .print-page { display: flex; flex-direction: column; position: relative; page-break-after: always; }
             .page-break-before { page-break-before: always; }
-
-            /* Add padding to second page header so it doesn't touch top */
             #printPage2 { padding-top: 30px; }
-
             .rx-badge { text-align: center; margin: 20px 0; }
             .rx-badge span { background: #222; color: white !important; padding: 6px 30px; border-radius: 4px; font-weight: bold; letter-spacing: 2px; font-size: 16px; -webkit-print-color-adjust: exact; }
-            
-            /* Print Meta Grid */
             .print-meta-grid { display: flex; justify-content: space-between; margin: 10px 0; font-weight: bold; font-size: 16px; border-bottom: 2px solid #000; padding-bottom: 5px; }
             
             .rx-table { width: 100%; border-collapse: collapse; margin-top: 10px; border: 2px solid #000; }
@@ -248,21 +190,13 @@
             .rx-table td { border: 1px solid #000; padding: 8px 5px; font-size: 16px; text-align: center; height: 40px; vertical-align: middle; font-weight: 600; color: #1e3a8a !important; }
             .rx-table td.drug-name-cell { text-align: left; padding-left: 15px; color: #000 !important; }
             
-            /* Signature flow layout instead of absolute */
-            .print-footer { 
-                margin-top: 50px; /* Space from table */
-                text-align: right; 
-                padding-bottom: 20px; 
-            }
+            .print-footer { margin-top: 50px; text-align: right; padding-bottom: 20px; }
             .signature-line { border-top: 1px solid #000; margin-top: 10px; padding-top: 5px; font-weight: bold; display: inline-block; width: 200px; text-align: center;}
             
-            /* PRINT BOXES */
             .print-section-box { border: 1px solid #000; padding: 5px 10px; margin-bottom: 8px; font-size: 14px; font-family: 'Inter', sans-serif; display: flex; align-items: baseline; gap: 10px; min-height: 35px;}
             .print-section-title { font-weight: bold; min-width: 140px; text-decoration: underline;}
             .print-section-content { font-weight: 600; flex-grow: 1; white-space: pre-wrap; }
             .print-details-box { border: 1px solid #000; padding: 10px; height: auto; min-height: 0; margin-bottom: 20px; font-size: 14px; white-space: pre-wrap; font-family: 'Inter', sans-serif; display: none; width: 100%; }
-            
-            .print-prescription-box { text-align: center; border: 1px solid #000; padding: 5px; margin: 15px 0 5px 0; font-weight: bold; background: #eee !important; -webkit-print-color-adjust: exact; }
             .print-patient-rx-row { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; padding: 0 10px; }
         }
         .print-only { display: none; }
@@ -282,6 +216,26 @@
                 <button class="btn btn-red btn-sm" onclick="closeModal('selectionModal')">X</button>
             </div>
             <div class="modal-body selection-grid" id="selectionContainer"></div>
+        </div>
+    </div>
+
+    <div id="universalMedModal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h4 class="modal-title" id="uniModalTitle">Add New Medicine</h4>
+                <button class="btn btn-red btn-sm" onclick="closeModal('universalMedModal')">X</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="uniModalMode"> <input type="hidden" id="uniModalTargetId"> <div class="form-group">
+                    <label>Medicine Name</label>
+                    <input type="text" id="uniModalName" placeholder="e.g. Paracetamol">
+                </div>
+                <div class="form-group">
+                    <label>Strengths (comma separated)</label>
+                    <input type="text" id="uniModalStrengths" placeholder="e.g. 500mg, 650mg">
+                </div>
+                <button class="btn btn-success" style="width:100%" onclick="saveUniversalMedicine()">Save to Database</button>
+            </div>
         </div>
     </div>
 
@@ -375,20 +329,11 @@
                 <div class="card" style="max-width: 800px; margin: 0 auto;">
                     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:20px;">
                         <h3 style="margin:0;">💊 Medicine Manager (Cloud)</h3>
-                        <button class="btn btn-primary" onclick="showAddMedForm()">+ Add New Medicine</button>
+                        <button class="btn btn-primary" onclick="openManagerAddModal()">+ Add New Medicine</button>
                     </div>
-                    <div id="addMedForm" style="display:none; background:#f9fafb; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #e5e7eb;">
-                        <h4 id="medFormTitle">Add New Medicine</h4>
-                        <input type="hidden" id="editMedId">
-                        <div class="grid-2">
-                            <div class="form-group"><label>Medicine Name</label><div class="mic-wrapper"><input type="text" id="newMedName" placeholder="e.g. Paracetamol"><button id="mic-newMedName" class="mic-btn" onmousedown="handleManualMicClick(event, 'newMedName')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button></div></div>
-                            <div class="form-group"><label>Strengths (comma separated)</label><div class="mic-wrapper"><input type="text" id="newMedStrengths" placeholder="e.g. 500mg, 650mg, Syrup"><button id="mic-newMedStrengths" class="mic-btn" onmousedown="handleManualMicClick(event, 'newMedStrengths')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button></div></div>
-                        </div>
-                        <button class="btn btn-success" id="btnSaveMed" onclick="saveMedicineData()">Save to Cloud</button>
-                        <button class="btn btn-secondary" onclick="document.getElementById('addMedForm').style.display='none'">Cancel</button>
-                    </div>
+                    
                     <div style="margin-bottom: 15px;">
-                        <div class="mic-wrapper"><input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." oninput="renderMedManagerList()"><button id="mic-medManagerSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'medManagerSearch')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button></div>
+                        <div class="mic-wrapper"><input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." oninput="renderMedManagerList()"></div>
                     </div>
                     <div id="medManagerList" style="height: 500px; overflow-y: auto; border:1px solid #eee; border-radius:6px;"></div>
                 </div>
@@ -527,7 +472,6 @@
 
         let allPatients = [], waitingQueue = [], cloudMedicines = [], clinicalTemplates = [];
         let currentPatient = null, rowCount = 0;
-        
         let recognition = null, isAutoMicOn = false, activeInputId = null, finalTranscript = '';
         let currentTemplateAction = null;
 
@@ -568,7 +512,7 @@
             setupListeners();
             await seedMedicines();
             await seedTemplates();
-            // Listeners
+            
             onSnapshot(query(collection(db, "patients"), orderBy("timestamp", "desc")), (s) => {
                 allPatients = s.docs.map(d => ({ id: d.id, ...d.data() }));
                 waitingQueue = allPatients.filter(p => p.status === 'waiting');
@@ -582,10 +526,8 @@
                 clinicalTemplates = s.docs.map(d => ({ id: d.id, ...d.data() }));
                 renderTemplateChips(); renderTemplateManagerList();
             });
-            // Mics
             ['docDetails'].forEach(attachMicListeners);
             
-            // Auto Expand Listeners
             document.querySelectorAll('.auto-expand').forEach(el => {
                 el.addEventListener('input', function() {
                     this.style.height = 'auto';
@@ -605,43 +547,144 @@
             const nameVal = input.value.trim();
             const missingDiv = document.getElementById(`missing-alert-${rid}`);
             const med = cloudMedicines.find(m => m.name.toLowerCase() === nameVal.toLowerCase());
+            
+            const select = document.getElementById(`str-select-${rid}`);
+            select.innerHTML = '<option value="">--</option>'; // Reset
+
             if (med) {
                 missingDiv.innerHTML = '';
-                const select = document.getElementById(`strength-${rid}`);
-                select.innerHTML = '<option value="">--</option>';
-                med.strengths.forEach(opt => { const el = document.createElement('option'); el.value = opt; el.innerText = opt; select.appendChild(el); });
+                // Populate options
+                med.strengths.forEach(opt => {
+                    const el = document.createElement('option');
+                    el.value = opt; el.innerText = opt;
+                    select.appendChild(el);
+                });
+                // Add Manual Option
+                const manualOpt = document.createElement('option');
+                manualOpt.value = 'manual'; manualOpt.innerText = '✎ Manual Input';
+                select.appendChild(manualOpt);
+                
+                // Ensure dropdown mode is active
+                toggleStrengthMode(rid, 'select');
+                
             } else if (nameVal.length > 2) {
-                missingDiv.innerHTML = `<div class="add-med-link" onclick="quickAddMedicine('${nameVal}')">⚠️ '${nameVal}' not found. + Add?</div>`;
-            } else { missingDiv.innerHTML = ''; }
+                // If not found, clear dropdown but allow manual, show Add button
+                const manualOpt = document.createElement('option');
+                manualOpt.value = 'manual'; manualOpt.innerText = '✎ Manual Input';
+                select.appendChild(manualOpt);
+                
+                missingDiv.innerHTML = `<span class="add-med-btn-inline" onclick="openAddRowModal('${rid}', '${nameVal}')">+ Add "${nameVal}"</span>`;
+            } else { 
+                missingDiv.innerHTML = ''; 
+                toggleStrengthMode(rid, 'select'); // Reset to dropdown
+            }
         }
 
-        window.quickAddMedicine = function(name) { switchPage('medicine'); showAddMedForm(); document.getElementById('newMedName').value = name; }
-        window.saveMedicineData = async function() {
-            const id = document.getElementById('editMedId').value, name = document.getElementById('newMedName').value, str = document.getElementById('newMedStrengths').value;
-            if(!name) return alert("Enter name");
-            const strengths = str.split(',').map(s => s.trim()).filter(s => s);
-            if(id) await updateDoc(doc(db, "medicines", id), { name, strengths }); else await addDoc(collection(db, "medicines"), { name, strengths });
-            document.getElementById('addMedForm').style.display = 'none';
-        }
+        window.toggleStrengthMode = (rid, mode) => {
+            const select = document.getElementById(`str-select-${rid}`);
+            const manualBox = document.getElementById(`str-manual-box-${rid}`);
+            
+            if (mode === 'manual') {
+                select.style.display = 'none';
+                manualBox.style.display = 'flex';
+                document.getElementById(`str-input-${rid}`).focus();
+            } else {
+                select.style.display = 'block';
+                select.value = ''; // Reset selection
+                manualBox.style.display = 'none';
+            }
+        };
+
+        window.handleStrengthChange = (rid) => {
+            const select = document.getElementById(`str-select-${rid}`);
+            if (select.value === 'manual') {
+                toggleStrengthMode(rid, 'manual');
+            }
+        };
+
+        // UNIVERSAL MODAL FUNCTIONS
+        window.openAddRowModal = (rid, name) => {
+            document.getElementById('uniModalTitle').innerText = "Add Missing Medicine";
+            document.getElementById('uniModalName').value = name;
+            document.getElementById('uniModalStrengths').value = '';
+            document.getElementById('uniModalMode').value = 'row';
+            document.getElementById('uniModalTargetId').value = rid;
+            document.getElementById('universalMedModal').style.display = 'flex';
+        };
+
+        window.openManagerAddModal = () => {
+            document.getElementById('uniModalTitle').innerText = "Add New Medicine";
+            document.getElementById('uniModalName').value = '';
+            document.getElementById('uniModalStrengths').value = '';
+            document.getElementById('uniModalMode').value = 'manager_add';
+            document.getElementById('universalMedModal').style.display = 'flex';
+        };
+
+        window.openManagerEditModal = (id, name, strengthsStr) => {
+            document.getElementById('uniModalTitle').innerText = "Edit Medicine";
+            document.getElementById('uniModalName').value = name;
+            document.getElementById('uniModalStrengths').value = strengthsStr;
+            document.getElementById('uniModalMode').value = 'manager_edit';
+            document.getElementById('uniModalTargetId').value = id;
+            document.getElementById('universalMedModal').style.display = 'flex';
+        };
+
+        window.saveUniversalMedicine = async () => {
+            const name = document.getElementById('uniModalName').value;
+            const strStr = document.getElementById('uniModalStrengths').value;
+            const mode = document.getElementById('uniModalMode').value;
+            const targetId = document.getElementById('uniModalTargetId').value;
+            
+            if(!name) return alert("Enter Medicine Name");
+            const strengths = strStr.split(',').map(s => s.trim()).filter(s => s);
+            
+            if (mode === 'manager_edit') {
+                await updateDoc(doc(db, "medicines", targetId), { name, strengths });
+            } else {
+                // Both 'row' and 'manager_add' create a new doc
+                await addDoc(collection(db, "medicines"), { name, strengths });
+            }
+            
+            // Post-save actions
+            if (mode === 'row') {
+                // If called from a row, we wait for DB update then refresh that specific row's dropdown
+                // Since we rely on snapshot listener for cloudMedicines, we might need a small delay or manual push
+                // For simplicity/reliability, we'll manually force the row update with these new values immediately
+                const select = document.getElementById(`str-select-${targetId}`);
+                select.innerHTML = '<option value="">--</option>';
+                strengths.forEach(opt => {
+                    const el = document.createElement('option'); el.value = opt; el.innerText = opt; select.appendChild(el);
+                });
+                const man = document.createElement('option'); man.value = 'manual'; man.innerText = '✎ Manual Input'; select.appendChild(man);
+                
+                // Clear warning
+                document.getElementById(`missing-alert-${targetId}`).innerHTML = '';
+            }
+            
+            closeModal('universalMedModal');
+        };
+
         window.deleteMedicine = async function(id) { if(confirm("Delete?")) await deleteDoc(doc(db, "medicines", id)); }
-        window.editMedicine = function(id, name, strengths) {
-            showAddMedForm();
-            document.getElementById('medFormTitle').innerText = "Edit Medicine"; document.getElementById('btnSaveMed').innerText = "Update";
-            document.getElementById('editMedId').value = id; document.getElementById('newMedName').value = name; document.getElementById('newMedStrengths').value = strengths;
-        }
-        window.showAddMedForm = function() { document.getElementById('addMedForm').style.display = 'block'; document.getElementById('medFormTitle').innerText = "Add New"; document.getElementById('btnSaveMed').innerText = "Save"; document.getElementById('editMedId').value = ''; }
+
+        window.quickAddMedicine = function(name) { switchPage('medicine'); showAddMedForm(); document.getElementById('newMedName').value = name; }
         
         function renderMedManagerList() {
             const term = document.getElementById('medManagerSearch').value.toLowerCase();
             const container = document.getElementById('medManagerList'); container.innerHTML = "";
             cloudMedicines.filter(m => m.name.toLowerCase().includes(term)).forEach(m => {
-                container.innerHTML += `<div class="med-list-item"><div><strong>${m.name}</strong> <br> <small style="color:#666">${m.strengths.join(', ')}</small></div><div style="display:flex; gap:5px;"><button class="btn btn-secondary btn-sm" onclick="editMedicine('${m.id}', '${m.name}', '${m.strengths.join(", ")}')">Edit</button><button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button></div></div>`;
+                container.innerHTML += `
+                    <div class="med-list-item">
+                        <div><strong>${m.name}</strong> <br> <small style="color:#666">${m.strengths.join(', ')}</small></div>
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn btn-secondary btn-sm" onclick="openManagerEditModal('${m.id}', '${m.name}', '${m.strengths.join(", ")}')">Edit</button>
+                            <button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button>
+                        </div>
+                    </div>`;
             });
         }
         
         function populateDatalist() { const dl = document.getElementById('allMedicines'); dl.innerHTML = ""; cloudMedicines.forEach(med => { const opt = document.createElement('option'); opt.value = med.name; dl.appendChild(opt); }); }
 
-        // --- NAVIGATION ---
         function setupListeners() {
             document.getElementById('btn-reception').onclick = () => switchPage('reception');
             document.getElementById('btn-doctor').onclick = () => switchPage('doctor');
@@ -701,26 +744,42 @@
             if(printNotes && !notes.trim()) { alert("Notes empty!"); document.getElementById('docDetails').classList.add('input-error'); return; }
             
             const drugs = []; let isValid = true;
-            document.querySelectorAll('.drug-row').forEach(row => {
-                const rid = row.id.split('-')[1], name = document.getElementById(`name-${rid}`).value.trim();
-                if(!name) return;
-                const exists = cloudMedicines.some(m => m.name.toLowerCase() === name.toLowerCase());
-                if(!exists) { isValid = false; document.getElementById(`name-${rid}`).classList.add('input-error'); alert("Unknown medicine: " + name); return; }
+            
+            // Loop through rows
+            const rows = document.querySelectorAll('.drug-row');
+            for(const row of rows) {
+                const rid = row.id.split('-')[1];
+                const name = document.getElementById(`name-${rid}`).value.trim();
+                if(!name) continue; // Skip empty rows
+
                 const type = document.querySelector(`input[id^="type-"][id$="-${rid}"]:checked`)?.id.split('-')[1].toUpperCase();
                 if(!type) { isValid = false; alert("Select Type for " + name); row.scrollIntoView(); return; }
-                const str = document.getElementById(`strength-${rid}`).value;
-                if(!str || str==='--') { isValid = false; alert("Select Strength for " + name); return; }
+                
+                // STRENGTH LOGIC
+                const sel = document.getElementById(`str-select-${rid}`);
+                const inp = document.getElementById(`str-input-${rid}`);
+                let str = (sel.style.display !== 'none') ? sel.value : inp.value;
+                if(!str && sel.style.display !== 'none') { isValid = false; alert("Select Strength for " + name); return; }
+                
                 const getVal = (s) => document.getElementById(`${s}-chk-${rid}`).checked ? 1 : parseFloat(document.getElementById(`${s}-${rid}`).value);
                 const m=getVal('m'), a=getVal('a'), n=getVal('n');
                 if(m+a+n === 0) { isValid = false; alert("Select Dose for " + name); return; }
                 const total = document.getElementById(`t-${rid}`).value;
                 if(total == 0 || total === "Error") { isValid = false; alert("Check duration for " + name); return; }
+                
                 drugs.push({ name, strength: str, type, m, a, n, t: total });
-            });
+
+                // ** AUTO-SAVE NEW MEDICINE / STRENGTH **
+                const existingMed = cloudMedicines.find(m => m.name.toLowerCase() === name.toLowerCase());
+                if(!existingMed) {
+                    await addDoc(collection(db, "medicines"), { name: name, strengths: [str] });
+                } else if(str && !existingMed.strengths.includes(str)) {
+                    await updateDoc(doc(db, "medicines", existingMed.id), { strengths: arrayUnion(str) });
+                }
+            }
 
             if(!isValid) return; if(drugs.length === 0 && !notes) { alert("Nothing to print!"); return; }
 
-            // LABS DATA
             const labs = {
                 bp: document.getElementById('examBP').value, pulse: document.getElementById('examPulse').value,
                 hb: document.getElementById('labHB').value, rbs: document.getElementById('labRBS').value, cr: document.getElementById('labCreatinine').value,
@@ -735,7 +794,6 @@
                 const hasExam = (printNotes && notes) || labs.bp || labs.pulse || labs.hb || labs.rbs || labs.cr || labs.ecg || labs.eeg || labs.ncv || labs.dop;
                 const hasMeds = drugs.length > 0;
 
-                // --- PAGE 1: EXAM & NOTES ---
                 const page1 = document.getElementById('printPage1');
                 if(hasExam) {
                     page1.style.display = 'block';
@@ -749,7 +807,6 @@
                     if(labs.eeg) examHtml += `<div class="print-section-box"><div class="print-section-title">EEG:</div><div class="print-section-content">${labs.eeg}</div></div>`;
                     if(labs.ncv) examHtml += `<div class="print-section-box"><div class="print-section-title">NCV:</div><div class="print-section-content">${labs.ncv}</div></div>`;
                     if(labs.dop) examHtml += `<div class="print-section-box"><div class="print-section-title">Carotid/TCS:</div><div class="print-section-content">${labs.dop}</div></div>`;
-                    
                     document.getElementById('printExamBody').innerHTML = examHtml;
 
                     const pNotes = document.getElementById('printNotesBody');
@@ -759,10 +816,9 @@
                     page1.style.display = 'none';
                 }
 
-                // --- PAGE 2: PRESCRIPTION ---
                 const page2 = document.getElementById('printPage2');
                 if(hasMeds) {
-                    page2.style.display = 'flex'; // Use flex for column layout
+                    page2.style.display = 'flex';
                     document.getElementById('printNameP2').innerText = "Name: " + currentPatient.name;
                     document.getElementById('printDateP2').innerText = "Date: " + record.date;
                     
@@ -825,14 +881,7 @@
                             const l = h.labs;
                             const parts = [];
                             if(l.bp) parts.push(`BP: ${l.bp}`);
-                            if(l.pulse) parts.push(`Pulse: ${l.pulse}`);
                             if(l.hb) parts.push(`HB: ${l.hb}`);
-                            if(l.rbs) parts.push(`RBS: ${l.rbs}`);
-                            if(l.cr) parts.push(`Cr: ${l.cr}`);
-                            if(l.ecg) parts.push(`ECG: ${l.ecg}`);
-                            if(l.eeg) parts.push(`EEG: ${l.eeg}`);
-                            if(l.ncv) parts.push(`NCV: ${l.ncv}`);
-                            if(l.dop) parts.push(`Dop: ${l.dop}`);
                             if(parts.length > 0) labStr = `<div style="font-size:12px; color:#666; margin-bottom:5px;"><strong>Exam:</strong> ${parts.join(', ')}</div>`;
                         }
                         return `<div style="border-bottom:1px solid #ccc; padding:10px 0;"><strong>${h.date}</strong>${labStr}<p style="margin:5px 0;">${h.notes || ''}</p><ul style="margin:5px 0; padding-left:20px; font-size:13px;">${h.meds.map(m => `<li>${m.type} ${m.name} (${m.strength})</li>`).join('')}</ul></div>`;
@@ -846,10 +895,18 @@
             const container = document.getElementById('drugListContainer');
             const div = document.createElement('div'); div.className = 'drug-row'; div.id = `row-${rowCount}`;
             const doseOpts = `<option value="0">0</option><option value="0.5">½</option><option value="2">2</option><option value="3">3</option>`; 
+            
             div.innerHTML = `
                 <div class="col-name"><label>Medicine Name</label><div class="mic-wrapper"><input list="allMedicines" id="name-${rowCount}" placeholder="Search..." oninput="updateStrengths(${rowCount})"></div><div id="missing-alert-${rowCount}"></div>
                 <div class="form-check-group"><label class="form-check-label"><input type="checkbox" id="type-tab-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'tab')" checked> TAB</label><label class="form-check-label"><input type="checkbox" id="type-syp-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'syp')"> Syp</label><label class="form-check-label"><input type="checkbox" id="type-cap-${rowCount}" onclick="handleTypeCheck(${rowCount}, 'cap')"> Cap</label></div></div>
-                <div class="col-weight"><label>Strength</label><select id="strength-${rowCount}"><option value="">--</option></select></div>
+                <div class="col-weight">
+                    <label>Strength</label>
+                    <select id="str-select-${rowCount}" onchange="handleStrengthChange(${rowCount})"><option value="">--</option></select>
+                    <div id="str-manual-box-${rowCount}" style="display:none; align-items:center; gap:5px;">
+                        <input type="text" id="str-input-${rowCount}" placeholder="Type...">
+                        <button class="btn btn-red btn-sm" style="padding:2px 6px;" onclick="toggleStrengthMode(${rowCount}, 'select')">✕</button>
+                    </div>
+                </div>
                 <div class="col-small"><label>M</label><div class="dose-input-group"><select id="m-${rowCount}" onchange="handleDoseInput(${rowCount},'m','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="m-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'m','check')" checked></label></div></div>
                 <div class="col-small"><label>A</label><div class="dose-input-group"><select id="a-${rowCount}" onchange="handleDoseInput(${rowCount},'a','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="a-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'a','check')"></label></div></div>
                 <div class="col-small"><label>N</label><div class="dose-input-group"><select id="n-${rowCount}" onchange="handleDoseInput(${rowCount},'n','dropdown')">${doseOpts}</select><label class="checkbox-label"><input type="checkbox" id="n-chk-${rowCount}" onchange="handleDoseInput(${rowCount},'n','check')" checked></label></div></div>
@@ -908,7 +965,7 @@
             const t = currentTemplateAction; let txt = `• Patient has ${t.template.name}`;
             if(t.subtype) txt += ` (${t.subtype})`; if(t.duration) txt += ` for ${t.duration}`; txt += ".";
             const area = document.getElementById('docDetails'); area.value += (area.value ? "\n" : "") + txt; 
-            area.style.height = 'auto'; area.style.height = (area.scrollHeight) + 'px'; // Auto expand on template insert
+            area.style.height = 'auto'; area.style.height = (area.scrollHeight) + 'px'; 
             closeModal('selectionModal');
         }
         function openSelectionModal(title, opts, cb) {
