@@ -140,11 +140,44 @@
             border-radius: 4px; cursor: pointer; margin-top: 5px; display: inline-block; font-weight: 600;
         }
 
-        .patient-list-item { padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; background: #f9fafb; transition: 0.2s; }
-        .patient-list-item:hover { border-color: var(--primary); transform: translateX(2px); }
+        /* PATIENT LIST HOVER EXPAND EFFECT */
+        .patient-list-item { 
+            padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; 
+            background: #f9fafb; transition: all 0.3s ease; display: block; 
+        }
+        .patient-list-item:hover { 
+            border-color: var(--primary); 
+            transform: translateX(2px); 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
+        }
+        
+        .patient-list-header {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .patient-details-expanded {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.4s ease;
+            font-size: 13px;
+            color: #4b5563;
+            margin-top: 0;
+            background: #eff6ff;
+            border-radius: 6px;
+        }
+
+        /* The Magic Hover */
+        .patient-list-item:hover .patient-details-expanded {
+            max-height: 100px;
+            opacity: 1;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #bfdbfe;
+        }
+
         .patient-list-item.selected { background: var(--primary-light); border-color: var(--primary); border-left: 4px solid var(--primary); }
         
-        .review-item { display: flex; justify-content: space-between; align-items: center; }
         .btn-sm { padding: 5px 10px; font-size: 12px; }
 
         .med-list-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; align-items: center; }
@@ -297,7 +330,10 @@
                 <button class="btn btn-red btn-sm" onclick="closeModal('universalMedModal')">X</button>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="uniModalMode"> <input type="hidden" id="uniModalTargetId"> <div class="form-group">
+                <input type="hidden" id="uniModalMode"> 
+                <input type="hidden" id="uniModalTargetId"> 
+                
+                <div class="form-group">
                     <label>Medicine Name</label>
                     <input type="text" id="uniModalName" placeholder="e.g. Paracetamol">
                 </div>
@@ -365,7 +401,7 @@
                     <div class="nav-pills">
                         <button id="btn-reception" class="nav-btn active">Reception Desk</button>
                         <button id="btn-doctor" class="nav-btn">Doctor Chamber</button>
-                        <button id="btn-medicines" class="nav-btn">Add Medicine</button>
+                        <button id="btn-medicines" class="nav-btn" onclick="openManagerAddModal()">Add Medicine</button>
                         <button id="btn-logout" class="nav-btn logout-btn" onclick="logout()">Logout</button>
                     </div>
                 </div>
@@ -479,8 +515,9 @@
             </div>
             
             <div class="print-meta-grid">
-                <div id="printNameP1">Patient Name: </div>
-                <div id="printAgeSexP1">Age/Sex: </div>
+                <div id="printNameP1"></div>
+                <div id="printRegP1"></div>
+                <div id="printAgeSexP1"></div>
             </div>
             
             <div id="printExamBody"></div>
@@ -493,9 +530,10 @@
                 <div class="clinic-info-container"><img src="logo.png" alt="Logo" class="clinic-logo-img"><div class="clinic-info"><div class="clinic-name">NEURO SPECIALITIES CENTRE</div><div class="clinic-details">3933, CLUB ROAD, BELGAUM-590 001<br>Ph.: 0831-2430625, E-mail: walidoc@hotmail.com</div></div></div>
             </div>
 
-            <div class="print-patient-rx-row" style="margin-top:20px;">
-                <div id="printNameP2">Name: </div>
-                <div id="printDateP2">Date: </div>
+            <div class="print-meta-grid">
+                <div id="printNameP2"></div>
+                <div id="printRegP2"></div>
+                <div id="printDateP2"></div>
             </div>
 
             <div class="rx-badge"><span>PRESCRIPTION</span></div>
@@ -512,7 +550,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, arrayUnion, serverTimestamp, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, arrayUnion, serverTimestamp, getDocs, deleteDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyAWNn0lX3UzfKkZ2ivirPMb3vu9GNGLcfg",
@@ -607,8 +645,14 @@
                 });
             });
             
-            // Default check notes
             document.getElementById('includeNotesInPrint').checked = true;
+            
+            const bpInput = document.getElementById('examBP');
+            bpInput.addEventListener('input', function(e) {
+                if(this.value.length === 3 && !this.value.includes('/')) {
+                    this.value += '/';
+                }
+            });
         }
 
         async function seedMedicines() { const snap = await getDocs(collection(db, "medicines")); if(snap.empty && typeof medicineDatabase !== 'undefined') for (const [n, s] of Object.entries(medicineDatabase)) await addDoc(collection(db, "medicines"), { name: n, strengths: s }); }
@@ -621,34 +665,28 @@
             const med = cloudMedicines.find(m => m.name.toLowerCase() === nameVal.toLowerCase());
             
             const select = document.getElementById(`str-select-${rid}`);
-            select.innerHTML = '<option value="">--</option>'; // Reset
+            select.innerHTML = '<option value="">--</option>'; 
 
             if (med) {
                 missingDiv.innerHTML = '';
-                // Populate options
                 med.strengths.forEach(opt => {
                     const el = document.createElement('option');
                     el.value = opt; el.innerText = opt;
                     select.appendChild(el);
                 });
-                // Add Manual Option
                 const manualOpt = document.createElement('option');
                 manualOpt.value = 'manual'; manualOpt.innerText = '✎ Manual Input';
                 select.appendChild(manualOpt);
-                
-                // Ensure dropdown mode is active
                 toggleStrengthMode(rid, 'select');
                 
             } else if (nameVal.length > 2) {
-                // If not found, clear dropdown but allow manual, show Add button
                 const manualOpt = document.createElement('option');
                 manualOpt.value = 'manual'; manualOpt.innerText = '✎ Manual Input';
                 select.appendChild(manualOpt);
-                
                 missingDiv.innerHTML = `<span class="add-med-btn-inline" onclick="openAddRowModal('${rid}', '${nameVal}')">+ Add "${nameVal}"</span>`;
             } else { 
                 missingDiv.innerHTML = ''; 
-                toggleStrengthMode(rid, 'select'); // Reset to dropdown
+                toggleStrengthMode(rid, 'select');
             }
         }
 
@@ -662,7 +700,7 @@
                 document.getElementById(`str-input-${rid}`).focus();
             } else {
                 select.style.display = 'block';
-                select.value = ''; // Reset selection
+                select.value = ''; 
                 manualBox.style.display = 'none';
             }
         };
@@ -674,7 +712,6 @@
             }
         };
 
-        // UNIVERSAL MODAL FUNCTIONS
         window.openAddRowModal = (rid, name) => {
             document.getElementById('uniModalTitle').innerText = "Add Missing Medicine";
             document.getElementById('uniModalName').value = name;
@@ -713,21 +750,16 @@
             if (mode === 'manager_edit') {
                 await updateDoc(doc(db, "medicines", targetId), { name, strengths });
             } else {
-                // Both 'row' and 'manager_add' create a new doc
                 await addDoc(collection(db, "medicines"), { name, strengths });
             }
             
-            // Post-save actions
             if (mode === 'row') {
-                // Manually force update UI for the specific row
                 const select = document.getElementById(`str-select-${targetId}`);
                 select.innerHTML = '<option value="">--</option>';
                 strengths.forEach(opt => {
                     const el = document.createElement('option'); el.value = opt; el.innerText = opt; select.appendChild(el);
                 });
                 const man = document.createElement('option'); man.value = 'manual'; man.innerText = '✎ Manual Input'; select.appendChild(man);
-                
-                // Clear warning
                 document.getElementById(`missing-alert-${targetId}`).innerHTML = '';
             }
             
@@ -735,7 +767,6 @@
         };
 
         window.deleteMedicine = async function(id) { if(confirm("Delete?")) await deleteDoc(doc(db, "medicines", id)); }
-
         window.quickAddMedicine = function(name) { switchPage('medicine'); showAddMedForm(); document.getElementById('newMedName').value = name; }
         
         function renderMedManagerList() {
@@ -774,20 +805,49 @@
             else if(page === 'medicine') document.getElementById('btn-medicines').classList.add('active');
         }
 
-        // --- PATIENT LOGIC ---
         async function registerPatient() {
             const btn = document.getElementById('btnRegister'); btn.disabled = true;
-            await addDoc(collection(db, "patients"), {
-                name: document.getElementById('regName').value, age: document.getElementById('regAge').value, sex: document.getElementById('regSex').value,
-                phone: document.getElementById('regPhone').value, address: document.getElementById('regAddress').value, diagnosis: document.getElementById('regDiagnosis').value,
-                regDate: new Date().toLocaleDateString(), timestamp: serverTimestamp(), status: 'waiting', history: []
-            });
-            document.getElementById('regForm').reset(); btn.disabled = false;
+            const counterRef = doc(db, "counters", "patients");
+            try {
+                await runTransaction(db, async (transaction) => {
+                    const counterDoc = await transaction.get(counterRef);
+                    let newId = 1;
+                    if (counterDoc.exists()) { newId = counterDoc.data().current + 1; }
+                    transaction.set(counterRef, { current: newId });
+                    const newPatientRef = doc(collection(db, "patients"));
+                    transaction.set(newPatientRef, {
+                        name: document.getElementById('regName').value, 
+                        age: document.getElementById('regAge').value, 
+                        sex: document.getElementById('regSex').value,
+                        phone: document.getElementById('regPhone').value, 
+                        address: document.getElementById('regAddress').value, 
+                        diagnosis: document.getElementById('regDiagnosis').value,
+                        regDate: new Date().toLocaleDateString(), 
+                        timestamp: serverTimestamp(), 
+                        status: 'waiting', 
+                        history: [],
+                        regNo: newId
+                    });
+                });
+                document.getElementById('regForm').reset();
+            } catch (e) { console.error(e); alert("Registration Failed."); }
+            btn.disabled = false;
         }
+
         function renderReviewSearch() {
             const term = document.getElementById('reviewSearch').value.toLowerCase(), container = document.getElementById('reviewList'); container.innerHTML = "";
-            allPatients.filter(p => p.name.toLowerCase().includes(term)).forEach(p => {
-                container.innerHTML += `<div class="patient-list-item review-item"><div><strong>${p.name}</strong> <small>(${p.age}Y/${p.sex})</small></div><button class="btn btn-yellow btn-sm" onclick="sendToDoctor('${p.id}')">Send to Doctor</button></div>`;
+            allPatients.filter(p => p.name.toLowerCase().includes(term) || String(p.regNo).includes(term)).forEach(p => {
+                container.innerHTML += `
+                <div class="patient-list-item review-item">
+                    <div class="patient-list-header">
+                        <div><strong>${p.name}</strong> <small>(#${p.regNo || '?'} | ${p.age}Y/${p.sex})</small></div>
+                        <button class="btn btn-yellow btn-sm" onclick="sendToDoctor('${p.id}')">Send</button>
+                    </div>
+                    <div class="patient-details-expanded">
+                        <div>📞: ${p.phone || '-'}</div>
+                        <div>🏠: ${p.address || '-'}</div>
+                    </div>
+                </div>`;
             });
         }
         window.sendToDoctor = async (id) => await updateDoc(doc(db, "patients", id), { status: 'waiting', timestamp: serverTimestamp() });
@@ -795,13 +855,13 @@
             const container = document.getElementById('doctorQueueList'); container.innerHTML = ""; document.getElementById('queueCount').innerText = waitingQueue.length;
             waitingQueue.forEach(p => {
                 const div = document.createElement('div'); div.className = `patient-list-item ${currentPatient && currentPatient.id === p.id ? 'selected' : ''}`;
-                div.onclick = () => selectPatient(p); div.innerHTML = `<strong>${p.name}</strong><br><small>${p.age}Y / ${p.sex}</small>`;
+                div.onclick = () => selectPatient(p); div.innerHTML = `<strong>${p.name}</strong><br><small>#${p.regNo || '?'} | ${p.age}Y / ${p.sex}</small>`;
                 container.appendChild(div);
             });
         }
         function selectPatient(p) {
             currentPatient = p; document.getElementById('workspace').style.display = 'block';
-            document.getElementById('pNameDisplay').innerText = p.name; document.getElementById('pDetailsDisplay').innerText = `${p.age}Y / ${p.sex} | ${p.phone}`;
+            document.getElementById('pNameDisplay').innerText = p.name; document.getElementById('pDetailsDisplay').innerText = `#${p.regNo || '?'} | ${p.age}Y / ${p.sex} | ${p.phone}`;
             renderDoctorQueue(); document.getElementById('drugListContainer').innerHTML = ''; document.getElementById('docDetails').value = ''; 
             ['examBP','examPulse','labHB','labRBS','labCreatinine','testECG','testEEG','testNCV','testDoppler'].forEach(id => document.getElementById(id).value = '');
             addDrugRow();
@@ -815,17 +875,15 @@
             
             const drugs = []; let isValid = true;
             
-            // Loop through rows
             const rows = document.querySelectorAll('.drug-row');
             for(const row of rows) {
                 const rid = row.id.split('-')[1];
                 const name = document.getElementById(`name-${rid}`).value.trim();
-                if(!name) continue; // Skip empty rows
+                if(!name) continue;
 
                 const type = document.querySelector(`input[id^="type-"][id$="-${rid}"]:checked`)?.id.split('-')[1].toUpperCase();
                 if(!type) { isValid = false; alert("Select Type for " + name); row.scrollIntoView(); return; }
                 
-                // STRENGTH LOGIC
                 const sel = document.getElementById(`str-select-${rid}`);
                 const inp = document.getElementById(`str-input-${rid}`);
                 let str = (sel.style.display !== 'none') ? sel.value : inp.value;
@@ -839,7 +897,6 @@
                 
                 drugs.push({ name, strength: str, type, m, a, n, t: total });
 
-                // ** AUTO-SAVE NEW MEDICINE / STRENGTH **
                 const existingMed = cloudMedicines.find(m => m.name.toLowerCase() === name.toLowerCase());
                 if(!existingMed) {
                     await addDoc(collection(db, "medicines"), { name: name, strengths: [str] });
@@ -868,6 +925,7 @@
                 if(hasExam) {
                     page1.style.display = 'block';
                     document.getElementById('printNameP1').innerText = "Patient Name: " + currentPatient.name;
+                    document.getElementById('printRegP1').innerText = "Reg No: " + (currentPatient.regNo || '-');
                     document.getElementById('printAgeSexP1').innerText = `Age/Sex: ${currentPatient.age} / ${currentPatient.sex}`;
                     
                     let examHtml = "";
@@ -890,6 +948,7 @@
                 if(hasMeds) {
                     page2.style.display = 'flex';
                     document.getElementById('printNameP2').innerText = "Name: " + currentPatient.name;
+                    document.getElementById('printRegP2').innerText = "Reg No: " + (currentPatient.regNo || '-');
                     document.getElementById('printDateP2').innerText = "Date: " + record.date;
                     
                     const tbody = document.getElementById('printTableBody'); tbody.innerHTML = '';
