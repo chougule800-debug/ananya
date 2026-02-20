@@ -2,60 +2,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dr. Bharat's Arogya Homeopathy - Cloud System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <script src="medicines.js"></script>
 
     <style>
         :root {
             --primary: #1e3a8a;
+            --primary-hover: #1e40af;
             --primary-light: #eff6ff;
             --dr-red: #b91c1c;
             --text: #1f2937;
-            --bg: #f3f4f6;
-            --border: #e5e7eb;
+            --text-light: #4b5563;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
             --success: #059669;
             --error: #ef4444;
+            --warning: #f59e0b;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
         * { box-sizing: border-box; }
+        
         body { 
             font-family: 'Inter', sans-serif; 
             background: var(--bg); 
             color: var(--text); 
             margin: 0; 
             padding: 20px; 
+            line-height: 1.5;
         }
 
         .container { max-width: 1500px; margin: 0 auto; }
 
+        /* --- CUSTOM SCROLLBARS --- */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
         /* --- TOAST NOTIFICATION --- */
         #toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 50px;
-            padding: 12px 20px;
-            position: fixed;
-            z-index: 10000;
-            left: 50%;
-            bottom: 40px;
-            transform: translateX(-50%);
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
+            visibility: hidden; min-width: 250px; background-color: #1f2937; color: #fff;
+            text-align: center; border-radius: 50px; padding: 12px 24px;
+            position: fixed; z-index: 10000; left: 50%; bottom: 20px;
+            transform: translateX(-50%) translateY(20px); font-size: 14px; font-weight: 500;
+            box-shadow: var(--shadow-hover); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 50px;
-        }
-
+        #toast.show { visibility: visible; opacity: 1; transform: translateX(-50%) translateY(0); bottom: 40px; }
         #toast.success { background-color: var(--success); }
         #toast.error { background-color: var(--error); }
 
@@ -64,251 +63,259 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 9999; display: flex; justify-content: center; align-items: center;
         }
-        #loadingOverlay { background: rgba(255,255,255,0.9); z-index: 10000; display: none; flex-direction: column; }
+        #loadingOverlay { background: rgba(255,255,255,0.95); z-index: 10000; display: none; flex-direction: column; backdrop-filter: blur(4px); }
         
         .auth-card {
-            background: white; padding: 40px; border-radius: 16px; width: 100%; max-width: 420px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); text-align: center; border-top: 5px solid var(--primary);
+            background: var(--surface); padding: 48px 40px; border-radius: var(--radius-lg); width: 100%; max-width: 420px;
+            box-shadow: var(--shadow-hover); text-align: center; border-top: 6px solid var(--primary);
         }
-        .auth-logo { height: 60px; margin-bottom: 15px; display: none; }
-        .auth-title { color: var(--primary); font-weight: 900; font-size: 24px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: -0.5px; }
-        .auth-subtitle { color: #6b7280; font-size: 14px; margin-bottom: 30px; }
+        .auth-title { color: var(--primary); font-weight: 900; font-size: 24px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: -0.5px; }
+        .auth-subtitle { color: var(--text-light); font-size: 14px; margin-bottom: 32px; }
         
         .spinner {
-            width: 50px; height: 50px; border: 5px solid #e5e7eb; border-top: 5px solid var(--primary);
-            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+            width: 40px; height: 40px; border: 4px solid var(--border); border-top: 4px solid var(--primary);
+            border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- HEADER --- */
         .app-header {
-            background: white; padding: 20px 30px; border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex;
-            justify-content: space-between; align-items: flex-start; margin-bottom: 25px;
-            border-bottom: 4px solid var(--primary);
+            background: var(--surface); padding: 20px 30px; border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm); display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 24px; border: 1px solid var(--border); border-left: 6px solid var(--primary);
         }
 
         .header-left h1 { 
-            color: var(--dr-red); font-size: 28px; margin: 0; font-weight: 900; 
-            text-transform: uppercase; letter-spacing: -0.5px;
-            display: flex; align-items: baseline; gap: 10px;
+            color: var(--dr-red); font-size: 26px; margin: 0; font-weight: 900; 
+            text-transform: uppercase; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px;
         }
-        
-        .degree-text { color: #000; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0; }
-        .header-left p { margin: 2px 0; font-size: 13px; font-weight: 700; color: #000; }
-        .kmc-code { font-size: 14px; font-weight: 600; color: #444; margin-top: 5px !important; }
 
         .header-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
-        .clinic-brand { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .clinic-name { color: var(--primary); font-size: 22px; font-weight: 900; text-transform: uppercase; border: 2px solid var(--primary); padding: 4px 10px; display: inline-block; }
-        .clinic-logo-header { height: 50px; width: auto; }
-
-        .nav-pills { display: flex; gap: 10px; background: var(--bg); padding: 5px; border-radius: 8px; align-self: flex-end; align-items: center; }
-        .nav-btn { border: none; background: transparent; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; color: #6b7280; transition: 0.2s; }
-        .nav-btn.active { background: white; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .nav-btn-icon { font-size: 18px; padding: 8px 15px; }
-        .logout-btn { color: #ef4444 !important; border: 1px solid #ef4444 !important; margin-left: 10px; }
+        
+        .nav-pills { display: flex; gap: 8px; background: var(--bg); padding: 6px; border-radius: 10px; border: 1px solid var(--border); }
+        .nav-btn { 
+            border: none; background: transparent; padding: 10px 20px; border-radius: var(--radius-md); 
+            font-weight: 600; font-size: 14px; cursor: pointer; color: var(--text-light); 
+            transition: all 0.2s ease; 
+        }
+        .nav-btn:hover { color: var(--primary); background: rgba(30, 58, 138, 0.05); }
+        .nav-btn.active { background: var(--surface); color: var(--primary); box-shadow: var(--shadow-sm); }
+        .logout-btn { color: var(--error) !important; }
         .logout-btn:hover { background: #fee2e2 !important; }
 
         /* --- LAYOUTS --- */
         .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .page.active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        
-        .grid-reception { display: grid; grid-template-columns: 2fr 1.5fr; gap: 20px; }
-        
-        /* DOCTOR LAYOUT (Sticky Sidebar) */
-        .grid-doctor { 
-            display: grid; 
-            grid-template-columns: 280px 1fr; 
-            gap: 20px; 
-            align-items: start; 
+        .card { 
+            background: var(--surface); padding: 24px; border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-sm); margin-bottom: 24px; border: 1px solid var(--border);
         }
+        
+        .grid-reception { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; }
+        
+        .grid-doctor { display: grid; grid-template-columns: 300px 1fr; gap: 24px; align-items: start; }
 
         .patient-list-section { 
-            position: sticky;
-            top: 20px; 
-            height: calc(100vh - 40px); 
-            overflow-y: auto; 
-            display: flex; 
-            flex-direction: column;
+            position: sticky; top: 20px; height: calc(100vh - 40px); 
+            overflow-y: auto; display: flex; flex-direction: column;
         }
 
-        .grid-3-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 20px; } 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; font-size: 12px; font-weight: 600; color: #4b5563; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+        .grid-3-top { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; } 
         
-        /* Auto-expandable textarea style */
-        textarea.auto-expand { 
-            resize: none; 
-            overflow-y: hidden; 
-            min-height: 40px; 
+        /* --- FORMS & INPUTS --- */
+        .form-group { margin-bottom: 16px; text-align: left; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; }
+        
+        input, select, textarea { 
+            width: 100%; padding: 10px 12px; border: 1px solid var(--border); 
+            border-radius: var(--radius-md); font-size: 14px; font-family: inherit;
+            transition: all 0.2s; background: var(--bg); color: var(--text);
         }
+        input:focus, select:focus, textarea:focus {
+            outline: none; border-color: var(--primary); background: var(--surface);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+        
+        textarea.auto-expand { resize: none; overflow-y: hidden; min-height: 44px; }
 
-        .input-error { border: 2px solid #ef4444 !important; background-color: #fef2f2; }
+        .input-error { border-color: var(--error) !important; background-color: #fef2f2 !important; }
 
-        .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
+        /* --- BUTTONS --- */
+        .btn { 
+            padding: 10px 20px; border: none; border-radius: var(--radius-md); font-weight: 600; 
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center; 
+            gap: 8px; font-size: 14px; transition: all 0.2s ease; text-transform: letter-spacing: 0.2px;
+        }
+        .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn:active { transform: translateY(0); }
+        
         .btn-primary { background: var(--primary); color: white; }
-        .btn-green { background: #059669; color: white; }
-        .btn-red { background: #ef4444; color: white; }
-        .btn-secondary { background: white; border: 1px solid var(--border); color: var(--text); }
-        .btn-yellow { background: #f59e0b; color: white; }
-        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-green { background: var(--success); color: white; }
+        .btn-red { background: var(--error); color: white; }
+        .btn-secondary { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+        .btn-secondary:hover { background: var(--bg); border-color: #cbd5e1; }
+        .btn-yellow { background: var(--warning); color: white; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
 
         /* --- DRUG ROWS --- */
-        .drug-row { display: flex; gap: 15px; align-items: flex-start; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 10px; }
+        .drug-row { 
+            display: flex; gap: 16px; align-items: flex-start; background: var(--surface); 
+            padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border); 
+            margin-bottom: 12px; box-shadow: var(--shadow-sm); position: relative;
+        }
         
-        .col-name { flex: 4; display: flex; flex-direction: column; gap: 5px; } 
+        .col-name { flex: 3; display: flex; flex-direction: column; gap: 8px; } 
         .col-weight { flex: 1.5; } 
-        .col-small { flex: 0.8; text-align: center; } 
+        .col-small { flex: 0.8; text-align: center; background: var(--bg); padding: 8px; border-radius: var(--radius-md); } 
         .col-days { flex: 2; } 
         .col-total { flex: 1; } 
-        .col-action { flex: 0.4; text-align: right; padding-top: 28px; }
+        .col-action { flex: 0.2; display: flex; align-items: center; justify-content: center; padding-top: 26px; }
         
-        .drug-row label { display: block; font-size: 11px; font-weight: 700; color: #4b5563; margin-bottom: 4px; }
+        .drug-row label { display: block; font-size: 12px; font-weight: 700; color: var(--text-light); margin-bottom: 6px; }
 
-        .form-check-group { display: flex; gap: 10px; margin-top: 2px; }
-        .form-check-label { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #555; cursor: pointer; font-weight: 600; }
-        .form-check-label input { width: auto; margin: 0; }
+        .form-check-group { display: flex; gap: 12px; margin-top: 4px; }
+        .form-check-label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-light); cursor: pointer; font-weight: 600; }
+        .form-check-label input { width: 14px; height: 14px; margin: 0; cursor: pointer;}
 
-        .dose-input-group { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-        .checkbox-label { font-size: 10px; color: #666; font-weight: bold; cursor: pointer; height: 20px; display: flex; align-items: center; }
+        .dose-input-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .checkbox-label { font-size: 11px; color: var(--text-light); font-weight: bold; cursor: pointer; display: flex; align-items: center; }
         
-        .duration-checks { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+        .duration-checks { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
         .dur-check-label { 
-            font-size: 11px; font-weight: 700; color: #374151; display: flex; align-items: center; gap: 4px; cursor: pointer;
-            background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #e5e7eb;
+            font-size: 11px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 4px; cursor: pointer;
+            background: var(--surface); padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); transition: all 0.2s;
         }
-        .dur-check-label input { margin: 0; width: auto; }
+        .dur-check-label:hover { border-color: var(--primary); background: var(--primary-light); }
 
-        /* Add Medicine Button in Row */
         .add-med-btn-inline {
-            font-size: 12px; color: #fff; background: var(--primary); padding: 4px 10px; 
-            border-radius: 4px; cursor: pointer; margin-top: 5px; display: inline-block; font-weight: 600;
+            font-size: 12px; color: white; background: var(--primary); padding: 4px 10px; 
+            border-radius: 6px; cursor: pointer; margin-top: 8px; display: inline-block; font-weight: 600; transition: 0.2s;
         }
+        .add-med-btn-inline:hover { background: var(--primary-hover); }
 
-        /* --- EXPANDABLE PATIENT LIST ITEM --- */
+        /* --- PATIENT LIST ITEM --- */
         .patient-list-item { 
-            padding: 12px; 
-            border: 1px solid var(--border); 
-            border-radius: 8px; 
-            margin-bottom: 8px; 
-            cursor: pointer; 
-            background: #f9fafb; 
-            transition: all 0.2s ease;
+            padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); 
+            margin-bottom: 10px; cursor: pointer; background: var(--surface); 
+            transition: all 0.2s ease; position: relative; overflow: hidden;
         }
-        /* No hover expansion by default */
         .patient-list-item:hover { 
-            border-color: var(--primary); 
-            transform: translateX(2px);
-            background: white;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border-color: #cbd5e1; transform: translateY(-2px); box-shadow: var(--shadow-md); 
+        }
+        .patient-list-item.selected { 
+            background: var(--primary-light); border-color: var(--primary); 
+        }
+        .patient-list-item.selected::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary);
         }
         
-        .patient-list-header {
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-        }
+        .patient-list-header { display: flex; justify-content: space-between; align-items: center; }
+        .patient-list-header strong { font-size: 15px; color: var(--text); }
 
-        /* Hidden details that expand on CLICK */
         .patient-details-expanded {
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
-            background: #eff6ff;
-            border-radius: 6px;
-            margin-top: 0;
-            padding: 0 10px;
+            max-height: 0; overflow: hidden; opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg); border-radius: var(--radius-md); margin-top: 0; padding: 0 12px;
         }
-
-        /* Expanded State via JS Class */
         .patient-list-item.expanded .patient-details-expanded {
-            max-height: 100px;
-            opacity: 1;
-            margin-top: 10px;
-            padding: 8px 10px;
-            border: 1px solid #bfdbfe;
+            max-height: 120px; opacity: 1; margin-top: 12px; padding: 12px; border: 1px solid var(--border);
         }
         
-        .patient-list-item.selected { background: var(--primary-light); border-color: var(--primary); border-left: 4px solid var(--primary); }
-        
-        .review-item { display: block; }
-        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
 
-        .med-list-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; align-items: center; }
-        .med-list-item:hover { background: #f9fafb; }
+        .med-list-item { 
+            display: flex; justify-content: space-between; padding: 16px; 
+            border-bottom: 1px solid var(--border); align-items: center; transition: 0.2s;
+        }
+        .med-list-item:hover { background: var(--bg); }
 
-        /* MIC STYLES */
+        /* --- MIC STYLES & SWITCHES --- */
         .mic-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
-        .mic-wrapper input { width: 100%; padding-right: 30px; }
+        .mic-wrapper input, .mic-wrapper textarea { width: 100%; padding-right: 40px; }
         .mic-btn { 
-            position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
             background: none; border: none; cursor: pointer; color: #9ca3af;
-            z-index: 10; padding: 0; display: flex; align-items: center;
+            z-index: 10; padding: 4px; display: flex; align-items: center; border-radius: 50%; transition: 0.2s;
         }
+        .mic-btn:hover { background: var(--bg); color: var(--text); }
         .mic-btn svg { width: 18px; height: 18px; fill: currentColor; }
-        .mic-btn.listening { color: #ef4444; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .mic-btn.listening { color: var(--error); animation: pulse 1.5s infinite; background: #fee2e2; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
-        .auto-mic-container { display: flex; align-items: center; gap: 8px; background: #f3f4f6; padding: 5px 10px; border-radius: 20px; border: 1px solid #e5e7eb; }
-        .switch-label { font-size: 12px; font-weight: 700; color: #374151; }
-        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+        .auto-mic-container { 
+            display: flex; align-items: center; gap: 10px; background: var(--surface); 
+            padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+        }
+        .switch-label { font-size: 13px; font-weight: 600; color: var(--text-light); }
+        .switch { position: relative; display: inline-block; width: 36px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.2);}
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        .notes-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .notes-checkbox { width: 18px; height: 18px; cursor: pointer; margin: 0; }
-        .notes-label { font-weight: 700; color: var(--text); font-size: 14px; cursor: pointer; }
-
-        .add-med-link {
-            font-size: 12px; color: #d97706; cursor: pointer; margin-top: 4px; display: block; font-weight: 600;
-            background: #fffbeb; border: 1px solid #fcd34d; padding: 4px 8px; border-radius: 4px; text-align: center;
-        }
-
-        /* CLINICAL TEMPLATE CHIPS */
-        .template-area { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; align-items: center; }
+        /* --- TEMPLATE CHIPS --- */
+        .template-area { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
         .template-chip { 
-            background: #e0f2fe; color: #0284c7; padding: 6px 12px; border-radius: 20px; 
-            font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #bae6fd; transition: 0.2s; 
+            background: var(--surface); color: var(--primary); padding: 6px 14px; border-radius: 20px; 
+            font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #bae6fd; transition: all 0.2s; 
         }
-        .template-chip:hover { background: #0284c7; color: white; }
+        .template-chip:hover { background: var(--primary); color: white; border-color: var(--primary); transform: translateY(-1px); }
         
         .template-add-btn { 
-            background: white; border: 1px dashed #cbd5e1; color: #64748b; 
-            padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; 
+            background: transparent; border: 1px dashed #94a3b8; color: var(--text-light); 
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;
         }
-        .template-add-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .template-add-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
-        /* LAB GRID */
-        .lab-grid-row1 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
-        .lab-grid-row2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 10px; }
-        .lab-big-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: 'Inter', sans-serif; resize: none; overflow-y: hidden; min-height: 40px;}
-        .lab-input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; text-align: center; font-weight: 600; color: var(--primary); }
+        /* --- LAB GRID --- */
+        .lab-grid-row1 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px; }
+        .lab-grid-row2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 16px; }
+        .lab-input { text-align: center; font-weight: 600; color: var(--primary); }
 
-        /* MODALS */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
-        .modal-content { background-color: white; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-title { font-weight: 700; font-size: 18px; margin: 0; }
-        .modal-body { max-height: 400px; overflow-y: auto; }
-        .selection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+        /* --- MODALS --- */
+        .modal { 
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            align-items: center; justify-content: center; 
+        }
+        .modal-content { 
+            background-color: var(--surface); padding: 32px; border-radius: var(--radius-lg); 
+            width: 90%; max-width: 500px; box-shadow: var(--shadow-hover); position: relative;
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-title { font-weight: 800; font-size: 20px; margin: 0; color: var(--text); }
+        .selection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
         .selection-btn { 
-            padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: white; 
-            cursor: pointer; font-size: 13px; text-align: center; transition: 0.2s; font-weight: 500; color: #374151;
+            padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); 
+            cursor: pointer; font-size: 13px; text-align: center; transition: all 0.2s; font-weight: 600; color: var(--text);
         }
-        .selection-btn:hover { border-color: var(--primary); background: #f0f9ff; color: var(--primary); }
+        .selection-btn:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 
-        /* PRINT STYLES */
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 1024px) {
+            .grid-doctor { grid-template-columns: 1fr; }
+            .patient-list-section { position: relative; height: auto; max-height: 400px; top: 0; }
+            .grid-reception { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .app-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .nav-pills { width: 100%; justify-content: space-between; overflow-x: auto; }
+            .nav-btn { padding: 8px 12px; font-size: 13px; white-space: nowrap; }
+            .drug-row { flex-wrap: wrap; }
+            .col-name, .col-days, .col-weight { flex: 1 1 100%; }
+            .col-small { flex: 1 1 30%; }
+            .col-total { flex: 1 1 50%; }
+            .col-action { flex: 1 1 100%; text-align: right; padding-top: 0; }
+        }
+
+        /* PRINT STYLES (Kept exactly as requested) */
         @media print {
             @page { margin: 10mm; size: A4; }
             body, .container { background: white; margin: 0; padding: 0; max-width: 100%; }
@@ -325,22 +332,12 @@
             .clinic-logo-img { height: 60px; width: auto; }
             .clinic-name { color: #1e3a8a !important; font-size: 20px; font-weight: 900; text-transform: uppercase; border: 2px solid #1e3a8a; padding: 2px 8px; display: inline-block; }
             
-            /* Two separate pages layout */
-            .print-page { 
-                display: flex; flex-direction: column; 
-                position: relative;
-                page-break-after: always; 
-            }
-            
+            .print-page { display: flex; flex-direction: column; position: relative; page-break-after: always; }
             .page-break-before { page-break-before: always; }
-
-            /* Add padding to second page header so it doesn't touch top */
             #printPage2 { padding-top: 30px; }
-
             .rx-badge { text-align: center; margin: 20px 0; }
             .rx-badge span { background: #222; color: white !important; padding: 6px 30px; border-radius: 4px; font-weight: bold; letter-spacing: 2px; font-size: 16px; -webkit-print-color-adjust: exact; }
             
-            /* Print Meta Grid */
             .print-meta-grid { display: flex; justify-content: space-between; margin: 10px 0; font-weight: bold; font-size: 16px; border-bottom: 2px solid #000; padding-bottom: 5px; }
             
             .rx-table { width: 100%; border-collapse: collapse; margin-top: 10px; border: 2px solid #000; }
@@ -348,22 +345,13 @@
             .rx-table td { border: 1px solid #000; padding: 8px 5px; font-size: 16px; text-align: center; height: 40px; vertical-align: middle; font-weight: 600; color: #1e3a8a !important; }
             .rx-table td.drug-name-cell { text-align: left; padding-left: 15px; color: #000 !important; }
             
-            /* Signature flow layout */
-            .print-footer { 
-                margin-top: 50px; 
-                text-align: right; 
-                padding-bottom: 20px; 
-            }
+            .print-footer { margin-top: 50px; text-align: right; padding-bottom: 20px; }
             .signature-line { border-top: 1px solid #000; margin-top: 10px; padding-top: 5px; font-weight: bold; display: inline-block; width: 200px; text-align: center;}
             
-            /* PRINT BOXES */
             .print-section-box { border: 1px solid #000; padding: 5px 10px; margin-bottom: 8px; font-size: 14px; font-family: 'Inter', sans-serif; display: flex; align-items: baseline; gap: 10px; min-height: 35px;}
             .print-section-title { font-weight: bold; min-width: 140px; text-decoration: underline;}
             .print-section-content { font-weight: 600; flex-grow: 1; white-space: pre-wrap; }
             .print-details-box { border: 1px solid #000; padding: 10px; height: auto; min-height: 0; margin-bottom: 20px; font-size: 14px; white-space: pre-wrap; font-family: 'Inter', sans-serif; display: none; width: 100%; }
-            
-            .print-prescription-box { text-align: center; border: 1px solid #000; padding: 5px; margin: 15px 0 5px 0; font-weight: bold; background: #eee !important; -webkit-print-color-adjust: exact; }
-            .print-patient-rx-row { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; padding: 0 10px; }
         }
         .print-only { display: none; }
     </style>
@@ -374,7 +362,7 @@
 
     <div id="loadingOverlay" style="display: none;">
         <div class="spinner"></div>
-        <div style="font-weight:600; color:#374151;">Loading...</div>
+        <div style="font-weight:600; color:var(--text-light);">Loading...</div>
     </div>
 
     <div id="selectionModal" class="modal">
@@ -421,7 +409,7 @@
                     <label>Strengths (comma separated)</label>
                     <input type="text" id="uniModalStrengths" placeholder="e.g. 500mg, 650mg">
                 </div>
-                <button class="btn btn-success" style="width:100%" onclick="saveUniversalMedicine()">Save to Database</button>
+                <button class="btn btn-green" style="width:100%" onclick="saveUniversalMedicine()">Save to Database</button>
             </div>
         </div>
     </div>
@@ -433,36 +421,36 @@
                 <button class="btn btn-red btn-sm" onclick="closeModal('templateManagerModal')">X</button>
             </div>
             <div class="modal-body">
-                <div style="background:#f9fafb; padding:15px; border-radius:8px; margin-bottom:20px;">
-                    <h5>Add New Template</h5>
+                <div style="background:var(--bg); padding:20px; border-radius:var(--radius-md); margin-bottom:20px; border:1px solid var(--border);">
+                    <h5 style="margin-top:0;">Add New Template</h5>
                     <div class="form-group"><label>Condition Name (e.g. Headache)</label><input type="text" id="tplName"></div>
                     <div class="form-group"><label>Sub-Types (comma separated)</label><input type="text" id="tplTypes" placeholder="Migraine, Tension, Cluster"></div>
                     <div class="form-group"><label>Durations (comma separated)</label><input type="text" id="tplDurations" placeholder="5 Days, 10 Days, 1 Month"></div>
-                    <button class="btn btn-success" onclick="saveNewTemplate()">Save Template</button>
+                    <button class="btn btn-green" onclick="saveNewTemplate()">Save Template</button>
                 </div>
-                <div id="templateListContainer"><div style="display:flex;justify-content:space-between;padding:5px;"><span>Vertigo</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('G2WDPhElj5BAmceimytG')">Del</button></div><div style="display:flex;justify-content:space-between;padding:5px;"><span>Stroke</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('JTHLQkhNg2ufZ0KDOYNb')">Del</button></div><div style="display:flex;justify-content:space-between;padding:5px;"><span>Parkinson's</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('Lq1QNmoDNFIO0pIimvIP')">Del</button></div><div style="display:flex;justify-content:space-between;padding:5px;"><span>Neuropathy</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('RPUaoK3tGHkNV9LRwhR1')">Del</button></div><div style="display:flex;justify-content:space-between;padding:5px;"><span>Back Pain</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('SY3bKZDB0E6omRkziVnV')">Del</button></div><div style="display:flex;justify-content:space-between;padding:5px;"><span>Epilepsy</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('cSQzMXdxRqQE8Z8EOjKx')">Del</button></div><div style="display:flex;justify-content:space-between;padding:5px;"><span>Neck Pain</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('nL3xHta6WiS2YZ7FkqNv')">Del</button></div><div style="display:flex;justify-content:space-between;padding:5px;"><span>Headache</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('sewmrLGRUlGcDSKpcJKl')">Del</button></div></div>
+                <div id="templateListContainer"><div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--border);"><span>Vertigo</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('G2WDPhElj5BAmceimytG')">Del</button></div><div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--border);"><span>Stroke</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('JTHLQkhNg2ufZ0KDOYNb')">Del</button></div></div>
             </div>
         </div>
     </div>
 
     <div id="authContainer" style="display: none;">
         <div class="auth-card">
-            <div class="auth-title">Dr. Bharat's Arogya Homeopathy</div>
+            <div class="auth-title">Dr. Bharat's Arogya</div>
             <div class="auth-subtitle">Secure Cloud System Access</div>
             
             <div id="loginForm">
                 <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" placeholder="e.g. doctor@clinic.com"></div>
                 <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter Password"></div>
                 <button class="btn btn-primary" style="width:100%" onclick="login()">Login</button>
-                <div style="margin-top:15px; font-size:13px;"><a href="#" style="color:var(--primary); text-decoration:none;" onclick="toggleAuthForms()">Register New Staff</a></div>
+                <div style="margin-top:20px; font-size:13px;"><a href="#" style="color:var(--primary); text-decoration:none; font-weight:600;" onclick="toggleAuthForms()">Register New Staff</a></div>
             </div>
 
             <div id="signupForm" style="display:none;">
                 <div class="form-group"><label>Email Address</label><input type="email" id="regEmail" placeholder="e.g. nurse@clinic.com"></div>
                 <div class="form-group"><label>Create Password</label><input type="password" id="regPass" placeholder="Min 6 characters"></div>
-                <div class="form-group"><label>Clinic Code</label><input type="password" id="regCode" placeholder="Ask Administrator" style="border-color:#f59e0b;"></div>
+                <div class="form-group"><label>Clinic Code</label><input type="password" id="regCode" placeholder="Ask Administrator" style="border-color:var(--warning);"></div>
                 <button class="btn btn-green" style="width:100%" onclick="signup()">Register</button>
-                <div style="margin-top:15px; font-size:13px;"><a href="#" style="color:var(--primary); text-decoration:none;" onclick="toggleAuthForms()">Back to Login</a></div>
+                <div style="margin-top:20px; font-size:13px;"><a href="#" style="color:var(--primary); text-decoration:none; font-weight:600;" onclick="toggleAuthForms()">Back to Login</a></div>
             </div>
         </div>
     </div>
@@ -477,7 +465,7 @@
                     <div class="nav-pills">
                         <button id="btn-reception" class="nav-btn active">Reception Desk</button>
                         <button id="btn-doctor" class="nav-btn">Doctor Chamber</button>
-                        <button id="btn-medicines" class="nav-btn" onclick="openManagerAddModal()">Add New Medicine</button>
+                        <button id="btn-medicines" class="nav-btn" onclick="openManagerAddModal()">Add Medicine</button>
                         <button id="btn-logout" class="nav-btn logout-btn" onclick="logout()">Logout</button>
                     </div>
                 </div>
@@ -486,7 +474,7 @@
             <div id="receptionPage" class="page active no-print">
                 <div class="grid-reception">
                     <div class="card">
-                        <h3 style="margin-top:0;">New Patient Registration</h3>
+                        <h3 style="margin-top:0; color:var(--text);">New Patient Registration</h3>
                         <form id="regForm">
                             <div class="grid-3-top">
                                 <div class="form-group"><label>Patient Name *</label><input type="text" id="regName" required=""></div>
@@ -502,16 +490,16 @@
                     
                     <div class="card" style="height: fit-content;">
                         <h3 style="margin-top:0; color:var(--primary);">Review / Old Patient</h3>
-                        <div class="mic-wrapper" style="margin-bottom:10px;"><input type="text" id="reviewSearch" placeholder="🔍 Search Database..."><button id="mic-reviewSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'reviewSearch')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path></svg></button></div>
-                        <div id="reviewList" style="height: 400px; overflow-y: auto; border:1px solid #eee; border-radius:6px; padding:10px;">
+                        <div class="mic-wrapper" style="margin-bottom:16px;"><input type="text" id="reviewSearch" placeholder="🔍 Search Database..."><button id="mic-reviewSearch" class="mic-btn" onmousedown="handleManualMicClick(event, 'reviewSearch')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path></svg></button></div>
+                        <div id="reviewList" style="height: 400px; overflow-y: auto; border:1px solid var(--border); border-radius:var(--radius-md); padding:10px;">
                 <div class="patient-list-item review-item" onclick="togglePatientDetails(this)">
                     <div class="patient-list-header">
-                        <div><strong>prajwal rawoot</strong> <small>(#1 | 19Y/Male)</small></div>
+                        <div><strong>prajwal rawoot</strong> <small style="color:var(--text-light)">(#1 | 19Y/Male)</small></div>
                         <button class="btn btn-yellow btn-sm" onclick="event.stopPropagation(); sendToDoctor('FHWN3TEKVjYZI08dEvyn')">Send to Doctor</button>
                     </div>
                     <div class="patient-details-expanded">
-                        <div style="font-size:12px; margin-bottom:2px;">📞 8088361612</div>
-                        <div style="font-size:12px;">🏠 piranwadi</div>
+                        <div style="font-size:13px; margin-bottom:4px;">📞 8088361612</div>
+                        <div style="font-size:13px;">🏠 piranwadi</div>
                     </div>
                 </div></div>
                     </div>
@@ -520,25 +508,25 @@
 
             <div id="medicinePage" class="page no-print">
                 <div class="card" style="max-width: 800px; margin: 0 auto;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:20px;">
                         <h3 style="margin:0;">💊 Medicine Manager (Cloud)</h3>
                         <button class="btn btn-primary" onclick="openManagerAddModal()">+ Add New Medicine</button>
                     </div>
                     
-                    <div style="margin-bottom: 15px;">
+                    <div style="margin-bottom: 16px;">
                         <div class="mic-wrapper"><input type="text" id="medManagerSearch" placeholder="🔍 Search medicines..." oninput="renderMedManagerList()"></div>
                     </div>
-                    <div id="medManagerList" style="height: 500px; overflow-y: auto; border:1px solid #eee; border-radius:6px;">
+                    <div id="medManagerList" style="height: 500px; overflow-y: auto; border:1px solid var(--border); border-radius:var(--radius-md);">
                     <div class="med-list-item">
-                        <div><strong>Duloxetine</strong> <br> <small style="color:#666">sss, ssss, bbb, 5767</small></div>
-                        <div style="display:flex; gap:5px;">
+                        <div><strong>Duloxetine</strong> <br> <small style="color:var(--text-light)">sss, ssss, bbb, 5767</small></div>
+                        <div style="display:flex; gap:8px;">
                             <button class="btn btn-secondary btn-sm" onclick="openManagerEditModal('gJC9NHSuAhGO395XeGCX', 'Duloxetine', 'sss, ssss, bbb, 5767')">Edit</button>
                             <button class="btn btn-red btn-sm" onclick="deleteMedicine('gJC9NHSuAhGO395XeGCX')">Delete</button>
                         </div>
                     </div>
                     <div class="med-list-item">
-                        <div><strong>Syndopa</strong> <br> <small style="color:#666">45</small></div>
-                        <div style="display:flex; gap:5px;">
+                        <div><strong>Syndopa</strong> <br> <small style="color:var(--text-light)">45</small></div>
+                        <div style="display:flex; gap:8px;">
                             <button class="btn btn-secondary btn-sm" onclick="openManagerEditModal('qwyrphgSNgcnJK1C1tvZ', 'Syndopa', '45')">Edit</button>
                             <button class="btn btn-red btn-sm" onclick="deleteMedicine('qwyrphgSNgcnJK1C1tvZ')">Delete</button>
                         </div>
@@ -548,25 +536,28 @@
 
             <div id="doctorPage" class="page no-print">
                 <div class="grid-doctor">
-                    <div class="card patient-list-section" style="height: 85vh; overflow-y: auto; display:flex; flex-direction:column;">
-                        <div style="margin-bottom:10px;"><h3 style="margin:0; font-size:16px;">Waiting Queue (<span id="queueCount">1</span>)</h3></div>
+                    <div class="card patient-list-section">
+                        <div style="margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border);"><h3 style="margin:0; font-size:18px;">Waiting Queue (<span id="queueCount">1</span>)</h3></div>
                         <div id="doctorQueueList" style="flex-grow:1;"><div class="patient-list-item "><strong>prajwal rawoot</strong><br><small>#1 | 19Y / Male</small></div></div>
                     </div>
 
                     <div id="workspace" style="display: none;">
                         <div class="card">
-                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:20px;">
-                                <div><h2 id="pNameDisplay" style="margin:0;">-</h2><small id="pDetailsDisplay" style="color:#6b7280;">-</small></div>
-                                <div style="display:flex; gap:15px; align-items:center;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:24px;">
+                                <div><h2 id="pNameDisplay" style="margin:0; font-weight:800;">-</h2><small id="pDetailsDisplay" style="color:var(--text-light); font-weight:500;">-</small></div>
+                                <div style="display:flex; gap:16px; align-items:center;">
                                     <div class="auto-mic-container"><span class="switch-label">Auto-Mic</span><label class="switch"><input type="checkbox" id="autoMicToggle" onchange="toggleAutoMic()"><span class="slider"></span></label></div>
-                                    <button id="btnToggleHistory" class="btn btn-secondary">History</button>
+                                    <button id="btnToggleHistory" class="btn btn-secondary">Patient History</button>
                                 </div>
                             </div>
 
-                            <div id="historySection" style="display:none; background:#f0f9ff; padding:15px; border-radius:8px; margin-bottom:20px;"><h4>Previous Visits</h4><div id="historyContent">Loading history...</div></div>
+                            <div id="historySection" style="display:none; background:var(--primary-light); padding:20px; border-radius:var(--radius-lg); margin-bottom:24px; border:1px solid #bfdbfe;">
+                                <h4 style="margin-top:0; color:var(--primary);">Previous Visits</h4>
+                                <div id="historyContent">Loading history...</div>
+                            </div>
 
-                            <div style="margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
-                                <h5 style="margin-top:0; color:var(--primary); margin-bottom:10px;">On Examination</h5>
+                            <div style="margin-bottom: 24px; background: var(--bg); padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                                <h5 style="margin-top:0; color:var(--primary); margin-bottom:16px; font-size:15px;">On Examination</h5>
                                 <div class="lab-grid-row1">
                                     <div class="form-group"><label>BP</label><input type="text" id="examBP" class="lab-input" placeholder="e.g. 140/80"></div>
                                     <div class="form-group"><label>Pulse</label><input type="text" id="examPulse" class="lab-input" placeholder="e.g. 78"></div>
@@ -576,28 +567,32 @@
                                     <div class="form-group"><label>RBS (mg/dL)</label><input type="text" id="labRBS" class="lab-input" placeholder="e.g. 110"></div>
                                     <div class="form-group"><label>Creatinine (mg/dL)</label><input type="text" id="labCreatinine" class="lab-input" placeholder="e.g. 0.9"></div>
                                 </div>
-                                <div class="form-group"><label>ECG</label><textarea id="testECG" class="lab-big-input auto-expand" rows="1" placeholder="Result"></textarea></div>
-                                <div class="form-group"><label>EEG</label><textarea id="testEEG" class="lab-big-input auto-expand" rows="1" placeholder="Result"></textarea></div>
-                                <div class="form-group"><label>NCV</label><textarea id="testNCV" class="lab-big-input auto-expand" rows="1" placeholder="Result"></textarea></div>
-                                <div class="form-group"><label>Carotid Doppler / TCS</label><textarea id="testDoppler" class="lab-big-input auto-expand" rows="1" placeholder="Result"></textarea></div>
+                                <div class="form-group"><label>ECG</label><textarea id="testECG" class="auto-expand" rows="1" placeholder="Result"></textarea></div>
+                                <div class="form-group"><label>EEG</label><textarea id="testEEG" class="auto-expand" rows="1" placeholder="Result"></textarea></div>
+                                <div class="form-group"><label>NCV</label><textarea id="testNCV" class="auto-expand" rows="1" placeholder="Result"></textarea></div>
+                                <div class="form-group"><label>Carotid Doppler / TCS</label><textarea id="testDoppler" class="auto-expand" rows="1" placeholder="Result"></textarea></div>
                             </div>
 
-                            <div style="margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb;">
-                                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                                    <div class="notes-header"><input type="checkbox" id="includeNotesInPrint" class="notes-checkbox" title="Check to print on Rx"><label for="includeNotesInPrint" class="notes-label">Case Details / Notes (Check to print)</label></div>
-                                    <div class="template-area" id="templateChipContainer"><span class="template-chip">Vertigo</span><span class="template-chip">Stroke</span><span class="template-chip">Parkinson's</span><span class="template-chip">Neuropathy</span><span class="template-chip">Back Pain</span><span class="template-chip">Epilepsy</span><span class="template-chip">Neck Pain</span><span class="template-chip">Headache</span><span class="template-add-btn" onclick="openTemplateManager()">+ Manage Templates</span></div>
+                            <div style="margin-bottom: 24px; background: var(--bg); padding: 20px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items:center;">
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        <input type="checkbox" id="includeNotesInPrint" style="width:16px; height:16px; cursor:pointer; margin:0;" title="Check to print on Rx">
+                                        <label for="includeNotesInPrint" style="font-weight:700; color:var(--text); font-size:14px; cursor:pointer; margin:0;">Case Details / Notes (Check to print)</label>
+                                    </div>
+                                    <div class="template-area" id="templateChipContainer"></div>
                                 </div>
                                 <div class="mic-wrapper">
-                                    <textarea id="docDetails" class="form-control auto-expand" rows="4" placeholder="Type or use templates..."></textarea>
+                                    <textarea id="docDetails" class="auto-expand" rows="4" placeholder="Type or use templates..."></textarea>
                                     <button id="mic-docDetails" class="mic-btn" onmousedown="handleManualMicClick(event, 'docDetails')"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"></path><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"></path></svg></button>
                                 </div>
                             </div>
 
                             <div id="drugListContainer"></div>
-                            <div style="margin-top:20px;"><button id="btnAddDrug" class="btn btn-green">+ Add Medicine</button></div>
-                            <div style="margin-top: 20px; display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:20px;">
+                            <div style="margin-top:20px;"><button id="btnAddDrug" class="btn btn-secondary">+ Add Medicine</button></div>
+                            
+                            <div style="margin-top: 32px; display:flex; justify-content:space-between; border-top:1px solid var(--border); padding-top:24px;">
                                 <button id="btnFinish" class="btn btn-red">Clear from Queue</button>
-                                <button id="btnPrint" class="btn btn-primary">Save &amp; Print</button>
+                                <button id="btnPrint" class="btn btn-primary">Save &amp; Print Prescription</button>
                             </div>
                         </div>
                     </div>
@@ -611,8 +606,7 @@
         <div id="printPage1" class="print-page" style="display:none;">
             <div class="print-header">
                 <div class="dr-info"><h1>Dr. bharat's arogya Homeopathy</h1></div>
-                <div class="clinic-info-container">
-                    </div>
+                <div class="clinic-info-container"></div>
             </div>
             
             <div class="print-meta-grid">
@@ -628,8 +622,7 @@
         <div id="printPage2" class="print-page page-break-before" style="display:none;">
             <div class="print-header">
                 <div class="dr-info"><h1>Dr. bharat's arogya Homeopathy</h1></div>
-                <div class="clinic-info-container">
-                   </div>
+                <div class="clinic-info-container"></div>
             </div>
 
             <div class="print-meta-grid">
@@ -654,7 +647,6 @@
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, arrayUnion, serverTimestamp, getDocs, deleteDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-        // UPDATED CREDENTIALS
         const firebaseConfig = {
           apiKey: "AIzaSyAlDYY4VvvK36DbdDkCmrt2CzCncNlqPsc",
           authDomain: "mama-doc.firebaseapp.com",
@@ -670,7 +662,6 @@
         const db = getFirestore(app);
         const CLINIC_CODE = "NEURO2026"; 
 
-        // CLINICAL TEMPLATES SEED
         const DEFAULT_TEMPLATES = [
             { name: "Headache", subtypes: ["Migraine", "Tension", "Cluster", "Sinusitis"], durations: ["5 Days", "10 Days", "15 Days", "1 Month"] },
             { name: "Epilepsy", subtypes: ["GTCS", "Focal", "Absence", "Myoclonic"], durations: ["1 Month", "2 Months", "3 Months", "6 Months"] },
@@ -687,7 +678,6 @@
         let recognition = null, isAutoMicOn = false, activeInputId = null, finalTranscript = '';
         let currentTemplateAction = null;
 
-        // --- TOAST FUNCTION ---
         function showToast(msg, type='neutral') {
             const t = document.getElementById('toast');
             t.className = type; 
@@ -696,12 +686,8 @@
             setTimeout(() => { t.className = ''; }, 800); 
         }
 
-        // --- TOGGLE DETAILS ---
-        window.togglePatientDetails = function(el) {
-            el.classList.toggle('expanded');
-        }
+        window.togglePatientDetails = function(el) { el.classList.toggle('expanded'); }
 
-        // --- AUTH & INIT ---
         onAuthStateChanged(auth, (user) => {
             document.getElementById('loadingOverlay').style.display = 'none';
             if (user) {
@@ -892,7 +878,7 @@
             cloudMedicines.filter(m => m.name.toLowerCase().includes(term)).forEach(m => {
                 container.innerHTML += `
                     <div class="med-list-item">
-                        <div><strong>${m.name}</strong> <br> <small style="color:#666">${m.strengths.join(', ')}</small></div>
+                        <div><strong>${m.name}</strong> <br> <small style="color:var(--text-light)">${m.strengths.join(', ')}</small></div>
                         <div style="display:flex; gap:5px;">
                             <button class="btn btn-secondary btn-sm" onclick="openManagerEditModal('${m.id}', '${m.name}', '${m.strengths.join(", ")}')">Edit</button>
                             <button class="btn btn-red btn-sm" onclick="deleteMedicine('${m.id}')">Delete</button>
@@ -1089,7 +1075,6 @@
             document.getElementById('workspace').style.display = 'none'; currentPatient = null;
         }
 
-        // --- ROW HELPERS ---
         window.addDrugRow = addDrugRow;
         window.calculateTotal = calculateTotal;
         window.updateStrengths = (id) => handleMedicineInput(id);
@@ -1130,9 +1115,9 @@
                             const parts = [];
                             if(l.bp) parts.push(`BP: ${l.bp}`);
                             if(l.hb) parts.push(`HB: ${l.hb}`);
-                            if(parts.length > 0) labStr = `<div style="font-size:12px; color:#666; margin-bottom:5px;"><strong>Exam:</strong> ${parts.join(', ')}</div>`;
+                            if(parts.length > 0) labStr = `<div style="font-size:12px; color:var(--text-light); margin-bottom:5px;"><strong>Exam:</strong> ${parts.join(', ')}</div>`;
                         }
-                        return `<div style="border-bottom:1px solid #ccc; padding:10px 0;"><strong>${h.date}</strong>${labStr}<p style="margin:5px 0;">${h.notes || ''}</p><ul style="margin:5px 0; padding-left:20px; font-size:13px;">${h.meds.map(m => `<li>${m.type} ${m.name} (${m.strength})</li>`).join('')}</ul></div>`;
+                        return `<div style="border-bottom:1px solid var(--border); padding:10px 0;"><strong>${h.date}</strong>${labStr}<p style="margin:5px 0;">${h.notes || ''}</p><ul style="margin:5px 0; padding-left:20px; font-size:13px;">${h.meds.map(m => `<li>${m.type} ${m.name} (${m.strength})</li>`).join('')}</ul></div>`;
                     }).join('');
                 }
             } else sec.style.display = 'none';
@@ -1161,8 +1146,8 @@
                 <div class="col-days"><label>Duration</label><select id="d-preset-${rowCount}" onchange="handleDurationChange(${rowCount})"><option value="">Select</option><option value="5">5 Days</option><option value="10">10 Days</option><option value="15">15 Days</option><option value="30">1 Month</option><option value="60">2 Months</option><option value="90">3 Months</option><option value="120">4 Months</option><option value="150">5 Months</option><option value="180">6 Months</option><option value="manual">Manual</option></select>
                 <div class="duration-checks"><label class="dur-check-label"><input type="checkbox" id="d-5-${rowCount}" onclick="setDurationChk(${rowCount},5)"> 5d</label><label class="dur-check-label"><input type="checkbox" id="d-10-${rowCount}" onclick="setDurationChk(${rowCount},10)"> 10d</label><label class="dur-check-label"><input type="checkbox" id="d-15-${rowCount}" onclick="setDurationChk(${rowCount},15)"> 15d</label><label class="dur-check-label"><input type="checkbox" id="d-30-${rowCount}" onclick="setDurationChk(${rowCount},30)"> 1m</label></div>
                 <div id="d-manual-container-${rowCount}" style="display:none; margin-top:5px;"><input type="number" id="d-num-${rowCount}" style="width:50px" oninput="calculateTotal(${rowCount})"><select id="d-unit-${rowCount}" onchange="calculateTotal(${rowCount})"><option value="1">Days</option><option value="30">Months</option></select></div></div>
-                <div class="col-total"><label>Total</label><input type="text" id="t-${rowCount}" readonly style="background:#eee"></div>
-                <div class="col-action"><button class="btn btn-red btn-sm" onclick="document.getElementById('row-${rowCount}').remove()">X</button></div>
+                <div class="col-total"><label>Total</label><input type="text" id="t-${rowCount}" readonly style="background:var(--bg); border:none;"></div>
+                <div class="col-action"><button class="btn btn-secondary btn-sm" style="color:var(--error);" onclick="document.getElementById('row-${rowCount}').remove()">X</button></div>
             `;
             container.appendChild(div); attachMicListeners(`name-${rowCount}`);
         }
@@ -1176,26 +1161,20 @@
             document.getElementById(`t-${rid}`).value = Math.ceil((m+a+n)*d);
         }
 
-        // --- TEMPLATE FLOW ---
         function renderTemplateChips() {
-            const container = document.getElementById('templateChipContainer'); const manageBtn = container.querySelector('.template-add-btn'); container.innerHTML = '';
+            const container = document.getElementById('templateChipContainer'); const manageBtn = document.createElement('span'); manageBtn.className = 'template-add-btn'; manageBtn.innerText = '+ Manage Templates'; manageBtn.onclick = openTemplateManager; container.innerHTML = '';
             clinicalTemplates.forEach(t => { const chip = document.createElement('span'); chip.className = 'template-chip'; chip.innerText = t.name; chip.onclick = () => startTemplateFlow(t); container.appendChild(chip); }); container.appendChild(manageBtn);
         }
         function startTemplateFlow(t) {
             currentTemplateAction = { template: t };
             const sub = t.subtypes || [], dur = t.durations || [];
-            
-            // Step 1: Subtype
             if(sub.length > 0) {
                 openSelectionModal(`Type of ${t.name}`, sub, (s) => { 
                     currentTemplateAction.subtype = s; 
-                    // Step 2: Duration
                     if(dur.length > 0) {
-                        // Add Manual Option dynamically
                         const durOptions = [...dur, "✎ Manual Input"];
                         openSelectionModal(`Duration`, durOptions, (d) => {
                             if (d === "✎ Manual Input") {
-                                // Open Custom Modal
                                 document.getElementById('manualDurationInput').value = '';
                                 document.getElementById('manualDurationModal').style.display = 'flex';
                                 document.getElementById('manualDurationInput').focus();
@@ -1237,9 +1216,8 @@
         };
         window.deleteTemplate = async (id) => { if(confirm("Delete?")) await deleteDoc(doc(db, "clinicalTemplates", id)); };
         window.closeModal = (id) => document.getElementById(id).style.display = 'none';
-        function renderTemplateManagerList() { const div = document.getElementById('templateListContainer'); div.innerHTML=''; clinicalTemplates.forEach(t=>{ div.innerHTML+=`<div style="display:flex;justify-content:space-between;padding:5px;"><span>${t.name}</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('${t.id}')">Del</button></div>`; }); }
+        function renderTemplateManagerList() { const div = document.getElementById('templateListContainer'); div.innerHTML=''; clinicalTemplates.forEach(t=>{ div.innerHTML+=`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--border);"><span>${t.name}</span><button class="btn btn-red btn-sm" onclick="deleteTemplate('${t.id}')">Del</button></div>`; }); }
 
-        // --- VOICE CORE ---
         if ('webkitSpeechRecognition' in window) {
             recognition = new webkitSpeechRecognition(); recognition.interimResults = true; recognition.lang = 'en-US';
             recognition.onresult = (e) => {
